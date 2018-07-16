@@ -1,2 +1,3 @@
-include 'biu_apps:app', 'biu_apps:kotlin'
-include 'biu_libs:dependencies', 'biu_libs:glide', ':biu_libs:mqtt', ':biu_libs:retrofit'
+include 'block_hosts:biu'
+include 'block_plugs:app', 'block_plugs:kotlin'
+include 'block_libs:dependencies', 'block_libs:glide', ':block_libs:mqtt', ':block_libs:retrofit'

@@ -15,6 +15,10 @@ ext {
             // multidex
             multidex                  : 'com.android.support:multidex:1.0.3',
 
+            // replugin
+            replugin_host             : "com.qihoo360.replugin:replugin-host-lib:${rootProject.ext.versions.repluginVersion}",
+            replugin_plugin           : "com.qihoo360.replugin:replugin-plugin-lib:${rootProject.ext.versions.repluginVersion}",
+
             // gson
             gson                      : 'com.google.code.gson:gson:2.8.5',
 
