@@ -1,0 +1,1 @@
+apply from: rootProject.ext.configs.base_lib

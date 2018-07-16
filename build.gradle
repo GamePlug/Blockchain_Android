@@ -1,0 +1,42 @@
+apply from: rootProject.ext.configs.dependencies
+
+buildscript {
+    ext {
+        config_dir = rootProject.rootDir.absolutePath + "/gradle_config/"
+        configs = [
+                base_app     : config_dir + "base_app.gradle",
+                base_lib     : config_dir + "base_lib.gradle",
+                dependencies : config_dir + "dependencies.gradle",
+                keystore     : config_dir + "mula.keystore",
+        ]
+        versions = [
+                compileSdkVersion   : 27,
+                minSdkVersion       : 14,
+                targetSdkVersion    : 27,
+                versionCode         : 1,
+                versionName         : '1.0.0',
+                supportVersion      : '27.1.1',
+                kotlinVersion       : '1.2.41',
+        ]
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.versions.kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:${rootProject.ext.versions.kotlinVersion}"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

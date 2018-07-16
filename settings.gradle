@@ -1,0 +1,2 @@
+include 'biu_apps:app', 'biu_apps:kotlin'
+include 'biu_libs:dependencies', 'biu_libs:glide', ':biu_libs:mqtt', ':biu_libs:retrofit'

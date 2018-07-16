@@ -1,0 +1,41 @@
+ext {
+    dependencies = [
+            // test
+            testInstrumentationRunner : 'android.support.test.runner.AndroidJUnitRunner',
+            junit                     : 'junit:junit:4.12',
+            test_runner               : 'com.android.support.test:runner:1.0.2',
+            test_espresso             : 'com.android.support.test.espresso:espresso-core:3.0.2',
+
+            // kotlin
+            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.versions.kotlinVersion}",
+
+            // support
+            appcompatV7               : "com.android.support:appcompat-v7:${rootProject.ext.versions.supportVersion}",
+
+            // multidex
+            multidex                  : 'com.android.support:multidex:1.0.3',
+
+            // gson
+            gson                      : 'com.google.code.gson:gson:2.8.5',
+
+            // rxjava
+            rxjava                    : 'io.reactivex.rxjava2:rxjava:2.1.16',
+            rxandroid                 : 'io.reactivex.rxjava2:rxandroid:2.0.2',
+
+            // retrofit
+            retrofit                  : 'com.squareup.retrofit2:retrofit:2.4.0',
+            converter_gson            : 'com.squareup.retrofit2:converter-gson:2.4.0',
+            adapter_rxjava            : 'com.squareup.retrofit2:adapter-rxjava2:2.4.0',
+
+            // glide
+            glide                     : 'com.github.bumptech.glide:glide:4.7.1',
+
+            // mqtt
+            mqttv3                    : 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0',
+            mqttv3_android            : 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1',
+
+            // butterknife
+            butterknife               : 'com.jakewharton:butterknife:8.4.0',
+            butterknife_compiler      : 'com.jakewharton:butterknife-compiler:8.4.0',
+    ]
+}

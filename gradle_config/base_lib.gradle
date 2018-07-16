@@ -1,0 +1,61 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.versions.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.versions.minSdkVersion
+        targetSdkVersion rootProject.ext.versions.targetSdkVersion
+        versionCode rootProject.ext.versions.versionCode
+        versionName rootProject.ext.versions.versionName
+
+        testInstrumentationRunner rootProject.ext.dependencies.testInstrumentationRunner
+        multiDexEnabled true
+    }
+
+    dexOptions {
+        javaMaxHeapSize "8g"
+    }
+
+}
+
+dependencies {
+    // libs
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // test
+    testImplementation rootProject.ext.dependencies.junit
+    androidTestImplementation rootProject.ext.dependencies.test_runner
+    androidTestImplementation rootProject.ext.dependencies.test_espresso
+
+    // kotlin
+    implementation rootProject.ext.dependencies.kotlin
+
+    // support
+    implementation rootProject.ext.dependencies.appcompatV7
+
+    // multidex
+    implementation rootProject.ext.dependencies.multidex
+
+    // rxjava
+    implementation rootProject.ext.dependencies.rxjava
+    implementation rootProject.ext.dependencies.rxandroid
+
+    // retrofit
+    implementation rootProject.ext.dependencies.retrofit
+    implementation rootProject.ext.dependencies.converter_gson
+    implementation rootProject.ext.dependencies.adapter_rxjava
+
+    // glide
+    implementation rootProject.ext.dependencies.glide
+
+    // mqtt
+    implementation rootProject.ext.dependencies.mqttv3
+    implementation rootProject.ext.dependencies.mqttv3_android
+
+    // butterknife
+    implementation rootProject.ext.dependencies.butterknife
+    annotationProcessor rootProject.ext.dependencies.butterknife_compiler
+}
