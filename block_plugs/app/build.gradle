@@ -1,7 +1,19 @@
 apply from: rootProject.ext.configs.base_app
 
+android {
+    defaultConfig {
+        applicationId "com.leichao.app"
+    }
+}
+
+apply from: rootProject.ext.configs.replugin_plugin
+
 dependencies {
     implementation project(':block_libs:mqtt')
     implementation project(':block_libs:retrofit')
     implementation project(':block_libs:glide')
+    implementation rootProject.ext.dependencies.rxjava
+    implementation rootProject.ext.dependencies.rxandroid
+    implementation rootProject.ext.dependencies.butterknife
+    annotationProcessor rootProject.ext.dependencies.butterknife_compiler
 }

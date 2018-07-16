@@ -60,24 +60,4 @@ dependencies {
 
     // multidex
     implementation rootProject.ext.dependencies.multidex
-
-    // rxjava
-    implementation rootProject.ext.dependencies.rxjava
-    implementation rootProject.ext.dependencies.rxandroid
-
-    // retrofit
-    implementation rootProject.ext.dependencies.retrofit
-    implementation rootProject.ext.dependencies.converter_gson
-    implementation rootProject.ext.dependencies.adapter_rxjava
-
-    // glide
-    implementation rootProject.ext.dependencies.glide
-
-    // mqtt
-    implementation rootProject.ext.dependencies.mqttv3
-    implementation rootProject.ext.dependencies.mqttv3_android
-
-    // butterknife
-    implementation rootProject.ext.dependencies.butterknife
-    annotationProcessor rootProject.ext.dependencies.butterknife_compiler
 }

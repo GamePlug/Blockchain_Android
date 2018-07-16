@@ -4,10 +4,12 @@ buildscript {
     ext {
         config_dir = rootProject.rootDir.absolutePath + "/gradle_config/"
         configs = [
-                base_app     : config_dir + "base_app.gradle",
-                base_lib     : config_dir + "base_lib.gradle",
-                dependencies : config_dir + "dependencies.gradle",
-                keystore     : config_dir + "mula.keystore",
+                dependencies    : config_dir + "dependencies.gradle",
+                base_app        : config_dir + "base_app.gradle",
+                base_lib        : config_dir + "base_lib.gradle",
+                replugin_host   : config_dir + "replugin_host.gradle",
+                replugin_plugin : config_dir + "replugin_plugin.gradle",
+                keystore        : config_dir + "mula.keystore",
         ]
         versions = [
                 compileSdkVersion   : 27,

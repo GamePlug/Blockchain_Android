@@ -28,7 +28,6 @@ import java.util.TreeSet;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import okhttp3.HttpUrl;
 
 /**
  * Created by leichao on 2018/1/5.

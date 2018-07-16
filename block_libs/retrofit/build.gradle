@@ -1,1 +1,10 @@
 apply from: rootProject.ext.configs.base_lib
+
+dependencies {
+    implementation rootProject.ext.dependencies.retrofit
+    implementation rootProject.ext.dependencies.converter_gson
+    implementation rootProject.ext.dependencies.adapter_rxjava
+    implementation rootProject.ext.dependencies.rxjava
+    implementation rootProject.ext.dependencies.rxandroid
+    implementation rootProject.ext.dependencies.gson
+}
