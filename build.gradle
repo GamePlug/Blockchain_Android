@@ -15,8 +15,6 @@ buildscript {
                 compileSdkVersion   : 27,
                 minSdkVersion       : 14,
                 targetSdkVersion    : 27,
-                versionCode         : 1,
-                versionName         : '1.0.0',
                 supportVersion      : '27.1.1',
                 kotlinVersion       : '1.2.51',
                 repluginVersion     : '2.2.4',
