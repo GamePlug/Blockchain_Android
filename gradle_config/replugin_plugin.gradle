@@ -1,8 +1,4 @@
-apply plugin: 'replugin-host-gradle'
-
-repluginHostConfig {
-    useAppCompat = true
-}
+apply plugin: 'replugin-plugin-gradle'
 
 dependencies {
     implementation rootProject.ext.dependencies.replugin_plugin
