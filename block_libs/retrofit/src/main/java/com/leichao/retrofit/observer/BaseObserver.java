@@ -49,20 +49,19 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     @Override
     public final void onNext(T t) {
-        dismissLoading();
         handHttpSuccess(t);
     }
 
     @Override
     public final void onError(Throwable e) {
-        dismissLoading();
         handHttpFailure(e);
-        handHttpCompleted();
+        onComplete();
     }
 
     @Override
     public final void onComplete() {
         handHttpCompleted();
+        dismissLoading();
     }
 
     /**
@@ -71,6 +70,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
     public final void cancel() {
         if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
+            dismissLoading();
         }
     }
 

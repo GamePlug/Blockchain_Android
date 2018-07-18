@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         super.onHttpFailure(result);
                     }
                 });
+        //mObserver.cancel();
     }
 
     private String getUserId() {
