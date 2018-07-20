@@ -14,6 +14,7 @@ dependencies {
     implementation project(':block_libs:mqtt')
     implementation project(':block_libs:retrofit')
     implementation project(':block_libs:glide')
+    implementation project(':block_libs:droidplugin')
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
     implementation rootProject.ext.dependencies.butterknife

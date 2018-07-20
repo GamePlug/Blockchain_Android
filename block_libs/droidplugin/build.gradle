@@ -1,0 +1,25 @@
+apply from: rootProject.ext.configs.base_lib
+
+dependencies {
+    compileOnly fileTree(dir: 'lib', include: '*.jar')// 指定compileOnly类型的lib目录,注意这里不是libs目录
+}
+
+android {
+    sourceSets {
+        main {
+            aidl.srcDirs = ['src/main/java']// 默认的aidl目录在'src/main/aidl',但项目的aidl放在了java中
+        }
+    }
+
+    defaultConfig{
+
+        // 建议改为自己的 packageName + .droidplugin_stub ，防止跟其它本插件使用者冲突
+        def authorityName = "com.leichao.biubiu.droidplugin_stub"
+
+        buildConfigField "String", "AUTHORITY_NAME", "\"${authorityName}\""
+        manifestPlaceholders = [
+                authorityName:"${authorityName}",
+        ]
+    }
+
+}

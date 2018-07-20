@@ -2,8 +2,12 @@ package com.leichao.biubiu.home;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,7 +20,12 @@ import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
+import com.morgoo.droidplugin.pm.PluginManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("aaaaaaa");
         textView.setText("Kotlin:" + TestKotlinKt.getA());
 
+        plugin();
         test();
     }
 
@@ -56,6 +66,56 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         unbinder.unbind();
         mObserver.cancel();
+    }
+
+    private void plugin() {
+        AssetManager asset = this.getAssets();
+        //循环的读取asset下的文件，并且写入到SD卡
+        FileOutputStream out = null;
+        InputStream in=null;
+        try {
+            File sdDir = new File(Environment.getExternalStorageDirectory().toString()+"/"+"Plugins");
+            if (!sdDir.exists() && !sdDir.mkdirs()) {
+                return;// 文件夹不存在且创建失败则返回
+            }
+            String assetPath = "plugins/mula_travel.apk";
+            File sdApk = new File(sdDir.getAbsolutePath(), assetPath.substring(0, assetPath.lastIndexOf("/")));
+            if (!sdApk.exists() && !sdApk.createNewFile()) {
+                return;// 文件不存在且创建失败则返回
+            }
+            //将内容写入到文件中
+            in=asset.open(assetPath);
+            out= new FileOutputStream(sdApk);
+            byte[] buffer = new byte[1024];
+            int byteCount=0;
+            while((byteCount=in.read(buffer))!=-1){
+                out.write(buffer, 0, byteCount);
+            }
+            out.flush();
+            // 安装插件
+            PluginManager.getInstance().installPackage(sdApk.getAbsolutePath(), 0);
+            // 启动插件
+            PackageManager pm = this.getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage("com.mula.travel");
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+                //asset.close();// asset是系统的，不能close
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // 单点登录传递的参数
