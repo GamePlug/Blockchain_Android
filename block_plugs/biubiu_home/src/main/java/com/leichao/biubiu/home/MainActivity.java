@@ -1,5 +1,6 @@
 package com.leichao.biubiu.home;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
@@ -20,6 +22,8 @@ import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
+import com.leichao.util.permission.PermissionManager;
+import com.leichao.util.permission.PermissionUtil;
 import com.morgoo.droidplugin.pm.PluginManager;
 
 import java.io.File;
@@ -30,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -57,8 +62,14 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("aaaaaaa");
         textView.setText("Kotlin:" + TestKotlinKt.getA());
 
-        plugin();
         test();
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                permission();
+            }
+        });
     }
 
     @Override
@@ -66,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         unbinder.unbind();
         mObserver.cancel();
+    }
+
+    private void permission() {
+        PermissionUtil.request(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        }, new PermissionManager.OnResultListener() {
+            @Override
+            public void onResult(List<String> grantedList, List<String> deniedList) {
+                if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    plugin();
+                }
+            }
+        });
     }
 
     private void plugin() {
@@ -79,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 return;// 文件夹不存在且创建失败则返回
             }
             String assetPath = "plugins/mula_travel.apk";
-            File sdApk = new File(sdDir.getAbsolutePath(), assetPath.substring(0, assetPath.lastIndexOf("/")));
+            File sdApk = new File(sdDir.getAbsolutePath(), assetPath.substring(
+                    assetPath.lastIndexOf("/"), assetPath.length()));
             if (!sdApk.exists() && !sdApk.createNewFile()) {
                 return;// 文件不存在且创建失败则返回
             }
