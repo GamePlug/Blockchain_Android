@@ -22,8 +22,7 @@ import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
-import com.leichao.util.permission.PermissionManager;
-import com.leichao.util.permission.PermissionUtil;
+import com.leichao.util.PermissionUtil;
 import com.morgoo.droidplugin.pm.PluginManager;
 
 import java.io.File;
@@ -80,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void permission() {
-        PermissionUtil.request(this, new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        }, new PermissionManager.OnResultListener() {
+        PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE, new PermissionUtil.OnResultListener() {
             @Override
             public void onResult(List<String> grantedList, List<String> deniedList) {
                 if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {

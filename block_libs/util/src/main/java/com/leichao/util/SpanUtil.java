@@ -1,4 +1,4 @@
-package com.leichao.util.text;
+package com.leichao.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -61,7 +61,7 @@ public class SpanUtil {
     }
 
     /**
-     * 设置图片Align
+     * 设置图片Align，见{@link AlignImageSpan}的三种align
      */
     public SpanUtil imageAlign(int align) {
         mImageAlign = align;
@@ -228,18 +228,18 @@ public class SpanUtil {
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, int resId) {
-        textImage(context, resId, mSpanBuilder.length() - mLastAppend.length(), mSpanBuilder.length());
+    public SpanUtil textImage(int resId) {
+        textImage(resId, mSpanBuilder.length() - mLastAppend.length(), mSpanBuilder.length());
         return this;
     }
 
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, int resId, String text) {
+    public SpanUtil textImage(int resId, String text) {
         Matcher m = Pattern.compile(text).matcher(mSpanBuilder.toString());
         while (m.find()) {
-            textImage(context, resId, m.start(), m.end());
+            textImage(resId, m.start(), m.end());
         }
         return this;
     }
@@ -247,8 +247,8 @@ public class SpanUtil {
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, int resId, int start, int end) {
-        ImageSpan imageSpan = new AlignImageSpan(context, resId, mImageAlign);
+    public SpanUtil textImage(int resId, int start, int end) {
+        ImageSpan imageSpan = new AlignImageSpan(AppUtil.getApp(), resId, mImageAlign);
         mSpanBuilder.setSpan(imageSpan, start, end, mFlags);
         return this;
     }
@@ -258,18 +258,18 @@ public class SpanUtil {
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, Bitmap bitmap) {
-        textImage(context, bitmap, mSpanBuilder.length() - mLastAppend.length(), mSpanBuilder.length());
+    public SpanUtil textImage(Bitmap bitmap) {
+        textImage(bitmap, mSpanBuilder.length() - mLastAppend.length(), mSpanBuilder.length());
         return this;
     }
 
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, Bitmap bitmap, String text) {
+    public SpanUtil textImage(Bitmap bitmap, String text) {
         Matcher m = Pattern.compile(text).matcher(mSpanBuilder.toString());
         while (m.find()) {
-            textImage(context, bitmap, m.start(), m.end());
+            textImage(bitmap, m.start(), m.end());
         }
         return this;
     }
@@ -277,8 +277,8 @@ public class SpanUtil {
     /**
      * 设置文字图片
      */
-    public SpanUtil textImage(Context context, Bitmap bitmap, int start, int end) {
-        ImageSpan imageSpan = new AlignImageSpan(context, bitmap, mImageAlign);
+    public SpanUtil textImage(Bitmap bitmap, int start, int end) {
+        ImageSpan imageSpan = new AlignImageSpan(AppUtil.getApp(), bitmap, mImageAlign);
         mSpanBuilder.setSpan(imageSpan, start, end, mFlags);
         return this;
     }

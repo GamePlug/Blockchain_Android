@@ -6,7 +6,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".permission.PermissionActivity"
+            android:name=".PermissionUtil$PermissionActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
     </application>
