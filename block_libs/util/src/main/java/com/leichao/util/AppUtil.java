@@ -27,10 +27,7 @@ public class AppUtil {
      * @param app Application
      */
     public static void init(Application app) {
-        if (AppManager.app == null) {
-            AppManager.app = app;
-            AppManager.app.registerActivityLifecycleCallbacks(new AppStatus());
-        }
+        AppManager.init(app);
     }
 
     /**
@@ -39,8 +36,7 @@ public class AppUtil {
      * @return Application
      */
     public static Application getApp() {
-        AppManager.checkIsInit();
-        return AppManager.app;
+        return AppManager.getApp();
     }
 
     /**
@@ -49,16 +45,7 @@ public class AppUtil {
      * @return true应用在前台，false应用在后台
      */
     public static boolean isForeground() {
-        return AppManager.isForeground;
-    }
-
-    /**
-     * 获取最上层的Activity,若没有则返回null
-     *
-     * @return Activity
-     */
-    public static Activity getTopActivity() {
-        return AppManager.getTopActivity();
+        return AppManager.isForeground();
     }
 
     /**
@@ -67,9 +54,7 @@ public class AppUtil {
      * @param listener OnStatusListener
      */
     public static void addStatusListener(OnStatusListener listener) {
-        if (!AppManager.listeners.contains(listener)) {
-            AppManager.listeners.add(listener);
-        }
+        AppManager.addStatusListener(listener);
     }
 
     /**
@@ -78,7 +63,7 @@ public class AppUtil {
      * @param listener OnStatusListener
      */
     public static void removeStatusListener(OnStatusListener listener) {
-        AppManager.listeners.remove(listener);
+        AppManager.removeStatusListener(listener);
     }
 
 
@@ -93,15 +78,24 @@ public class AppUtil {
 
     // App管理类
     static class AppManager {
-        private static Application app;
-        private static int activityCount = 0;
+        private static Application application;
+        private static int foreCount;// 前台Activity数量
+        private static int configCount;// 正在执行changingConfigurations的Activity数量
         private static boolean isForeground = true;// 应用是否在前台
-        private static List<OnStatusListener> listeners = new ArrayList<>();
-        private static LinkedList<Activity> activityList = new LinkedList<>();
+        private static final List<OnStatusListener> listeners = new ArrayList<>();
+        private static final LinkedList<Activity> activityList = new LinkedList<>();
+
+        // 初始化
+        static void init(Application app) {
+            if (application == null) {
+                application = app;
+                application.registerActivityLifecycleCallbacks(new AppStatus());
+            }
+        }
 
         // 检查是否初始化
         static void checkIsInit() {
-            if (app != null) {
+            if (application != null) {
                 return;
             }
             try {
@@ -119,10 +113,46 @@ public class AppUtil {
             throw new NullPointerException("You should init AppUtil first on Application");
         }
 
+        // 获取Application
+        static Application getApp() {
+            checkIsInit();
+            return application;
+        }
+
+        // App是否处于前台
+        static boolean isForeground() {
+            checkIsInit();
+            return isForeground;
+        }
+
+        // 添加App状态变化监听
+        static void addStatusListener(OnStatusListener listener) {
+            checkIsInit();
+            if (!listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+
+        // 移除App状态变化监听
+        static void removeStatusListener(OnStatusListener listener) {
+            checkIsInit();
+            listeners.remove(listener);
+        }
+
+        // 获取Activity队列
+        static LinkedList<Activity> getActivityList() {
+            checkIsInit();
+            return activityList;
+        }
+
         // 前台Activity数量增加
-        static void upForeActivityNum() {
-            activityCount++;
-            if (activityCount >= 1 && !isForeground) {
+        private static void upForeActivityCount() {
+            if (configCount < 0) {
+                configCount++;
+            } else {
+                foreCount++;
+            }
+            if (foreCount >= 1 && !isForeground) {
                 isForeground = true;
                 for (OnStatusListener listener : listeners) {
                     listener.onForeground();
@@ -131,18 +161,26 @@ public class AppUtil {
         }
 
         // 前台Activity数量减少
-        static void downForeActivityNum() {
-            activityCount--;
-            if (activityCount <= 0 && isForeground) {
+        private static void downForeActivityCount(Activity activity) {
+            if (activity.isChangingConfigurations()) {
+                configCount--;
+            } else {
+                foreCount--;
+            }
+            if (foreCount <= 0 && isForeground) {
                 isForeground = false;
                 for (OnStatusListener listener : listeners) {
                     listener.onBackground();
                 }
             }
+            // 前台Activity数量校准，当AppUtil.init()方法没有在Application初始化时调用，可能会出现小于0的情况
+            if (foreCount < 0) {
+                foreCount = 0;
+            }
         }
 
-        // 添加Activity到队列
-        static void addActivity(Activity activity) {
+        // 添加Activity到队列最顶部
+        private static void addTopActivity(Activity activity) {
             if (activityList.contains(activity)) {
                 if (!activityList.getLast().equals(activity)) {
                     activityList.remove(activity);
@@ -154,19 +192,8 @@ public class AppUtil {
         }
 
         // 从队列移除Activity
-        static void removeActivity(Activity activity) {
+        private static void removeActivity(Activity activity) {
             activityList.remove(activity);
-        }
-
-        // 获取最上层的Activity
-        static Activity getTopActivity() {
-            if (!activityList.isEmpty()) {
-                final Activity topActivity = activityList.getLast();
-                if (topActivity != null) {
-                    return topActivity;
-                }
-            }
-            return null;
         }
     }
 
@@ -175,17 +202,18 @@ public class AppUtil {
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            AppManager.addActivity(activity);
+            AppManager.addTopActivity(activity);
         }
 
         @Override
         public void onActivityStarted(Activity activity) {
-            AppManager.upForeActivityNum();
+            AppManager.addTopActivity(activity);
+            AppManager.upForeActivityCount();
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-
+            AppManager.addTopActivity(activity);
         }
 
         @Override
@@ -195,7 +223,7 @@ public class AppUtil {
 
         @Override
         public void onActivityStopped(Activity activity) {
-            AppManager.downForeActivityNum();
+            AppManager.downForeActivityCount(activity);
         }
 
         @Override
