@@ -21,7 +21,7 @@ public class PermissionUtil {
      * 请求权限(单个)
      * 只有没有该permission权限时才去申请，否则直接回调结果
      *
-     * @param permission Manifest.permission中的值
+     * @param permission Manifest.permission中的值 {@link android.Manifest.permission}
      * @param listener   权限结果回调监听
      */
     public static void request(String permission, OnResultListener listener) {
@@ -32,7 +32,7 @@ public class PermissionUtil {
      * 请求权限(多个)
      * 只有permissions中没有的权限时才去申请，如果所有权限都有则直接回调结果
      *
-     * @param permissions Manifest.permission中的值
+     * @param permissions Manifest.permission中的值 {@link android.Manifest.permission}
      * @param listener    权限结果回调监听
      */
     public static void request(String[] permissions, OnResultListener listener) {
@@ -42,7 +42,7 @@ public class PermissionUtil {
     /**
      * 检查是否有权限
      *
-     * @param permission Manifest.permission中的值
+     * @param permission Manifest.permission中的值 {@link android.Manifest.permission}
      * @return true有权限，false无权限
      */
     public static boolean check(String permission) {

@@ -14,6 +14,7 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
+import android.text.style.MetricAffectingSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,7 +24,12 @@ import java.util.regex.Pattern;
 /**
  * SpannableString工具类，可以改变字符串中部分文字的显示效果
  * <p>
- * 目前功能：修改文字颜色textColor()，修改文字大小textSize()，添加点击事件textClick()，替换字符为图片textImage()。
+ * 目前功能:
+ * 1.修改文字颜色:{@link #textColor}
+ * 2.修改文字大小:{@link #textSize}
+ * 3.对文字基线偏移:{@link #textBaseline}
+ * 4.添加点击事件:{@link #textClick}
+ * 5.替换字符为图片{@link #textImage}
  * 其他功能目前项目中用不到，需要用到时可自行扩展。
  * <p>
  * Created by leichao on 2018/7/12.
@@ -147,6 +153,35 @@ public class SpanUtil {
      */
     public SpanUtil textSize(int textSize, int start, int end) {
         mSpanBuilder.setSpan(new AbsoluteSizeSpan(textSize, true), start, end, mFlags);
+        return this;
+    }
+
+    //----------------------------------------文字基线偏移-------------------------------------------//
+
+    /**
+     * 设置文字基线偏移量
+     */
+    public SpanUtil textBaseline(int offset) {
+        textBaseline(offset, mSpanBuilder.length() - mLastAppend.length(), mSpanBuilder.length());
+        return this;
+    }
+
+    /**
+     * 设置文字基线偏移量
+     */
+    public SpanUtil textBaseline(int offset, String text) {
+        Matcher m = Pattern.compile(text).matcher(mSpanBuilder.toString());
+        while (m.find()) {
+            textBaseline(offset, m.start(), m.end());
+        }
+        return this;
+    }
+
+    /**
+     * 设置文字基线偏移量
+     */
+    public SpanUtil textBaseline(int offset, int start, int end) {
+        mSpanBuilder.setSpan(new TextBaselineSpan(offset, true), start, end, mFlags);
         return this;
     }
 
@@ -284,6 +319,42 @@ public class SpanUtil {
     }
 
     //---------------------------------------------------------------------------------------------//
+
+    /**
+     * 对文字基线进行偏移，负值代表向上，正值代表向下
+     */
+    public class TextBaselineSpan extends MetricAffectingSpan {
+
+        private int mOffset;
+        private boolean mDip;
+
+        public TextBaselineSpan(int offset) {
+            mOffset = offset;
+        }
+
+        public TextBaselineSpan(int offset, boolean dip) {
+            mOffset = offset;
+            mDip = dip;
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint tp) {
+            if (mDip) {
+                tp.baselineShift += mOffset * tp.density;
+            } else {
+                tp.baselineShift += mOffset;
+            }
+        }
+
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            if (mDip) {
+                tp.baselineShift += mOffset * tp.density;
+            } else {
+                tp.baselineShift += mOffset;
+            }
+        }
+    }
 
     /**
      * 可以使图片居中的ImageSpan
