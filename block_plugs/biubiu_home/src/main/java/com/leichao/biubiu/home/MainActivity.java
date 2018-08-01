@@ -22,6 +22,8 @@ import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
+import com.leichao.util.KeyboardUtil;
+import com.leichao.util.LogUtil;
 import com.leichao.util.PermissionUtil;
 import com.morgoo.droidplugin.pm.PluginManager;
 
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        KeyboardUtil.fixAndroidBug5497(this);
         unbinder = ButterKnife.bind(this);
 
         textView.setText("aaaaaaa");
@@ -63,12 +66,21 @@ public class MainActivity extends AppCompatActivity {
 
         test();
 
+        final KeyboardUtil.StatusListenerImpl keyboardListener = KeyboardUtil.addStatusListener(this, new KeyboardUtil.OnStatusListener() {
+            @Override
+            public void onStatus(boolean isShow) {
+                LogUtil.e("isShow:" + isShow);
+            }
+        });
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                KeyboardUtil.removeStatusListener(MainActivity.this, keyboardListener);
                 permission();
             }
         });
+
     }
 
     @Override

@@ -9,4 +9,8 @@
         android:layout_height="wrap_content"
         android:text="你好"/>
 
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="50dp" />
+
 </LinearLayout>

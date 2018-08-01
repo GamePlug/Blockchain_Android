@@ -76,25 +76,26 @@ public final class KeyboardUtil {
     /**
      * 设置软键盘显示或隐藏的监听
      */
-    public static KeyboardImpl addStatusListener(Activity activity, OnStatusListener listener) {
-        KeyboardImpl impl = new KeyboardImpl();
+    public static StatusListenerImpl addStatusListener(Activity activity, OnStatusListener listener) {
+        StatusListenerImpl impl = new StatusListenerImpl();
         impl.setStatusListener(activity, listener);
         return impl;
     }
 
     /**
-     * 移除软键盘显示或隐藏的监听
+     * 移除软键盘显示或隐藏的监听，设置监听后可以不调用移除方法(会随着Activity的销毁而销毁)
      */
-    public static void removeStatusListener(Activity activity, KeyboardImpl impl) {
+    public static void removeStatusListener(Activity activity, StatusListenerImpl impl) {
         impl.removeStatusListener(activity);
     }
 
     /**
      * 解决全屏沉浸式状态栏和输入法resize模式冲突的bug
-     * 在Activity的onCreate的super之前调用{@link Activity#onCreate(Bundle)}
+     * 在Activity的onCreate中setContentView方法调用之后再调用此方法
+     * {@link Activity#onCreate(Bundle)} {@link Activity#setContentView}
      */
     public static void fixAndroidBug5497(Activity activity) {
-        new KeyboardImpl().fixAndroidBug5497(activity);
+        new AndroidBug5497Impl().fixAndroidBug5497(activity);
     }
 
     /**
@@ -197,11 +198,41 @@ public final class KeyboardUtil {
         }
     }
 
-    private static class KeyboardImpl {
+    private static class AndroidBug5497Impl {
+        private int sContentViewInvisibleHeightPre5497;
+
+        private void fixAndroidBug5497(final Activity activity) {
+            final int flags = activity.getWindow().getAttributes().flags;
+            if ((flags & WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) != 0) {
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            }
+            final FrameLayout contentView = activity.findViewById(android.R.id.content);
+            final View contentViewChild = contentView.getChildAt(0);
+            final int paddingBottom = contentViewChild.getPaddingBottom();
+            sContentViewInvisibleHeightPre5497 = KeyboardManager.getContentViewInvisibleHeight(activity);
+            contentView.getViewTreeObserver()
+                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            int height = KeyboardManager.getContentViewInvisibleHeight(activity);
+                            if (sContentViewInvisibleHeightPre5497 != height) {
+                                contentViewChild.setPadding(
+                                        contentViewChild.getPaddingLeft(),
+                                        contentViewChild.getPaddingTop(),
+                                        contentViewChild.getPaddingRight(),
+                                        paddingBottom + height
+                                );
+                                sContentViewInvisibleHeightPre5497 = height;
+                            }
+                        }
+                    });
+        }
+    }
+
+    public static class StatusListenerImpl {
         private int sContentViewInvisibleHeightPre;
         private OnStatusListener mStatusListener;
         private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
-        private int sContentViewInvisibleHeightPre5497;
 
         private void setStatusListener(final Activity activity, final OnStatusListener listener) {
             final int flags = activity.getWindow().getAttributes().flags;
@@ -235,33 +266,6 @@ public final class KeyboardUtil {
             }
             mStatusListener = null;
             onGlobalLayoutListener = null;
-        }
-
-        private void fixAndroidBug5497(final Activity activity) {
-            final int flags = activity.getWindow().getAttributes().flags;
-            if ((flags & WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) != 0) {
-                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            }
-            final FrameLayout contentView = activity.findViewById(android.R.id.content);
-            final View contentViewChild = contentView.getChildAt(0);
-            final int paddingBottom = contentViewChild.getPaddingBottom();
-            sContentViewInvisibleHeightPre5497 = KeyboardManager.getContentViewInvisibleHeight(activity);
-            contentView.getViewTreeObserver()
-                    .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            int height = KeyboardManager.getContentViewInvisibleHeight(activity);
-                            if (sContentViewInvisibleHeightPre5497 != height) {
-                                contentViewChild.setPadding(
-                                        contentViewChild.getPaddingLeft(),
-                                        contentViewChild.getPaddingTop(),
-                                        contentViewChild.getPaddingRight(),
-                                        paddingBottom + height
-                                );
-                                sContentViewInvisibleHeightPre5497 = height;
-                            }
-                        }
-                    });
         }
     }
 
