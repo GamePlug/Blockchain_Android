@@ -2,7 +2,10 @@ package com.leichao.util;
 
 import android.util.Log;
 
-public class LogUtil {
+public final class LogUtil {
+
+    private LogUtil() {
+    }
 
     /**
      * 设置是否开启打印日志

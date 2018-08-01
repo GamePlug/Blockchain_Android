@@ -4,7 +4,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
-public class TextWatcherUtil {
+public final class TextWatcherUtil {
+
+    private TextWatcherUtil() {
+    }
 
     /**
      * 简化文字变化监听器
@@ -30,7 +33,7 @@ public class TextWatcherUtil {
      * 简化EditText输入监听器,onFilter对文字过滤
      * 只要重写onChange即可，解决重写TextWatcher容易发生的死循环问题，光标问题，无法连续删除问题
      */
-    public abstract class Filter extends Simple {
+    public static abstract class Filter extends Simple {
 
         protected EditText mEditText;
         protected boolean isChange = true;
@@ -78,7 +81,7 @@ public class TextWatcherUtil {
      * 自定义字符过滤的TextWatcher
      * 可以指定中文英文或数字的任意组合，以及指定额外的字符，或者正则表达式
      */
-    public class Regex extends Filter {
+    public static class Regex extends Filter {
 
         public static final int CHINESE = 1;
         public static final int ENGLISH = 2;

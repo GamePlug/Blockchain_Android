@@ -5,7 +5,10 @@ import android.app.Activity;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ActivityUtil {
+public final class ActivityUtil {
+
+    private ActivityUtil() {
+    }
 
     /**
      * 获取Activity队列

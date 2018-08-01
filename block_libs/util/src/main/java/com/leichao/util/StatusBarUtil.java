@@ -12,7 +12,10 @@ import android.view.WindowManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class StatusBarUtil {
+public final class StatusBarUtil {
+
+    private StatusBarUtil() {
+    }
 
     /**
      * 设置Activity的状态栏颜色

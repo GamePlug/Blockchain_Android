@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AppUtil {
+public final class AppUtil {
+
+    private AppUtil() {
+    }
 
     /**
      * 工具包初始化
@@ -75,13 +78,15 @@ public class AppUtil {
         return AppManager.getActivityList();
     }
 
-
-    //------------------------------------------内部方法---------------------------------------------//
-
-    // App处于前后台状态变化回调
+    /**
+     * App处于前后台状态变化回调
+     */
     public interface OnStatusListener {
         void onStatus(boolean isForeground);
     }
+
+
+    //------------------------------------------内部方法---------------------------------------------//
 
     // App管理类
     private static class AppManager {

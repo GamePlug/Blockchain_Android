@@ -15,6 +15,9 @@ import java.lang.reflect.Field;
 
 public final class KeyboardUtil {
 
+    private KeyboardUtil() {
+    }
+
     /**
      * 显示软键盘
      */
@@ -139,12 +142,15 @@ public final class KeyboardUtil {
         */
     }
 
-
-    //------------------------------------------内部方法---------------------------------------------//
-
+    /**
+     * 软键盘显示或隐藏的状态变化回调
+     */
     public interface OnStatusListener {
         void onStatus(boolean isShow);
     }
+
+
+    //------------------------------------------内部方法---------------------------------------------//
 
     private static class KeyboardManager {
         private static InputMethodManager getInputManager() {

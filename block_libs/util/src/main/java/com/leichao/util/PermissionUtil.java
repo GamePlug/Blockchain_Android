@@ -15,7 +15,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PermissionUtil {
+public final class PermissionUtil {
+
+    private PermissionUtil() {
+    }
 
     /**
      * 请求权限(单个)

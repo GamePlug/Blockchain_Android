@@ -4,7 +4,10 @@ package com.leichao.util;
  * Created by leichao on 2017/3/13.
  */
 
-public class TextUtil {
+public final class TextUtil {
+
+    private TextUtil() {
+    }
 
     /**
      * 过滤Emoji

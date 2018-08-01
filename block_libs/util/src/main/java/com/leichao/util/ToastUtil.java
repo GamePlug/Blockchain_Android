@@ -7,12 +7,16 @@ import android.widget.Toast;
 /**
  * 显示Toast
  */
-public class ToastUtil {
+public final class ToastUtil {
+
     private static Handler handler = new Handler(Looper.getMainLooper());
     private static String oldMsg;
     private static Toast toast = null;
     private static long oneTime = 0;
     private static long twoTime = 0;
+
+    private ToastUtil() {
+    }
 
     public static void show(final String message) {
         handler.post(new Runnable() {

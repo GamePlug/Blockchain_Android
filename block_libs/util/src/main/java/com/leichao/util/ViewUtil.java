@@ -2,7 +2,10 @@ package com.leichao.util;
 
 import android.view.View;
 
-public class ViewUtil {
+public final class ViewUtil {
+
+    private ViewUtil() {
+    }
 
     /**
      * 获取焦点

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * <p>
  * Created by leichao on 2018/7/12.
  */
-public class SpanUtil {
+public final class SpanUtil {
 
     private SpannableStringBuilder mSpanBuilder;// 可拼接的SpannableString
     private CharSequence mLastAppend;// 上一次拼接的字符串
