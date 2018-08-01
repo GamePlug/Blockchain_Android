@@ -61,7 +61,7 @@ public class PermissionUtil {
         void onResult(List<String> grantedList, List<String> deniedList);
     }
 
-    static class PermissionManager {
+    private static class PermissionManager {
 
         private static volatile PermissionManager instance;
         private OnResultListener mListener;
@@ -69,7 +69,7 @@ public class PermissionUtil {
         private ArrayList<String> mGrantedList = new ArrayList<>();// 有权限
         private ArrayList<String> mDeniedList = new ArrayList<>();// 无权限
 
-        static PermissionManager getInstance() {
+        private static PermissionManager getInstance() {
             if (instance == null) {
                 synchronized (PermissionManager.class) {
                     if (instance == null) {
@@ -80,7 +80,7 @@ public class PermissionUtil {
             return instance;
         }
 
-        void request(Context context, String[] permissions, OnResultListener listener) {
+        private void request(Context context, String[] permissions, OnResultListener listener) {
             mPermissions = permissions;
             mListener = listener;
             checkPermissions(context);
@@ -94,7 +94,7 @@ public class PermissionUtil {
             }
         }
 
-        void result(Context context) {
+        private void result(Context context) {
             checkPermissions(context);
             onListener();
         }

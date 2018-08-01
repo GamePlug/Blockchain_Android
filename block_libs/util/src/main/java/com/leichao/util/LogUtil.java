@@ -47,7 +47,7 @@ public class LogUtil {
 
     //------------------------------------------内部方法---------------------------------------------//
 
-    static class Config {
+    private static class Config {
         private static String TAG = "LogUtil";
         private static boolean isDebug = true;
     }

@@ -13,7 +13,7 @@ public class ActivityUtil {
      * @return LinkedList<Activity>
      */
     public static LinkedList<Activity> getActivityList() {
-        return AppUtil.AppManager.getActivityList();
+        return AppUtil.getActivityList();
     }
 
     /**

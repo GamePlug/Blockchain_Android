@@ -66,18 +66,25 @@ public class AppUtil {
         AppManager.removeStatusListener(listener);
     }
 
+    /**
+     * 获取Activity队列
+     *
+     * @return LinkedList<Activity>
+     */
+    public static LinkedList<Activity> getActivityList() {
+        return AppManager.getActivityList();
+    }
+
 
     //------------------------------------------内部方法---------------------------------------------//
 
     // App处于前后台状态变化回调
     public interface OnStatusListener {
-        void onForeground();
-
-        void onBackground();
+        void onStatus(boolean isForeground);
     }
 
     // App管理类
-    static class AppManager {
+    private static class AppManager {
         private static Application application;
         private static int foreCount;// 前台Activity数量
         private static int configCount;// 正在执行changingConfigurations的Activity数量
@@ -86,7 +93,7 @@ public class AppUtil {
         private static final LinkedList<Activity> activityList = new LinkedList<>();
 
         // 初始化
-        static void init(Application app) {
+        private static void init(Application app) {
             if (application == null) {
                 application = app;
                 application.registerActivityLifecycleCallbacks(new AppStatus());
@@ -94,7 +101,7 @@ public class AppUtil {
         }
 
         // 检查是否初始化
-        static void checkIsInit() {
+        private static void checkIsInit() {
             if (application != null) {
                 return;
             }
@@ -114,19 +121,19 @@ public class AppUtil {
         }
 
         // 获取Application
-        static Application getApp() {
+        private static Application getApp() {
             checkIsInit();
             return application;
         }
 
         // App是否处于前台
-        static boolean isForeground() {
+        private static boolean isForeground() {
             checkIsInit();
             return isForeground;
         }
 
         // 添加App状态变化监听
-        static void addStatusListener(OnStatusListener listener) {
+        private static void addStatusListener(OnStatusListener listener) {
             checkIsInit();
             if (!listeners.contains(listener)) {
                 listeners.add(listener);
@@ -134,13 +141,13 @@ public class AppUtil {
         }
 
         // 移除App状态变化监听
-        static void removeStatusListener(OnStatusListener listener) {
+        private static void removeStatusListener(OnStatusListener listener) {
             checkIsInit();
             listeners.remove(listener);
         }
 
         // 获取Activity队列
-        static LinkedList<Activity> getActivityList() {
+        private static LinkedList<Activity> getActivityList() {
             checkIsInit();
             return activityList;
         }
@@ -155,7 +162,7 @@ public class AppUtil {
             if (foreCount >= 1 && !isForeground) {
                 isForeground = true;
                 for (OnStatusListener listener : listeners) {
-                    listener.onForeground();
+                    listener.onStatus(isForeground);
                 }
             }
         }
@@ -170,7 +177,7 @@ public class AppUtil {
             if (foreCount <= 0 && isForeground) {
                 isForeground = false;
                 for (OnStatusListener listener : listeners) {
-                    listener.onBackground();
+                    listener.onStatus(isForeground);
                 }
             }
             // 前台Activity数量校准，当AppUtil.init()方法没有在Application初始化时调用，可能会出现小于0的情况
@@ -198,7 +205,7 @@ public class AppUtil {
     }
 
     // Activity生命周期回调
-    static class AppStatus implements Application.ActivityLifecycleCallbacks {
+    private static class AppStatus implements Application.ActivityLifecycleCallbacks {
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

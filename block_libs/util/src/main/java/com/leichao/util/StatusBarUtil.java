@@ -64,9 +64,9 @@ public class StatusBarUtil {
                 activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
             result = true;
-        } else if (FixMeiZuStatusBar.setStatusBarDark(activity, darkmode)) {
+        } else if (FixStatusBarColor.setMeiZuStatusBarDark(activity, darkmode)) {
             result = true;
-        } else if (FixXiaoMiStatusBar.setStatusBarDark(activity, darkmode)) {
+        } else if (FixStatusBarColor.setXiaoMiStatusBarDark(activity, darkmode)) {
             result = true;
         }
         return result;
@@ -75,11 +75,11 @@ public class StatusBarUtil {
 
     //------------------------------------------内部方法---------------------------------------------//
 
-    static class FixMeiZuStatusBar {
+    private static class FixStatusBarColor {
         /**
          * 是否将魅族手机状态栏文字颜色更改为黑色，true为黑色，false为白色
          */
-        static boolean setStatusBarDark(Activity activity, boolean darkmode) {
+        private static boolean setMeiZuStatusBarDark(Activity activity, boolean darkmode) {
             boolean result = false;
             try {
                 Window window = activity.getWindow();
@@ -103,13 +103,11 @@ public class StatusBarUtil {
             }
             return result;
         }
-    }
 
-    static class FixXiaoMiStatusBar {
         /**
          * 是否将小米手机状态栏文字颜色更改为黑色，true为黑色，false为白色
          */
-        static boolean setStatusBarDark(Activity activity, boolean darkmode) {
+        private static boolean setXiaoMiStatusBarDark(Activity activity, boolean darkmode) {
             boolean result = false;
             Class<? extends Window> clazz = activity.getWindow().getClass();
             try {

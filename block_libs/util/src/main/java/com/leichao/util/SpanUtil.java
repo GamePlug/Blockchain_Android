@@ -323,16 +323,16 @@ public class SpanUtil {
     /**
      * 对文字基线进行偏移，负值代表向上，正值代表向下
      */
-    public class TextBaselineSpan extends MetricAffectingSpan {
+    private class TextBaselineSpan extends MetricAffectingSpan {
 
         private int mOffset;
         private boolean mDip;
 
-        public TextBaselineSpan(int offset) {
+        private TextBaselineSpan(int offset) {
             mOffset = offset;
         }
 
-        public TextBaselineSpan(int offset, boolean dip) {
+        private TextBaselineSpan(int offset, boolean dip) {
             mOffset = offset;
             mDip = dip;
         }
@@ -359,9 +359,9 @@ public class SpanUtil {
     /**
      * 可以使图片居中的ImageSpan
      */
-    public class AlignImageSpan extends ImageSpan {
+    private class AlignImageSpan extends ImageSpan {
 
-        public static final int ALIGN_CENTER = 101;
+        private static final int ALIGN_CENTER = 101;
 
         private AlignImageSpan(Drawable d, int verticalAlignment) {
             super(d, verticalAlignment);
