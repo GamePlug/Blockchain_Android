@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
@@ -24,6 +25,7 @@ import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.util.KeyboardUtil;
 import com.leichao.util.LogUtil;
+import com.leichao.util.NetworkUtil;
 import com.leichao.util.PermissionUtil;
 import com.morgoo.droidplugin.pm.PluginManager;
 
@@ -46,10 +48,12 @@ import butterknife.Unbinder;
 /**
  * Created by leichao on 2018/1/5.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NetworkUtil.OnStatusListener {
 
     @BindView(R.id.main_hello)
     TextView textView;
+    @BindView(R.id.main_edit)
+    EditText etInput;
 
     private Unbinder unbinder;
     private BaseObserver mObserver;
@@ -64,7 +68,17 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("aaaaaaa");
         textView.setText("Kotlin:" + TestKotlinKt.getA());
 
+        etInput.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                KeyboardUtil.showSoftInput(etInput);
+            }
+        }, 200);
+
         test();
+
+
+        NetworkUtil.addStatusListener(this);
 
         final KeyboardUtil.StatusListenerImpl keyboardListener = KeyboardUtil.addStatusListener(this, new KeyboardUtil.OnStatusListener() {
             @Override
@@ -84,10 +98,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStatus(NetworkUtil.NetworkStatus status) {
+        LogUtil.e("NetworkStatus:" + status.isAvailable + "---" + status.networkType + "---" + status.mobileType);
+        textView.setText("NetworkStatus:" + status.isAvailable + "---" + status.networkType + "---" + status.mobileType);
+    }
+
+    @Override
     protected void onDestroy() {
+        KeyboardUtil.fixSoftInputLeaks(this);
         super.onDestroy();
         unbinder.unbind();
         mObserver.cancel();
+        NetworkUtil.removeStatusListener(this);
     }
 
     private void permission() {
