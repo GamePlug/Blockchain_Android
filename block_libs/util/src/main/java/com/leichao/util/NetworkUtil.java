@@ -99,7 +99,7 @@ public final class NetworkUtil {
         private static Handler handler = new Handler(Looper.getMainLooper());
         private static final List<OnStatusListener> listeners = new ArrayList<>();
 
-        // 添加App状态变化监听
+        // 添加网络状态变化监听
         @RequiresPermission(ACCESS_NETWORK_STATE)
         private static void addStatusListener(OnStatusListener listener) {
             initStatusCallback();
@@ -108,7 +108,7 @@ public final class NetworkUtil {
             }
         }
 
-        // 移除App状态变化监听
+        // 移除网络状态变化监听
         private static void removeStatusListener(OnStatusListener listener) {
             listeners.remove(listener);
         }
@@ -155,9 +155,9 @@ public final class NetworkUtil {
                             break;
                         default:
                             String subtypeName = info.getSubtypeName();
-                            if (subtypeName.equalsIgnoreCase("TD-SCDMA")
-                                    || subtypeName.equalsIgnoreCase("WCDMA")
-                                    || subtypeName.equalsIgnoreCase("CDMA2000")) {
+                            if ("TD-SCDMA".equalsIgnoreCase(subtypeName)
+                                    || "WCDMA".equalsIgnoreCase(subtypeName)
+                                    || "CDMA2000".equalsIgnoreCase(subtypeName)) {
                                 status.mobileType = MobileType.MOBILE_3G;
                             } else {
                                 status.mobileType = MobileType.MOBILE_UNKNOWN;
