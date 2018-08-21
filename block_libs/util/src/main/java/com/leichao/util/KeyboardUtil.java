@@ -76,12 +76,23 @@ public final class KeyboardUtil {
     }
 
     /**
+     * 设置软键盘显示或隐藏的监听，无法主动移除(会自动随Activity销毁而移除)
+     * 如果需要手动移除，请调用如下两个方法
+     * {@link #addStatusListener(Activity, OnKeyboardStatusListener)}
+     * {@link #removeStatusListener(Activity, OnKeyboardStatusListener)}
+     */
+    public static void addStatusListenerNoNeedRemove(Activity activity, OnKeyboardStatusListener listener) {
+        new StatusListenerImpl().setStatusListener(activity, listener);
+    }
+
+    /**
      * 设置软键盘显示或隐藏的监听
      */
     public static void addStatusListener(Activity activity, OnKeyboardStatusListener listener) {
         StatusListenerImpl impl = new StatusListenerImpl();
         impl.setStatusListener(activity, listener);
-        KeyboardManager.listeners.put(listener, impl);
+        StatusListenerImpl lastImpl = KeyboardManager.listeners.put(listener, impl);// put返回的是在put之前已存在的值
+        if (lastImpl != null) lastImpl.removeStatusListener(activity);// 如果存在被覆盖的监听器则移除
     }
 
     /**
@@ -234,7 +245,7 @@ public final class KeyboardUtil {
         }
     }
 
-    public static class StatusListenerImpl {
+    private static class StatusListenerImpl {
         private int sContentViewInvisibleHeightPre;
         private OnKeyboardStatusListener mStatusListener;
         private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
