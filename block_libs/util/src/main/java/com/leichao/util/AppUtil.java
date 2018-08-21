@@ -56,7 +56,7 @@ public final class AppUtil {
      *
      * @param listener OnStatusListener
      */
-    public static void addStatusListener(OnStatusListener listener) {
+    public static void addStatusListener(OnAppStatusListener listener) {
         AppManager.addStatusListener(listener);
     }
 
@@ -65,7 +65,7 @@ public final class AppUtil {
      *
      * @param listener OnStatusListener
      */
-    public static void removeStatusListener(OnStatusListener listener) {
+    public static void removeStatusListener(OnAppStatusListener listener) {
         AppManager.removeStatusListener(listener);
     }
 
@@ -81,8 +81,8 @@ public final class AppUtil {
     /**
      * App处于前后台状态变化回调
      */
-    public interface OnStatusListener {
-        void onStatus(boolean isForeground);
+    public interface OnAppStatusListener {
+        void onAppStatus(boolean isForeground);
     }
 
 
@@ -94,7 +94,7 @@ public final class AppUtil {
         private static int foreCount;// 前台Activity数量
         private static int configCount;// 正在执行changingConfigurations的Activity数量
         private static boolean isForeground = true;// 应用是否在前台
-        private static final List<OnStatusListener> listeners = new ArrayList<>();
+        private static final List<OnAppStatusListener> listeners = new ArrayList<>();
         private static final LinkedList<Activity> activityList = new LinkedList<>();
 
         // 初始化
@@ -138,7 +138,7 @@ public final class AppUtil {
         }
 
         // 添加App状态变化监听
-        private static void addStatusListener(OnStatusListener listener) {
+        private static void addStatusListener(OnAppStatusListener listener) {
             checkIsInit();
             if (!listeners.contains(listener)) {
                 listeners.add(listener);
@@ -146,7 +146,7 @@ public final class AppUtil {
         }
 
         // 移除App状态变化监听
-        private static void removeStatusListener(OnStatusListener listener) {
+        private static void removeStatusListener(OnAppStatusListener listener) {
             checkIsInit();
             listeners.remove(listener);
         }
@@ -166,8 +166,8 @@ public final class AppUtil {
             }
             if (foreCount >= 1 && !isForeground) {
                 isForeground = true;
-                for (OnStatusListener listener : listeners) {
-                    listener.onStatus(isForeground);
+                for (OnAppStatusListener listener : listeners) {
+                    listener.onAppStatus(isForeground);
                 }
             }
         }
@@ -181,8 +181,8 @@ public final class AppUtil {
             }
             if (foreCount <= 0 && isForeground) {
                 isForeground = false;
-                for (OnStatusListener listener : listeners) {
-                    listener.onStatus(isForeground);
+                for (OnAppStatusListener listener : listeners) {
+                    listener.onAppStatus(isForeground);
                 }
             }
             // 前台Activity数量校准，当AppUtil.init()方法没有在Application初始化时调用，可能会出现小于0的情况

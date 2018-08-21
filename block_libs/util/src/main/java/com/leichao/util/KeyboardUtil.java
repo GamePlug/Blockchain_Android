@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class KeyboardUtil {
 
@@ -76,17 +78,18 @@ public final class KeyboardUtil {
     /**
      * 设置软键盘显示或隐藏的监听
      */
-    public static StatusListenerImpl addStatusListener(Activity activity, OnStatusListener listener) {
+    public static void addStatusListener(Activity activity, OnKeyboardStatusListener listener) {
         StatusListenerImpl impl = new StatusListenerImpl();
         impl.setStatusListener(activity, listener);
-        return impl;
+        KeyboardManager.listeners.put(listener, impl);
     }
 
     /**
-     * 移除软键盘显示或隐藏的监听，设置监听后可以不调用移除方法(会随着Activity的销毁而销毁)
+     * 移除软键盘显示或隐藏的监听
      */
-    public static void removeStatusListener(Activity activity, StatusListenerImpl impl) {
-        impl.removeStatusListener(activity);
+    public static void removeStatusListener(Activity activity, OnKeyboardStatusListener listener) {
+        StatusListenerImpl impl = KeyboardManager.listeners.remove(listener);
+        if (impl != null) impl.removeStatusListener(activity);
     }
 
     /**
@@ -146,14 +149,16 @@ public final class KeyboardUtil {
     /**
      * 软键盘显示或隐藏的状态变化回调
      */
-    public interface OnStatusListener {
-        void onStatus(boolean isShow);
+    public interface OnKeyboardStatusListener {
+        void onKeyboardStatus(boolean isShow);
     }
 
 
     //------------------------------------------内部方法---------------------------------------------//
 
     private static class KeyboardManager {
+        private static Map<OnKeyboardStatusListener, StatusListenerImpl> listeners = new HashMap<>();
+
         private static InputMethodManager getInputManager() {
             return (InputMethodManager) AppUtil.getApp().getSystemService(Activity.INPUT_METHOD_SERVICE);
         }
@@ -231,10 +236,10 @@ public final class KeyboardUtil {
 
     public static class StatusListenerImpl {
         private int sContentViewInvisibleHeightPre;
-        private OnStatusListener mStatusListener;
+        private OnKeyboardStatusListener mStatusListener;
         private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
 
-        private void setStatusListener(final Activity activity, final OnStatusListener listener) {
+        private void setStatusListener(final Activity activity, final OnKeyboardStatusListener listener) {
             final int flags = activity.getWindow().getAttributes().flags;
             if ((flags & WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS) != 0) {
                 activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -248,7 +253,7 @@ public final class KeyboardUtil {
                     if (mStatusListener != null) {
                         int height = KeyboardManager.getContentViewInvisibleHeight(activity);
                         if (sContentViewInvisibleHeightPre != height) {
-                            mStatusListener.onStatus(height >= 200);
+                            mStatusListener.onKeyboardStatus(height >= 200);
                             sContentViewInvisibleHeightPre = height;
                         }
                     }

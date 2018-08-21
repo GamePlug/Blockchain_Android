@@ -23,6 +23,7 @@ import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
+import com.leichao.util.AppUtil;
 import com.leichao.util.KeyboardUtil;
 import com.leichao.util.LogUtil;
 import com.leichao.util.NetworkUtil;
@@ -48,7 +49,7 @@ import butterknife.Unbinder;
 /**
  * Created by leichao on 2018/1/5.
  */
-public class MainActivity extends AppCompatActivity implements NetworkUtil.OnStatusListener {
+public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStatusListener, KeyboardUtil.OnKeyboardStatusListener, NetworkUtil.OnNetworkStatusListener {
 
     @BindView(R.id.main_hello)
     TextView textView;
@@ -77,20 +78,14 @@ public class MainActivity extends AppCompatActivity implements NetworkUtil.OnSta
 
         test();
 
-
+        AppUtil.addStatusListener(this);
+        KeyboardUtil.addStatusListener(this, this);
         NetworkUtil.addStatusListener(this);
-
-        final KeyboardUtil.StatusListenerImpl keyboardListener = KeyboardUtil.addStatusListener(this, new KeyboardUtil.OnStatusListener() {
-            @Override
-            public void onStatus(boolean isShow) {
-                LogUtil.e("isShow:" + isShow);
-            }
-        });
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                KeyboardUtil.removeStatusListener(MainActivity.this, keyboardListener);
+                KeyboardUtil.removeStatusListener(MainActivity.this, MainActivity.this);
                 permission();
             }
         });
@@ -98,7 +93,17 @@ public class MainActivity extends AppCompatActivity implements NetworkUtil.OnSta
     }
 
     @Override
-    public void onStatus(NetworkUtil.NetworkStatus status) {
+    public void onAppStatus(boolean isForeground) {
+        LogUtil.e("AppStatus:" + isForeground);
+    }
+
+    @Override
+    public void onKeyboardStatus(boolean isShow) {
+        LogUtil.e("KeyboardStatus:" + isShow);
+    }
+
+    @Override
+    public void onNetworkStatus(NetworkUtil.NetworkStatus status) {
         LogUtil.e("NetworkStatus:" + status.isAvailable + "---" + status.networkType + "---" + status.mobileType);
         textView.setText("NetworkStatus:" + status.isAvailable + "---" + status.networkType + "---" + status.mobileType);
     }
@@ -109,13 +114,15 @@ public class MainActivity extends AppCompatActivity implements NetworkUtil.OnSta
         super.onDestroy();
         unbinder.unbind();
         mObserver.cancel();
+        AppUtil.removeStatusListener(this);
+        KeyboardUtil.removeStatusListener(this, this);
         NetworkUtil.removeStatusListener(this);
     }
 
     private void permission() {
-        PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE, new PermissionUtil.OnResultListener() {
+        PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE, new PermissionUtil.OnPermissionResultListener() {
             @Override
-            public void onResult(List<String> grantedList, List<String> deniedList) {
+            public void onPermissionResult(List<String> grantedList, List<String> deniedList) {
                 if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     plugin();
                 }

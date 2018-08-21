@@ -27,7 +27,7 @@ public final class PermissionUtil {
      * @param permission Manifest.permission中的值 {@link android.Manifest.permission}
      * @param listener   权限结果回调监听
      */
-    public static void request(String permission, OnResultListener listener) {
+    public static void request(String permission, OnPermissionResultListener listener) {
         request(new String[]{permission}, listener);
     }
 
@@ -38,7 +38,7 @@ public final class PermissionUtil {
      * @param permissions Manifest.permission中的值 {@link android.Manifest.permission}
      * @param listener    权限结果回调监听
      */
-    public static void request(String[] permissions, OnResultListener listener) {
+    public static void request(String[] permissions, OnPermissionResultListener listener) {
         PermissionManager.getInstance().request(AppUtil.getApp(), permissions, listener);
     }
 
@@ -55,19 +55,19 @@ public final class PermissionUtil {
 
     //------------------------------------------内部方法---------------------------------------------//
 
-    public interface OnResultListener {
+    public interface OnPermissionResultListener {
         /**
          * 权限结果回调
          * @param grantedList 申请成功的权限
          * @param deniedList 申请失败的权限
          */
-        void onResult(List<String> grantedList, List<String> deniedList);
+        void onPermissionResult(List<String> grantedList, List<String> deniedList);
     }
 
     private static class PermissionManager {
 
         private static volatile PermissionManager instance;
-        private OnResultListener mListener;
+        private OnPermissionResultListener mListener;
         private String[] mPermissions;
         private ArrayList<String> mGrantedList = new ArrayList<>();// 有权限
         private ArrayList<String> mDeniedList = new ArrayList<>();// 无权限
@@ -83,7 +83,7 @@ public final class PermissionUtil {
             return instance;
         }
 
-        private void request(Context context, String[] permissions, OnResultListener listener) {
+        private void request(Context context, String[] permissions, OnPermissionResultListener listener) {
             mPermissions = permissions;
             mListener = listener;
             checkPermissions(context);
@@ -116,7 +116,8 @@ public final class PermissionUtil {
 
         private void onListener() {
             if (mListener != null) {
-                mListener.onResult(mGrantedList, mDeniedList);
+                mListener.onPermissionResult(mGrantedList, mDeniedList);
+                mListener = null;
             }
         }
     }

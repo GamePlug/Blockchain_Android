@@ -39,7 +39,7 @@ public final class NetworkUtil {
      * @param listener OnStatusListener
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public static void addStatusListener(OnStatusListener listener) {
+    public static void addStatusListener(OnNetworkStatusListener listener) {
         NetworkManager.addStatusListener(listener);
     }
 
@@ -49,7 +49,7 @@ public final class NetworkUtil {
      * @param listener OnStatusListener
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public static void removeStatusListener(OnStatusListener listener) {
+    public static void removeStatusListener(OnNetworkStatusListener listener) {
         NetworkManager.removeStatusListener(listener);
     }
 
@@ -86,8 +86,8 @@ public final class NetworkUtil {
     /**
      * 网络状态变化回调
      */
-    public interface OnStatusListener {
-        void onStatus(NetworkStatus status);
+    public interface OnNetworkStatusListener {
+        void onNetworkStatus(NetworkStatus status);
     }
 
 
@@ -97,11 +97,11 @@ public final class NetworkUtil {
         private static boolean isInitCallback;
         private static NetworkStatus mStatus;
         private static Handler handler = new Handler(Looper.getMainLooper());
-        private static final List<OnStatusListener> listeners = new ArrayList<>();
+        private static final List<OnNetworkStatusListener> listeners = new ArrayList<>();
 
         // 添加网络状态变化监听
         @RequiresPermission(ACCESS_NETWORK_STATE)
-        private static void addStatusListener(OnStatusListener listener) {
+        private static void addStatusListener(OnNetworkStatusListener listener) {
             initStatusCallback();
             if (!listeners.contains(listener)) {
                 listeners.add(listener);
@@ -109,7 +109,7 @@ public final class NetworkUtil {
         }
 
         // 移除网络状态变化监听
-        private static void removeStatusListener(OnStatusListener listener) {
+        private static void removeStatusListener(OnNetworkStatusListener listener) {
             listeners.remove(listener);
         }
 
@@ -188,8 +188,8 @@ public final class NetworkUtil {
                         return;
                     }
                     mStatus = status;
-                    for (OnStatusListener listener : NetworkManager.listeners) {
-                        listener.onStatus(mStatus);
+                    for (OnNetworkStatusListener listener : NetworkManager.listeners) {
+                        listener.onNetworkStatus(mStatus);
                     }
                 }
             }, 100);// 延时是因为NetworkCallback的onLost被调用时，可能NetworkStatus还未及时改变
