@@ -42,21 +42,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * Created by leichao on 2018/1/5.
  */
 public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStatusListener, KeyboardUtil.OnKeyboardStatusListener, NetworkUtil.OnNetworkStatusListener {
 
-    @BindView(R.id.main_hello)
     TextView textView;
-    @BindView(R.id.main_edit)
     EditText etInput;
 
-    private Unbinder unbinder;
     private BaseObserver mObserver;
 
     @Override
@@ -64,7 +57,9 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         KeyboardUtil.fixAndroidBug5497(this);
-        unbinder = ButterKnife.bind(this);
+
+        textView = findViewById(R.id.main_hello);
+        etInput = findViewById(R.id.main_edit);
 
         textView.setText("aaaaaaa");
         textView.setText("Kotlin:" + TestKotlinKt.getA());
@@ -112,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     protected void onDestroy() {
         KeyboardUtil.fixSoftInputLeaks(this);
         super.onDestroy();
-        unbinder.unbind();
         mObserver.cancel();
         AppUtil.removeStatusListener(this);
         KeyboardUtil.removeStatusListener(this, this);

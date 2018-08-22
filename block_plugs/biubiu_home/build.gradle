@@ -18,6 +18,4 @@ dependencies {
     implementation project(':block_libs:droidplugin')
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
-    implementation rootProject.ext.dependencies.butterknife
-    annotationProcessor rootProject.ext.dependencies.butterknife_compiler
 }
