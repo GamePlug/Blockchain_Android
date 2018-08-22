@@ -4,12 +4,11 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/splash_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:text="启动页"
+        android:text="主界面"
         android:textSize="38sp"
         android:textColor="#333333"/>
 

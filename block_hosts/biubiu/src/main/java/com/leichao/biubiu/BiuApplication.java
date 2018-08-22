@@ -6,6 +6,9 @@ import com.leichao.util.AppUtil;
 import com.morgoo.droidplugin.PluginHelper;
 import com.qihoo360.replugin.RePluginApplication;
 
+/**
+ * 参考:com.morgoo.droidplugin.PluginApplication
+ */
 public class BiuApplication extends RePluginApplication {
 
     @Override
