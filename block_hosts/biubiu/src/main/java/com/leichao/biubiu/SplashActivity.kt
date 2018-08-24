@@ -2,12 +2,10 @@ package com.leichao.biubiu
 
 import android.widget.TextView
 import com.leichao.common.BaseActivity
-import com.leichao.util.AppUtil
-import com.leichao.util.LogUtil
 import com.leichao.util.ToastUtil
 import com.qihoo360.replugin.RePlugin
 
-class SplashActivity : BaseActivity(), AppUtil.OnAppStatusListener {
+class SplashActivity : BaseActivity() {
 
     lateinit var tvSplash: TextView
 
@@ -17,7 +15,6 @@ class SplashActivity : BaseActivity(), AppUtil.OnAppStatusListener {
     }
 
     override fun initData() {
-        AppUtil.addStatusListener(this)
         Thread(Runnable {
             val pluginName = "biubiu_home"
             if (RePlugin.preload(pluginName)) {
@@ -34,12 +31,4 @@ class SplashActivity : BaseActivity(), AppUtil.OnAppStatusListener {
         tvSplash.setOnClickListener { ToastUtil.show("启动页") }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        AppUtil.removeStatusListener(this)
-    }
-
-    override fun onAppStatus(isForeground: Boolean) {
-        LogUtil.e("SplashActivity:AppStatus:$isForeground")
-    }
 }

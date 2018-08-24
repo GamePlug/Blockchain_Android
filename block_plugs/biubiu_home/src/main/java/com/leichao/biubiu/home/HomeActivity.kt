@@ -11,12 +11,12 @@ class HomeActivity : BaseActivity() {
     }
 
     override fun initData() {
-        home_text.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
     }
 
     override fun initEvent() {
+        home_text.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
 }
