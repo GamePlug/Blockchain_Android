@@ -1,10 +1,11 @@
 package com.leichao.util;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,21 +17,22 @@ public final class AppUtil {
     }
 
     /**
-     * 工具包初始化
+     * 工具包初始化，Application初始化时调用
      *
-     * @param context Context
+     * @param context 当前应用的Context
      */
-    public static void init(Context context) {
-        init((Application) context.getApplicationContext());
+    public static void init(@NonNull Context context) {
+        AppManager.init(context, null);
     }
 
     /**
-     * 工具包初始化
+     * 工具包初始化，Application初始化时调用(RePlugin插件中使用)
      *
-     * @param app Application
+     * @param context 当前应用的Context
+     * @param hostContext 宿主应用的Context
      */
-    public static void init(Application app) {
-        AppManager.init(app);
+    public static void init(@NonNull Context context, @Nullable Context hostContext) {
+        AppManager.init(context, hostContext);
     }
 
     /**
@@ -40,6 +42,15 @@ public final class AppUtil {
      */
     public static Application getApp() {
         return AppManager.getApp();
+    }
+
+    /**
+     * 获取宿主Application(RePlugin插件中使用)
+     *
+     * @return 宿主的Application
+     */
+    public static Application getHostApp() {
+        return AppManager.getHostApp();
     }
 
     /**
@@ -90,37 +101,31 @@ public final class AppUtil {
 
     // App管理类
     private static class AppManager {
-        private static Application application;
+        private static Application app;
+        private static Application hostApp;// 宿主Application，RePlugin插件中使用
         private static int foreCount;// 前台Activity数量
         private static int configCount;// 正在执行changingConfigurations的Activity数量
-        private static boolean isForeground = true;// 应用是否在前台
+        private static boolean isForeground = false;// 应用是否在前台
         private static final List<OnAppStatusListener> listeners = new ArrayList<>();
         private static final LinkedList<Activity> activityList = new LinkedList<>();
 
         // 初始化
-        private static void init(Application app) {
-            if (application == null) {
-                application = app;
-                application.registerActivityLifecycleCallbacks(new AppStatus());
+        private static void init(Context context, Context hostContext) {
+            if (app == null) {
+                app = (Application) context.getApplicationContext();
+                if (hostContext != null) {
+                    hostApp = (Application) hostContext.getApplicationContext();
+                } else {
+                    hostApp = app;
+                }
+                hostApp.registerActivityLifecycleCallbacks(new AppStatus());
             }
         }
 
         // 检查是否初始化
         private static void checkIsInit() {
-            if (application != null) {
+            if (app != null) {
                 return;
-            }
-            try {
-                @SuppressLint("PrivateApi")
-                Class<?> activityThread = Class.forName("android.app.ActivityThread");
-                Object at = activityThread.getMethod("currentActivityThread").invoke(null);
-                Object app = activityThread.getMethod("getApplication").invoke(at);
-                if (app != null) {
-                    init((Application) app);
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
             throw new NullPointerException("You should init AppUtil first on Application");
         }
@@ -128,7 +133,13 @@ public final class AppUtil {
         // 获取Application
         private static Application getApp() {
             checkIsInit();
-            return application;
+            return app;
+        }
+
+        // 获取宿主Application
+        private static Application getHostApp() {
+            checkIsInit();
+            return hostApp;
         }
 
         // App是否处于前台

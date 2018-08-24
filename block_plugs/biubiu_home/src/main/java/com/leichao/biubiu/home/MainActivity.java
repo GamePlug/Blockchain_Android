@@ -24,6 +24,7 @@ import com.leichao.util.KeyboardUtil;
 import com.leichao.util.LogUtil;
 import com.leichao.util.NetworkUtil;
 import com.leichao.util.PermissionUtil;
+import com.leichao.util.ToastUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ToastUtil.show(R.string.app_name);
                 KeyboardUtil.removeStatusListener(MainActivity.this, MainActivity.this);
                 permission();
             }

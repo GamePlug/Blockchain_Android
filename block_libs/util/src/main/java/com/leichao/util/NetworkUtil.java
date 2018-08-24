@@ -6,12 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 
@@ -96,19 +91,24 @@ public final class NetworkUtil {
     private static class NetworkManager {
         private static boolean isInitCallback;
         private static NetworkStatus mStatus;
-        private static Handler handler = new Handler(Looper.getMainLooper());
         private static final List<OnNetworkStatusListener> listeners = new ArrayList<>();
 
         // 添加网络状态变化监听
         @RequiresPermission(ACCESS_NETWORK_STATE)
         private static void addStatusListener(OnNetworkStatusListener listener) {
-            initStatusCallback();
+            // 添加时统一立即回调一次
+            mStatus = getNetworkStatus();
+            listener.onNetworkStatus(mStatus);
+            // 添加到监听器集合
             if (!listeners.contains(listener)) {
                 listeners.add(listener);
             }
+            // 初始化网络状态回调
+            initStatusCallback();
         }
 
         // 移除网络状态变化监听
+        @RequiresPermission(ACCESS_NETWORK_STATE)
         private static void removeStatusListener(OnNetworkStatusListener listener) {
             listeners.remove(listener);
         }
@@ -120,7 +120,8 @@ public final class NetworkUtil {
             status.networkType = NetworkType.NETWORK_NO;
             status.mobileType = MobileType.MOBILE_NO;
 
-            ConnectivityManager manager = getConnectivityManager();
+            ConnectivityManager manager = (ConnectivityManager)
+                    AppUtil.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo info = manager != null ? manager.getActiveNetworkInfo() : null;
             if (info != null && info.isAvailable()) {
                 status.isAvailable = true;
@@ -171,62 +172,43 @@ public final class NetworkUtil {
             return status;
         }
 
-        private static ConnectivityManager getConnectivityManager() {
-            return (ConnectivityManager) AppUtil.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
-        }
-
+        /**
+         * 初始化网络状态变化回调
+         *
+         * 不使用{@link ConnectivityManager#registerNetworkCallback}方法，原因如下：
+         * 1.registerNetworkCallback方法，注册后，有网络状态下会立即回调一次，无网络状态下不会回调，
+         *   不一致，需要额外统一处理
+         * 2.registerNetworkCallback方法，当手动关闭网络时，会立马回调onLost方法，有小概率出现
+         *   此时NetworkInfo网络状态未及时更新，需要稍微延时处理
+         *
+         * 不使用{@link BroadcastReceiver}静态注册广播，原因：Android 8.0开始静态注册该广播失效
+         *
+         * 因此使用{@link BroadcastReceiver}动态注册广播
+         */
         @SuppressLint("MissingPermission")
-        private static void statusChange() {
-            // post到主线程执行
-            handler.postDelayed(new Runnable() {
+        private static void initStatusCallback() {
+            if (isInitCallback) {
+                return;
+            }
+            isInitCallback = true;
+            BroadcastReceiver netStatusReceiver = new BroadcastReceiver() {
                 @Override
-                public void run() {
-                    NetworkStatus status = NetworkManager.getNetworkStatus();
+                public void onReceive(Context context, Intent intent) {
+                    NetworkStatus status = getNetworkStatus();
                     if (mStatus != null && mStatus.isAvailable == status.isAvailable
                             && mStatus.networkType == status.networkType
                             && mStatus.mobileType == status.mobileType) {
                         return;
                     }
                     mStatus = status;
-                    for (OnNetworkStatusListener listener : NetworkManager.listeners) {
+                    for (OnNetworkStatusListener listener : listeners) {
                         listener.onNetworkStatus(mStatus);
                     }
                 }
-            }, 100);// 延时是因为NetworkCallback的onLost被调用时，可能NetworkStatus还未及时改变
-        }
-
-        @RequiresPermission(ACCESS_NETWORK_STATE)
-        private static void initStatusCallback() {
-            if (isInitCallback) {
-                return;
-            }
-            isInitCallback = true;
-            ConnectivityManager manager = getConnectivityManager();
-            if (manager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                // 设置网络状态变化回调
-                manager.registerNetworkCallback(new NetworkRequest.Builder().build(), new ConnectivityManager.NetworkCallback() {
-                    @Override
-                    public void onAvailable(Network network) {
-                        statusChange();
-                    }
-
-                    @Override
-                    public void onLost(Network network) {
-                        statusChange();
-                    }
-                });
-            } else {
-                // 注册网络状态变化广播接收者
-                BroadcastReceiver netStatusReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        statusChange();
-                    }
-                };
-                IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                AppUtil.getApp().registerReceiver(netStatusReceiver, intentFilter);
-            }
+            };
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            AppUtil.getApp().registerReceiver(netStatusReceiver, intentFilter);
         }
     }
 
