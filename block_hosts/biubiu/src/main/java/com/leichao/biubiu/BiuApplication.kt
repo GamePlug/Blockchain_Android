@@ -26,9 +26,8 @@ class BiuApplication : Application() {
         super.attachBaseContext(base)
         RePlugin.App.attachBaseContext(this,// RePlugin
                 RePluginConfig().setUseHostClassIfNotFound(true)
-                        //.setCallbacks(HostCallbacks(this))
-                        //.setEventCallbacks(HostEventCallbacks(this))
-        )
+                        .setCallbacks(HostCallbacks(this))
+                        .setEventCallbacks(HostEventCallbacks(this)))
     }
 
 }

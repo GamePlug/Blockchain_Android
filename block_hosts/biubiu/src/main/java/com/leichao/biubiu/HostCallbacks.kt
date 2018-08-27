@@ -38,7 +38,7 @@ class HostCallbacks(context: Context) : RePluginCallbacks(context) {
         return super.openLatestFile(context, filename)
     }
 
-    override fun createContextInjector(): ContextInjector {
+    override fun createContextInjector(): ContextInjector? {
         return super.createContextInjector()
     }
 

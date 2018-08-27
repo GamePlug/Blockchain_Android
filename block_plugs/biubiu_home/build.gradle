@@ -18,4 +18,5 @@ dependencies {
     implementation project(':block_libs:glide')
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
+    implementation rootProject.ext.dependencies.recyclerView
 }

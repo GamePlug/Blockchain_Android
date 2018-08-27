@@ -11,6 +11,7 @@ ext {
 
             // support
             appcompatV7               : "com.android.support:appcompat-v7:${rootProject.ext.versions.supportVersion}",
+            recyclerView              : "com.android.support:recyclerview-v7:${rootProject.ext.versions.supportVersion}",
 
             // multidex
             multidex                  : 'com.android.support:multidex:1.0.3',

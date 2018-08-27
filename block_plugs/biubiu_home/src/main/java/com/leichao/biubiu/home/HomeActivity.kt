@@ -1,22 +1,19 @@
 package com.leichao.biubiu.home
 
-import android.content.Intent
 import com.leichao.common.BaseActivity
-import kotlinx.android.synthetic.main.activity_home.*
+import com.leichao.util.StatusBarUtil
 
 class HomeActivity : BaseActivity() {
 
     override fun initView() {
         setContentView(R.layout.activity_home)
+        StatusBarUtil.setStatusBarTranslucent(this)
     }
 
     override fun initData() {
     }
 
     override fun initEvent() {
-        home_text.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
     }
 
 }
