@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.leichao.util.KeyboardUtil;
 import com.leichao.util.LogUtil;
 import com.leichao.util.NetworkUtil;
 import com.leichao.util.PermissionUtil;
+import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -48,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        //StatusBarUtil.setBackgroundColor(this, Color.RED);
+        StatusBarUtil.setFullTranslucent(this);
         KeyboardUtil.fixAndroidBug5497(this);
 
         textView = findViewById(R.id.main_hello);

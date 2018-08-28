@@ -1,34 +1,36 @@
 package com.leichao.biubiu
 
-import android.widget.TextView
 import com.leichao.common.BaseActivity
+import com.leichao.util.StatusBarUtil
 import com.leichao.util.ToastUtil
 import com.qihoo360.replugin.RePlugin
+import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : BaseActivity() {
 
-    lateinit var tvSplash: TextView
-
     override fun initView() {
         setContentView(R.layout.activity_splash)
-        tvSplash = findViewById(R.id.splash_text)
+        StatusBarUtil.setFullTranslucent(this)
+        StatusBarUtil.setTextColor(this, true)
     }
 
     override fun initData() {
+        val startTime = System.currentTimeMillis()
         Thread(Runnable {
             val pluginName = "biubiu_home"
             if (RePlugin.preload(pluginName)) {
-                tvSplash.post {
+                val delayMillis = if (System.currentTimeMillis() - startTime > 1000L) 0L else 2000L
+                splash_text.postDelayed({
                     RePlugin.startActivity(this@SplashActivity,
                             RePlugin.createIntent(pluginName, "com.leichao.biubiu.home.HomeActivity"))
                     finish()
-                }
+                }, delayMillis)
             }
         }).start()
     }
 
     override fun initEvent() {
-        tvSplash.setOnClickListener { ToastUtil.show("启动页") }
+        splash_text.setOnClickListener { ToastUtil.show("启动页") }
     }
 
 }

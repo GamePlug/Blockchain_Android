@@ -131,7 +131,7 @@ public final class PermissionUtil {
         protected void onCreate(@Nullable Bundle savedInstanceState) {
             fixTransparentThemeOrientation();
             super.onCreate(savedInstanceState);
-            StatusBarUtil.setStatusBarColor(this, ContextCompat.getColor(this, android.R.color.transparent));
+            StatusBarUtil.setFullTranslucent(this);
             ArrayList<String> permissions = getIntent().getStringArrayListExtra(PERMISSIONS);
             if (permissions != null && permissions.size() > 0) {
                 ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), REQUEST_CODE);

@@ -7,7 +7,7 @@ class HomeActivity : BaseActivity() {
 
     override fun initView() {
         setContentView(R.layout.activity_home)
-        StatusBarUtil.setStatusBarTranslucent(this)
+        StatusBarUtil.setFullTranslucent(this)
     }
 
     override fun initData() {

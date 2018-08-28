@@ -13,20 +13,20 @@ import android.view.WindowManager;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/**
- * 参考：https://blog.csdn.net/u014418171/article/details/81223681
- */
 public final class StatusBarUtil {
 
     private StatusBarUtil() {
     }
 
     /**
-     * 设置沉浸式状态栏(沉浸式，即内容会延伸到状态栏)
+     * 设置全屏沉浸式状态栏(沉浸式，即内容会延伸到状态栏)
+     * 注：在界面中使用到输入框的时候，全屏沉浸式状态栏
+     *    与输入法模式 {@link WindowManager.LayoutParams#SOFT_INPUT_ADJUST_RESIZE}有冲突，
+     *    需要调用 {@link KeyboardUtil#fixAndroidBug5497(Activity)}用来解决冲突。
      *
      * @param activity Activity
      */
-    public static void setStatusBarTranslucent(Activity activity) {
+    public static void setFullTranslucent(Activity activity) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = activity.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -49,12 +49,12 @@ public final class StatusBarUtil {
     }
 
     /**
-     * 设置Activity的状态栏颜色(非沉浸式，即内容不会延伸到状态栏)
+     * 设置状态栏背景颜色(非沉浸式，即内容不会延伸到状态栏)
      *
      * @param activity Activity
      * @param color    颜色值
      */
-    public static void setStatusBarColor(Activity activity, int color) {
+    public static void setBackgroundColor(Activity activity, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = activity.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -67,6 +67,8 @@ public final class StatusBarUtil {
                 mChildView.setFitsSystemWindows(false);
                 ViewCompat.requestApplyInsets(mChildView);
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // 暂未兼容到19版本，若要兼容请参考：https://blog.csdn.net/u014418171/article/details/81223681
         }
     }
 
@@ -75,7 +77,7 @@ public final class StatusBarUtil {
      *
      * @return 状态栏高度，单位px
      */
-    public static int getStatusBarHeight() {
+    public static int getHeight() {
         Resources resources = Resources.getSystem();
         int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
         return resourceId > 0 ? resources.getDimensionPixelSize(resourceId) : 0;
@@ -87,7 +89,7 @@ public final class StatusBarUtil {
      * @param activity Activity
      * @param dark 状态栏文字颜色是否为黑色
      */
-    public static boolean setStatusBarTextDark(Activity activity, boolean dark) {
+    public static boolean setTextColor(Activity activity, boolean dark) {
         boolean result = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//6.0以上版本
             View decorView = activity.getWindow().getDecorView();
@@ -101,9 +103,9 @@ public final class StatusBarUtil {
                 decorView.setSystemUiVisibility(vis);
             }
             result = true;
-        } else if (FixStatusBarColor.setMeiZuStatusBarDark(activity, dark)) {
+        } else if (FixStatusBarColor.setMeiZuColor(activity, dark)) {
             result = true;
-        } else if (FixStatusBarColor.setXiaoMiStatusBarDark(activity, dark)) {
+        } else if (FixStatusBarColor.setXiaoMiColor(activity, dark)) {
             result = true;
         }
         return result;
@@ -116,7 +118,7 @@ public final class StatusBarUtil {
         /**
          * 是否将魅族手机状态栏文字颜色更改为黑色，true为黑色，false为白色
          */
-        private static boolean setMeiZuStatusBarDark(Activity activity, boolean dark) {
+        private static boolean setMeiZuColor(Activity activity, boolean dark) {
             boolean result = false;
             try {
                 Window window = activity.getWindow();
@@ -144,7 +146,7 @@ public final class StatusBarUtil {
         /**
          * 是否将小米手机状态栏文字颜色更改为黑色，true为黑色，false为白色
          */
-        private static boolean setXiaoMiStatusBarDark(Activity activity, boolean dark) {
+        private static boolean setXiaoMiColor(Activity activity, boolean dark) {
             boolean result = false;
             Class<? extends Window> clazz = activity.getWindow().getClass();
             try {
