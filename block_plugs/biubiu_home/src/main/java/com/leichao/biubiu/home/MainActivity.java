@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
         etInput = findViewById(R.id.main_edit);
 
         textView.setText("aaaaaaa");
-        textView.setText("Kotlin:" + TestKotlinKt.getA());
 
         etInput.postDelayed(new Runnable() {
             @Override

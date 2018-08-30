@@ -11,6 +11,8 @@
         android:paddingTop="30dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:clipToPadding="false"/>
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:overScrollMode="never"/>
 
 </LinearLayout>
