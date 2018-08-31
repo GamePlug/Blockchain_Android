@@ -19,7 +19,7 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         val position = viewHolder.adapterPosition
         if (!mBeanList[position].isExist) {
-            return makeMovementFlags(0, 0);
+            return makeMovementFlags(0, 0)
         }
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END
         return makeMovementFlags(dragFlags, 0)
@@ -29,17 +29,8 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
         val from = viewHolder.adapterPosition
         val to = target.adapterPosition
         if (mBeanList[to].isExist) {
-            val emptyIndex = findEmptyIndex(from, to)
-            if (emptyIndex >= 0) {
-                move(emptyIndex, to)
-                restore.add(0, intArrayOf(to, emptyIndex))
-                swap(from, to)
-                for (intArray in restore) move(intArray[0], intArray[1])
-                restore.clear()
-            } else {
-                move(from, to)
-                restore.add(0, intArrayOf(to, from))
-            }
+            move(from, to)
+            restore.add(0, intArrayOf(to, from))
         } else {
             swap(from, to)
             for (intArray in restore) move(intArray[0], intArray[1])
@@ -87,20 +78,4 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
         mAdapter.notifyItemMoved(if (from < to) to - 1 else to + 1, from)
     }
 
-    /**
-     * 当from与to位置不相邻时，寻找to位置向前不小于或向后不大于from位置的、离to位置元素最近的空位置
-     */
-    private fun findEmptyIndex(from: Int, to: Int): Int {
-        if (Math.abs(from - to) != 1 && mBeanList.size > from && mBeanList.size > to) {
-            // 先向前找
-            for(index in if (from <= to) to downTo from else to downTo 0) {
-                if (!mBeanList[index].isExist) return index
-            }
-            // 再向后找
-            for(index in if (from >= to) to..from else to until mBeanList.size - 1) {
-                if (!mBeanList[index].isExist) return index
-            }
-        }
-        return -1
-    }
 }
