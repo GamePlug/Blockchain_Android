@@ -17,7 +17,7 @@ class AppListAdapter(private val context: Context, private val beanList: List<Ap
 
     override fun onBindViewHolder(holder: BlogListHolder, position: Int) {
         val app = beanList[position]
-        if (app.isExist) {
+        if (app.appType != AppInfo.AppType.EMPTY) {
             holder.itemView.visibility = View.VISIBLE
             holder.itemView.app_name.text = app.appName
             holder.itemView.app_icon.setImageResource(app.appIcon)

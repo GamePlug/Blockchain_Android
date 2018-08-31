@@ -11,7 +11,6 @@ class HomeActivity : BaseActivity() {
 
     private lateinit var mBeanList : ArrayList<AppInfo>
     private lateinit var mAdapter : AppListAdapter
-    private var appNum = 15
 
     override fun initView() {
         setContentView(R.layout.activity_home)
@@ -25,15 +24,7 @@ class HomeActivity : BaseActivity() {
         mAdapter = AppListAdapter(this, mBeanList)
         home_rv.adapter = mAdapter
 
-        val total = if (appNum <= 24) 24 else {
-            4*(appNum/4 + if (appNum%4 == 0) 0 else 1)
-        }
-        for (i in 1..total) {
-            if (i <= appNum)
-                mBeanList.add(AppInfo(true, true, "设置$i", R.mipmap.ic_launcher))
-            else
-                mBeanList.add(AppInfo(false, false, "", 0))
-        }
+        mBeanList.addAll(AppManager.appList)
         mAdapter.notifyDataSetChanged()
     }
 

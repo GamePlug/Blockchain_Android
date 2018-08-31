@@ -12,36 +12,39 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
         return true
     }
 
-    override fun isItemViewSwipeEnabled(): Boolean {
-        return true
-    }
-
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         val position = viewHolder.adapterPosition
-        if (!mBeanList[position].isExist) {
-            return makeMovementFlags(0, 0)
+        val app = mBeanList[position]
+        return if (app.appType == AppInfo.AppType.EMPTY) {
+            makeMovementFlags(0, 0)
+        } else {
+            val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END
+            makeMovementFlags(dragFlags, 0)
         }
-        val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END
-        return makeMovementFlags(dragFlags, 0)
     }
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         val from = viewHolder.adapterPosition
         val to = target.adapterPosition
-        if (mBeanList[to].isExist) {
-            move(from, to)
-            restore.add(0, intArrayOf(to, from))
-        } else {
-            swap(from, to)
-            for (intArray in restore) move(intArray[0], intArray[1])
-            restore.clear()
+        val fromApp = mBeanList[from]
+        val toApp = mBeanList[to]
+        when {
+            toApp.appName == "回收站" && fromApp.appType != AppInfo.AppType.SYSTEM -> {
+                delete(from)
+                for (intArray in restore) move(intArray[0], intArray[1])
+                restore.clear()
+            }
+            toApp.appType != AppInfo.AppType.EMPTY -> {
+                move(from, to)
+                restore.add(0, intArrayOf(to, from))
+            }
+            else -> {
+                swap(from, to)
+                for (intArray in restore) move(intArray[0], intArray[1])
+                restore.clear()
+            }
         }
         return true
-    }
-
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        mBeanList.removeAt(viewHolder.adapterPosition)
-        mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
@@ -59,6 +62,17 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
             viewHolder.itemView.scaleX = 1F
             viewHolder.itemView.scaleY = 1F
         }
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+    /**
+     * 将from位置的元素删除，其他元素位置不变
+     */
+    private fun delete(from: Int) {
+        mBeanList.removeAt(from)
+        mBeanList.add(from, AppManager.emptyApp)
+        mAdapter.notifyDataSetChanged()
     }
 
     /**
