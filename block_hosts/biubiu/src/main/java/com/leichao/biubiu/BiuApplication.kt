@@ -2,6 +2,7 @@ package com.leichao.biubiu
 
 import android.app.Application
 import android.content.Context
+import android.support.multidex.MultiDex
 import com.leichao.util.AppUtil
 import com.morgoo.droidplugin.PluginHelper
 import com.qihoo360.replugin.RePlugin
@@ -24,6 +25,7 @@ class BiuApplication : Application() {
     override fun attachBaseContext(base: Context) {
         PluginHelper.getInstance().applicationAttachBaseContext(base)// DroidPlugin
         super.attachBaseContext(base)
+        MultiDex.install(this)// 解决方法数量过多的问题
         RePlugin.App.attachBaseContext(this,// RePlugin
                 RePluginConfig().setUseHostClassIfNotFound(true)
                         .setCallbacks(HostCallbacks(this))

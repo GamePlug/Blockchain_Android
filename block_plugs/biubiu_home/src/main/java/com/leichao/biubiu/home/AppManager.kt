@@ -10,9 +10,10 @@ object AppManager {
     init {
         // 系统应用
         appList.add(AppInfo(AppInfo.AppType.SYSTEM, "设置", R.mipmap.ic_launcher))
-        appList.add(AppInfo(AppInfo.AppType.SYSTEM, "应用商店", R.mipmap.ic_launcher))
         appList.add(AppInfo(AppInfo.AppType.SYSTEM, "回收站", R.mipmap.ic_launcher))
         appList.add(AppInfo(AppInfo.AppType.SYSTEM, "关于我们", R.mipmap.ic_launcher))
+        appList.add(AppInfo(AppInfo.AppType.SYSTEM, "应用商店", R.mipmap.ic_launcher))
+        appList.add(AppInfo(AppInfo.AppType.SYSTEM, "应用分身", R.mipmap.ic_launcher))
         for (i in 1..15) {
             appList.add(AppInfo(AppInfo.AppType.PLUGIN_RE, "应用$i", R.mipmap.ic_launcher))
         }
@@ -20,6 +21,18 @@ object AppManager {
         val emptyNum = if (appList.size <= 24) 24 - appList.size else appList.size % 4
         for (i in 1..emptyNum) {
             appList.add(emptyApp)
+        }
+    }
+
+    fun install(filepath: String, flags: Int): Int {
+        return try {
+            val clazz = Class.forName("com.leichao.biubiu.bridge.DroidPluginBridge")
+            val field = clazz.getField("INSTANCE");
+            val method = clazz.getMethod("installPackage", String::class.java, Int::class.java)
+            method.invoke(field.get(clazz), filepath, flags) as Int
+        } catch (e: Exception) {
+            e.printStackTrace()
+            -1
         }
     }
 

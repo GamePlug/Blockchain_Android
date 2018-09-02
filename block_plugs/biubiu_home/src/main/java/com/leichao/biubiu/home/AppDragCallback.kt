@@ -29,7 +29,9 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
         val fromApp = mBeanList[from]
         val toApp = mBeanList[to]
         when {
-            toApp.appName == "回收站" && fromApp.appType != AppInfo.AppType.SYSTEM -> {
+            toApp.appName == "回收站"
+                    && toApp.appType == AppInfo.AppType.SYSTEM
+                    && fromApp.appType != AppInfo.AppType.SYSTEM -> {
                 delete(from)
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()
@@ -38,7 +40,7 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
                 move(from, to)
                 restore.add(0, intArrayOf(to, from))
             }
-            else -> {
+            toApp.appType == AppInfo.AppType.EMPTY -> {
                 swap(from, to)
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()

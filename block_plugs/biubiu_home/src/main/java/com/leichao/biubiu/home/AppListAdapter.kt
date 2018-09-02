@@ -1,10 +1,12 @@
 package com.leichao.biubiu.home
 
+import android.Manifest
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.leichao.util.PermissionUtil
 import com.leichao.util.ToastUtil
 import kotlinx.android.synthetic.main.adapter_app_list.view.*
 
@@ -21,7 +23,14 @@ class AppListAdapter(private val context: Context, private val beanList: List<Ap
             holder.itemView.visibility = View.VISIBLE
             holder.itemView.app_name.text = app.appName
             holder.itemView.app_icon.setImageResource(app.appIcon)
-            holder.itemView.setOnClickListener { ToastUtil.show(app.appName) }
+            holder.itemView.setOnClickListener {
+                ToastUtil.show(app.appName)
+                PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE) { grantedList, _ ->
+                    if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        MainActivity.plugin(context)
+                    }
+                }
+            }
         } else {
             holder.itemView.visibility = View.GONE
         }
