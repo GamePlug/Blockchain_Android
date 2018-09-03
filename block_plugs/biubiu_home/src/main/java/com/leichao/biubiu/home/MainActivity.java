@@ -3,12 +3,8 @@ package com.leichao.biubiu.home;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -17,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.leichao.common.bridge.DroidPluginBridge;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.IStores;
 import com.leichao.retrofit.config.ConfigImpl;
@@ -33,10 +28,6 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -124,13 +115,13 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
             @Override
             public void onPermissionResult(List<String> grantedList, List<String> deniedList) {
                 if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    plugin(MainActivity.this);
+                    //plugin(MainActivity.this);
                 }
             }
         });
     }
 
-    public static void plugin(Context context) {
+    /*public static void plugin(Context context) {
         AssetManager asset = context.getAssets();
         //循环的读取asset下的文件，并且写入到SD卡
         FileOutputStream out = null;
@@ -179,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     // 单点登录传递的参数
     public static final String SECRET = "secret";

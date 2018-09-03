@@ -14,7 +14,7 @@ open class BaseBridge(className: String) {
         }
     }
 
-    protected fun invoke(method: String, vararg params: Any): Any {
+    protected fun invoke(methodName: String, vararg params: Any): Any {
         return try {
             val clazzParams = arrayOfNulls<Class<*>>(params.size)
             params.forEachIndexed { index, any ->
@@ -30,7 +30,7 @@ open class BaseBridge(className: String) {
                     else -> any.javaClass
                 }
             }
-            clazz.getMethod(method, *clazzParams).invoke(instance, *params)
+            clazz.getMethod(methodName, *clazzParams).invoke(instance, *params)
         } catch (e: Exception) {
             e.printStackTrace()
         }
