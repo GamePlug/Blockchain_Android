@@ -36,14 +36,14 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()
             }
-            toApp.appType != AppInfo.AppType.EMPTY -> {
-                move(from, to)
-                restore.add(0, intArrayOf(to, from))
-            }
             toApp.appType == AppInfo.AppType.EMPTY -> {
                 swap(from, to)
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()
+            }
+            else -> {
+                move(from, to)
+                restore.add(0, intArrayOf(to, from))
             }
         }
         return true

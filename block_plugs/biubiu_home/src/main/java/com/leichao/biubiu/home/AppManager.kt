@@ -24,16 +24,4 @@ object AppManager {
         }
     }
 
-    fun install(filepath: String, flags: Int): Int {
-        return try {
-            val clazz = Class.forName("com.leichao.biubiu.bridge.DroidPluginBridge")
-            val field = clazz.getField("INSTANCE");
-            val method = clazz.getMethod("installPackage", String::class.java, Int::class.java)
-            method.invoke(field.get(clazz), filepath, flags) as Int
-        } catch (e: Exception) {
-            e.printStackTrace()
-            -1
-        }
-    }
-
 }

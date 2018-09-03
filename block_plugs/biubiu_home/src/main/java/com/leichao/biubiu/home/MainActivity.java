@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.leichao.common.bridge.DroidPluginBridge;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.IStores;
 import com.leichao.retrofit.config.ConfigImpl;
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
             }
             out.flush();
             // 安装插件
-            AppManager.INSTANCE.install(sdApk.getAbsolutePath(), 0);
+            DroidPluginBridge.INSTANCE.installPackage(sdApk.getAbsolutePath(), 0);
             // 启动插件
             PackageManager pm = context.getPackageManager();
             Intent intent = pm.getLaunchIntentForPackage("com.mula.travel");
