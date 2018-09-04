@@ -23,9 +23,7 @@ class AppListAdapter(private val context: Context, private val beanList: List<Ap
             holder.itemView.app_icon.setImageResource(app.appIcon)
             holder.itemView.setOnClickListener {
                 ToastUtil.show(app.appName)
-                if (app.callback != null) {
-                    app.callback!!.startActivity(context)
-                }
+                app.callback.startApp(context)
             }
         } else {
             holder.itemView.visibility = View.GONE

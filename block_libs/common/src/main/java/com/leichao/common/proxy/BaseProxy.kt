@@ -1,6 +1,6 @@
-package com.leichao.common.bridge
+package com.leichao.common.proxy
 
-open class BaseBridge(className: String) {
+open class BaseProxy(className: String) {
 
     private lateinit var clazz: Class<*>
     private lateinit var instance: Any

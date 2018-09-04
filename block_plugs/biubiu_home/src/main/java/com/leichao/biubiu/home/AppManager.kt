@@ -1,12 +1,12 @@
 package com.leichao.biubiu.home
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
 import com.leichao.biubiu.home.app.copy.AppCopyActivity
-import com.leichao.common.bridge.DroidPluginBridge
-import com.leichao.util.PermissionUtil
+import com.leichao.common.proxy.DroidPluginProxy
+import com.leichao.common.proxy.RePluginProxy
+import com.qihoo360.replugin.RePlugin
 import java.io.File
 import java.util.*
 
@@ -23,37 +23,47 @@ object AppManager {
         appList.add(AppInfo(AppInfo.AppType.SYSTEM, "应用商店", R.mipmap.ic_launcher))
 
         appList.add(AppInfo(AppInfo.AppType.SYSTEM, "应用分身", R.mipmap.ic_launcher, 0, object : AppInfo.Callback() {
-            override fun startActivity(context: Context) {
+            override fun startApp(context: Context) {
                 context.startActivity(Intent(context, AppCopyActivity::class.java))
             }
         }))
 
+        appList.add(AppInfo(AppInfo.AppType.PLUGIN_RE, "桌面", R.mipmap.ic_launcher, 0, object : AppInfo.Callback() {
+            override fun startApp(context: Context) {
+                val intent = RePlugin.createIntent("biubiu_home", "com.leichao.biubiu.home.HomeActivity")
+                intent?.let { context.startActivity(it) }
+            }
+
+            override fun installApp(): Boolean {
+                return RePluginProxy.install("")
+            }
+
+            override fun uninstallApp(): Boolean {
+                return RePluginProxy.uninstall("biubiu_home")
+            }
+
+            override fun isAppInstalled(): Boolean {
+                return RePluginProxy.isInstalled("biubiu_home")
+            }
+        }))
+
         appList.add(AppInfo(AppInfo.AppType.PLUGIN_DROID, "摩拉旅行", R.mipmap.ic_launcher, 0, object : AppInfo.Callback() {
-            override fun startActivity(context: Context) {
+            override fun startApp(context: Context) {
                 val intent = context.packageManager.getLaunchIntentForPackage("com.mula.travel")
-                if (DroidPluginBridge.isInstalled("com.mula.travel")) {
-                    if (intent != null) {
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                    }
-                } else {
-                    PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE) { grantedList, _ ->
-                        if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                            Thread(Runnable {
-                                // 安装插件
-                                val result = DroidPluginBridge.install(Environment.getExternalStorageDirectory().toString()
-                                        + File.separator + "Plugins" + File.separator + "mula_travel.apk")
-                                // 启动插件
-                                if (result == 1) {
-                                    if (intent != null) {
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        context.startActivity(intent)
-                                    }
-                                }
-                            }).start()
-                        }
-                    }
-                }
+                intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent?.let { context.startActivity(it) }
+            }
+
+            override fun installApp(): Boolean {
+                return DroidPluginProxy.install("${Environment.getExternalStorageDirectory()}${File.separator}Plugins${File.separator}mula_travel.apk")
+            }
+
+            override fun uninstallApp(): Boolean {
+                return DroidPluginProxy.uninstall("com.mula.travel")
+            }
+
+            override fun isAppInstalled(): Boolean {
+                return DroidPluginProxy.isInstalled("com.mula.travel")
             }
         }))
 

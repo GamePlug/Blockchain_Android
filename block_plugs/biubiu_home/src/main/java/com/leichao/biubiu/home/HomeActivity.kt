@@ -1,9 +1,11 @@
 package com.leichao.biubiu.home
 
+import android.Manifest
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.leichao.common.BaseActivity
+import com.leichao.util.PermissionUtil
 import com.leichao.util.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_home.*
 
@@ -26,10 +28,25 @@ class HomeActivity : BaseActivity() {
 
         mBeanList.addAll(AppManager.appList)
         mAdapter.notifyDataSetChanged()
+        checkInstallApp()
     }
 
     override fun initEvent() {
         ItemTouchHelper(AppDragCallback(mBeanList, mAdapter)).attachToRecyclerView(home_rv)
+    }
+
+    private fun checkInstallApp() {
+        PermissionUtil.request(Manifest.permission.WRITE_EXTERNAL_STORAGE) { grantedList, _ ->
+            if (grantedList.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                mBeanList.forEach {
+                    if (!it.callback.isAppInstalled()) {
+                        Thread(Runnable {
+                            it.callback.installApp()
+                        }).start()
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -7,17 +7,20 @@ data class AppInfo(
         var appName: String,
         var appIcon: Int,
         var appSort: Int,
-        var callback: Callback?
+        var callback: Callback
 ) {
     constructor(appType: AppType, appName: String, appIcon: Int) :
-            this(appType, appName, appIcon, 0, null)
+            this(appType, appName, appIcon, 0, Callback())
 
     enum class AppType {
         SYSTEM, PLUGIN_RE, PLUGIN_DROID, EMPTY
     }
 
-    abstract class Callback {
-        abstract fun startActivity(context: Context)
+    open class Callback {
+        open fun startApp(context: Context) {}
+        open fun installApp(): Boolean {return true}
+        open fun uninstallApp(): Boolean {return true}
+        open fun isAppInstalled(): Boolean {return true}
     }
 
 }
