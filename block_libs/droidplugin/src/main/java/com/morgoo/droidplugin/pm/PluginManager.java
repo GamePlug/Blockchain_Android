@@ -999,10 +999,12 @@ public class PluginManager implements ServiceConnection {
         }
     }
 
-    public void deletePackage(String packageName, int flags) throws RemoteException {
+    public int deletePackage(String packageName, int flags) throws RemoteException {
         try {
             if (mPluginManager != null) {
-                mPluginManager.deletePackage(packageName, flags);
+                int result = mPluginManager.deletePackage(packageName, flags);
+                Log.w(TAG, String.format("%s uninstall result %d", packageName, result));
+                return result;
             } else {
                 Log.w(TAG, "Plugin Package Manager Service not be connect");
             }
@@ -1011,6 +1013,7 @@ public class PluginManager implements ServiceConnection {
         } catch (Exception e) {
             Log.e(TAG, "deletePackage", e);
         }
+        return -1;
     }
 
 
