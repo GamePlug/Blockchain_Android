@@ -1,15 +1,16 @@
 package com.leichao.biubiu.home
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 
 data class AppInfo(
         var appType: AppType,
         var appName: String,
-        var appIcon: Int,
+        var appIcon: Drawable,
         var appSort: Int,
         var callback: Callback
 ) {
-    constructor(appType: AppType, appName: String, appIcon: Int) :
+    constructor(appType: AppType, appName: String, appIcon: Drawable) :
             this(appType, appName, appIcon, 0, Callback())
 
     enum class AppType {

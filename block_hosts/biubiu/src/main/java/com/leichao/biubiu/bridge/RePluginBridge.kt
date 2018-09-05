@@ -10,8 +10,8 @@ object RePluginBridge {
      * 安装RePlugin插件。支持安装，同版本覆盖安装，或升级。不支持降级。
      */
     @Keep
-    fun install(filepath: String): Boolean {
-        return RePlugin.install(filepath) != null
+    fun install(filePath: String): Boolean {
+        return RePlugin.install(filePath) != null
     }
 
     /**

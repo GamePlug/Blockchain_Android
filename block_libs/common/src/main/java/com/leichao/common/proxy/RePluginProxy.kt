@@ -5,8 +5,8 @@ object RePluginProxy: BaseProxy("com.leichao.biubiu.bridge.RePluginBridge") {
     /**
      * 安装RePlugin插件。支持安装，同版本覆盖安装，或升级。不支持降级。
      */
-    fun install(filepath: String): Boolean {
-        val result = invoke("install", filepath)
+    fun install(filePath: String): Boolean {
+        val result = invoke("install", filePath)
         return result as? Boolean ?: false
     }
 

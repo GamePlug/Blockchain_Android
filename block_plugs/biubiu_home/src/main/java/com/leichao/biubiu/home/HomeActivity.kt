@@ -1,13 +1,16 @@
 package com.leichao.biubiu.home
 
 import android.Manifest
+import android.os.Environment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import com.leichao.common.BaseActivity
+import com.leichao.common.proxy.DroidPluginProxy
 import com.leichao.util.PermissionUtil
 import com.leichao.util.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_home.*
+import java.io.File
 
 class HomeActivity : BaseActivity() {
 
@@ -45,6 +48,7 @@ class HomeActivity : BaseActivity() {
                         }).start()
                     }
                 }
+                DroidPluginProxy.install("${Environment.getExternalStorageDirectory()}${File.separator}Plugins${File.separator}mula_travel.apk")
             }
         }
     }

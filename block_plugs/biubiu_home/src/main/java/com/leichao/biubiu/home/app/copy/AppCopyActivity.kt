@@ -1,10 +1,16 @@
 package com.leichao.biubiu.home.app.copy
 
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import com.leichao.biubiu.home.AppInfo
 import com.leichao.biubiu.home.R
 import com.leichao.common.BaseActivity
 import kotlinx.android.synthetic.main.activity_app_copy.*
 
 class AppCopyActivity: BaseActivity() {
+
+    private lateinit var mBeanList : ArrayList<AppInfo>
+    private lateinit var mAdapter : AppCopyAdapter
 
     override fun initView() {
         setContentView(R.layout.activity_app_copy)
@@ -12,7 +18,14 @@ class AppCopyActivity: BaseActivity() {
     }
 
     override fun initData() {
-        AppCopy().getAppList(this)
+        copy_rv.layoutManager = LinearLayoutManager(this)
+        copy_rv.itemAnimator = DefaultItemAnimator()
+        mBeanList = ArrayList()
+        mAdapter = AppCopyAdapter(this, mBeanList)
+        copy_rv.adapter = mAdapter
+
+        mBeanList.addAll(AppCopyManager.appList)
+        mAdapter.notifyDataSetChanged()
     }
 
     override fun initEvent() {
