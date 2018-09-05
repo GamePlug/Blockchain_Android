@@ -1,1 +1,5 @@
 apply from: rootProject.ext.configs.base_lib
+
+dependencies {
+    implementation project(':block_libs:util')
+}
