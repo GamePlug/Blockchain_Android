@@ -15,13 +15,21 @@ object AppCopyManager {
     init {
         val packageManager = AppUtil.getApp().packageManager
         val apps = packageManager.getInstalledApplications(0)
+        val droidApps = DroidPluginProxy.getAllInstalled()
         for (info in apps) {
             if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {//非系统应用
                 val filePath = info.sourceDir
                 val packageName = info.packageName
                 val appName = info.loadLabel(packageManager).toString()
                 val appIcon = info.loadIcon(packageManager)
-                appList.add(AppInfo(AppInfo.AppType.PLUGIN_DROID, appName, appIcon, 0, object : AppInfo.Callback() {
+
+                var installStatus = AppInfo.InstallStatus.UNINSTALLED
+                droidApps.forEach {
+                    if (packageName == it.packageName) {
+                        installStatus = AppInfo.InstallStatus.INSTALLED
+                    }
+                }
+                appList.add(AppInfo(AppInfo.AppType.PLUGIN_DROID, installStatus, appName, appIcon, 0, object : AppInfo.Callback() {
                     override fun startApp(context: Context) {
                         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
                         intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

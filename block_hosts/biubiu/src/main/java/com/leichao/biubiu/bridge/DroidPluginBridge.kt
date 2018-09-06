@@ -1,11 +1,13 @@
 package com.leichao.biubiu.bridge
 
 import android.support.annotation.Keep
-import com.leichao.common.proxy.DroidPluginProxy
 import com.leichao.util.AppUtil
 import com.morgoo.droidplugin.pm.PluginManager
 import com.morgoo.helper.compat.PackageManagerCompat
 
+/**
+ * DroidPlugin对外反射开放类，返回值使用Java JDK或Android SDK中的类，否者反射的返回值会出现转换异常
+ */
 @Keep
 object DroidPluginBridge {
 
@@ -46,18 +48,18 @@ object DroidPluginBridge {
      * 获取所有已安装的DroidPlugin插件。
      */
     @Keep
-    fun getAllInstalled(): List<DroidPluginProxy.DroidApp> {
-        val packageManager = AppUtil.getApp().packageManager
-        val apps = PluginManager.getInstance().getInstalledApplications(0)
-        val droidAppList = ArrayList<DroidPluginProxy.DroidApp>()
-        for (info in apps) {
-            val filePath = info.sourceDir
-            val packageName = info.packageName
-            val appName = info.loadLabel(packageManager).toString()
-            val appIcon = info.loadIcon(packageManager)
-            droidAppList.add(DroidPluginProxy.DroidApp(filePath, packageName, appName, appIcon))
+    fun getAllInstalled(): List<Map<String, Any>> {
+        val list = ArrayList<Map<String, Any>>()
+        for (droidPlugin in PluginManager.getInstance().getInstalledApplications(0)) {
+            val packageManager = AppUtil.getApp().packageManager
+            val map = HashMap<String, Any>()
+            map["filePath"] = droidPlugin.sourceDir
+            map["packageName"] = droidPlugin.packageName
+            map["appName"] = droidPlugin.loadLabel(packageManager).toString()
+            map["appIcon"] = droidPlugin.loadIcon(packageManager)
+            list.add(map)
         }
-        return droidAppList
+        return list
     }
 
 }

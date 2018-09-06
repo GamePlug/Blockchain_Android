@@ -1,5 +1,6 @@
 package com.leichao.common.proxy
 
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 
 object DroidPluginProxy: BaseProxy("com.leichao.biubiu.bridge.DroidPluginBridge") {
@@ -34,10 +35,20 @@ object DroidPluginProxy: BaseProxy("com.leichao.biubiu.bridge.DroidPluginBridge"
     @Suppress("UNCHECKED_CAST")
     fun getAllInstalled(): List<DroidApp> {
         val result = invoke("getAllInstalled")
-        return result as? ArrayList<DroidApp> ?: ArrayList()
+        val list = result as? ArrayList<Map<String, Any>> ?: ArrayList()
+        val droidAppList = ArrayList<DroidApp>()
+        for (info in list) {
+            droidAppList.add(DroidApp(
+                    info["filePath"] as? String ?: "",
+                    info["packageName"] as? String ?: "",
+                    info["appName"] as? String ?: "",
+                    info["appIcon"] as? Drawable ?: ColorDrawable()
+            ))
+        }
+        return droidAppList
     }
 
-    data class DroidApp(
+    data class DroidApp (
             var filePath: String,
             var packageName: String,
             var appName: String,
