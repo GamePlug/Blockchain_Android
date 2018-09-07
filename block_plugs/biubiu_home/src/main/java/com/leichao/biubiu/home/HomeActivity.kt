@@ -19,8 +19,7 @@ class HomeActivity : BaseActivity(), AppManager.OnInstallListener {
     override fun initData() {
         home_rv.layoutManager = GridLayoutManager(this, 4)
         home_rv.itemAnimator = DefaultItemAnimator()
-        Thread(Runnable {
-            AppManager.getAppList()
+        Thread(Runnable {// 开启线程，因为中AppListAdapter获取了App列表，为耗时操作
             mAdapter = AppListAdapter(this)
             runOnUiThread {
                 home_rv.adapter = mAdapter

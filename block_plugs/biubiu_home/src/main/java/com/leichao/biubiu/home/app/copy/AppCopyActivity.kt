@@ -20,8 +20,7 @@ class AppCopyActivity : BaseActivity(), AppManager.OnInstallListener {
     override fun initData() {
         copy_rv.layoutManager = LinearLayoutManager(this)
         copy_rv.itemAnimator = DefaultItemAnimator()
-        Thread(Runnable {
-            AppCopyManager.getAppList()
+        Thread(Runnable {// 开启线程，因为中AppCopyAdapter获取了App列表，为耗时操作
             mAdapter = AppCopyAdapter(this)
             runOnUiThread { copy_rv.adapter = mAdapter }
         }).start()

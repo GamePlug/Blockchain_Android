@@ -44,6 +44,7 @@ class AppListAdapter(private val context: Context) : RecyclerView.Adapter<AppLis
             }
         } else {
             holder.itemView.visibility = View.GONE
+            holder.itemView.setOnClickListener(null)
         }
     }
 

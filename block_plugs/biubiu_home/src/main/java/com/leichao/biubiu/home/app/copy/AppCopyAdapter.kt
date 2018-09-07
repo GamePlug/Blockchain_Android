@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.leichao.biubiu.home.AppInfo
 import com.leichao.biubiu.home.R
 import com.leichao.util.PermissionUtil
 import com.leichao.util.ToastUtil
@@ -25,7 +26,7 @@ class AppCopyAdapter(private val context: Context) : RecyclerView.Adapter<AppCop
         val app = beanList[position]
         holder.itemView.visibility = View.VISIBLE
         holder.itemView.app_icon.setImageDrawable(app.plugin.appIcon)
-        if (!app.isAppInstalled()) {
+        if (app.status == AppInfo.Status.UNINSTALLED) {
             holder.itemView.app_name.text = app.plugin.appName
             holder.itemView.app_name.setTextColor(ContextCompat.getColor(context, R.color.color_333333))
             holder.itemView.setOnClickListener {
@@ -43,8 +44,14 @@ class AppCopyAdapter(private val context: Context) : RecyclerView.Adapter<AppCop
                 }
             }
         } else {
-            holder.itemView.app_name.text = "${app.plugin.appName}(已安装)"
+            when {
+                app.status == AppInfo.Status.INSTALLED -> holder.itemView.app_name.text = "${app.plugin.appName}(已安装)"
+                app.status == AppInfo.Status.INSTALLING -> holder.itemView.app_name.text = "${app.plugin.appName}(安装中)"
+                app.status == AppInfo.Status.UPDATING -> holder.itemView.app_name.text = "${app.plugin.appName}(更新中)"
+                app.status == AppInfo.Status.UNINSTALLING -> holder.itemView.app_name.text = "${app.plugin.appName}(卸载中)"
+            }
             holder.itemView.app_name.setTextColor(ContextCompat.getColor(context, R.color.color_999999))
+            holder.itemView.setOnClickListener(null)
         }
     }
 
