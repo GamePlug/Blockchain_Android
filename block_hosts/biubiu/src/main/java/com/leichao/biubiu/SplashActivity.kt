@@ -1,6 +1,7 @@
 package com.leichao.biubiu
 
 import com.leichao.common.BaseActivity
+import com.leichao.common.plugin.PluginConstant
 import com.leichao.util.StatusBarUtil
 import com.leichao.util.ToastUtil
 import com.qihoo360.replugin.RePlugin
@@ -17,12 +18,15 @@ class SplashActivity : BaseActivity() {
     override fun initData() {
         val startTime = System.currentTimeMillis()
         Thread(Runnable {
-            val pluginName = "biubiu_home"
+            val pluginName = PluginConstant.BIUBIU_HOME
             if (RePlugin.preload(pluginName)) {
-                val delayMillis = if (System.currentTimeMillis() - startTime > 1000L) 0L else 2000L
+                val delayMillis = if (System.currentTimeMillis() - startTime > 1000L) 0L else 1000L
                 splash_text.postDelayed({
-                    RePlugin.startActivity(this@SplashActivity,
-                            RePlugin.createIntent(pluginName, "com.leichao.biubiu.home.HomeActivity"))
+                    val activities = RePlugin.fetchPackageInfo(pluginName).activities
+                    if (activities != null && activities.isNotEmpty()) {
+                        RePlugin.startActivity(this@SplashActivity,
+                                RePlugin.createIntent(pluginName, activities[0].name))
+                    }
                     finish()
                 }, delayMillis)
             }

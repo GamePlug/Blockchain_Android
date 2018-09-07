@@ -1,15 +1,18 @@
-package com.leichao.biubiu.home
+package com.leichao.biubiu.home.app.home
 
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
+import com.leichao.biubiu.home.app.AppInfo
+import com.leichao.biubiu.home.app.AppManager
+import com.leichao.biubiu.home.R
 import com.leichao.common.BaseActivity
 import com.leichao.util.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity(), AppManager.OnInstallListener {
 
-    private var mAdapter : AppListAdapter? = null
+    private var mAdapter : HomeAdapter? = null
 
     override fun initView() {
         setContentView(R.layout.activity_home)
@@ -20,10 +23,10 @@ class HomeActivity : BaseActivity(), AppManager.OnInstallListener {
         home_rv.layoutManager = GridLayoutManager(this, 4)
         home_rv.itemAnimator = DefaultItemAnimator()
         Thread(Runnable {// 开启线程，因为中AppListAdapter获取了App列表，为耗时操作
-            mAdapter = AppListAdapter(this)
+            mAdapter = HomeAdapter(this)
             runOnUiThread {
                 home_rv.adapter = mAdapter
-                mAdapter?.let { ItemTouchHelper(AppDragCallback(it)).attachToRecyclerView(home_rv) }
+                mAdapter?.let { ItemTouchHelper(HomeDragCallback(it)).attachToRecyclerView(home_rv) }
             }
         }).start()
     }

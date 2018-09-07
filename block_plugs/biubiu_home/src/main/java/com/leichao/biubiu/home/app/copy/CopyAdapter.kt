@@ -7,15 +7,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.leichao.biubiu.home.AppInfo
+import com.leichao.biubiu.home.app.AppInfo
+import com.leichao.biubiu.home.app.AppManager
 import com.leichao.biubiu.home.R
 import com.leichao.util.PermissionUtil
 import com.leichao.util.ToastUtil
 import kotlinx.android.synthetic.main.adapter_app_copy.view.*
 
-class AppCopyAdapter(private val context: Context) : RecyclerView.Adapter<AppCopyAdapter.BlogListHolder>() {
+class CopyAdapter(private val context: Context) : RecyclerView.Adapter<CopyAdapter.BlogListHolder>() {
 
-    private val beanList = AppCopyManager.getAppList()
+    private val beanList = AppManager.getCopyAppList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BlogListHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.adapter_app_copy, parent, false)

@@ -1,11 +1,11 @@
-package com.leichao.biubiu.home
+package com.leichao.biubiu.home.app
 
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import com.leichao.common.proxy.Plugin
-import com.leichao.common.proxy.ProxyDroidPlugin
-import com.leichao.common.proxy.ProxyRePlugin
+import com.leichao.common.plugin.Plugin
+import com.leichao.common.plugin.ProxyDroidPlugin
+import com.leichao.common.plugin.ProxyRePlugin
 import com.qihoo360.replugin.RePlugin
 
 data class AppInfo(
@@ -53,10 +53,10 @@ data class AppInfo(
     fun installApp(): Boolean {
         val isUpdate = isAppInstalled()
         if (isUpdate) {
-            status = AppInfo.Status.UPDATING
+            status = Status.UPDATING
             AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_START)
         } else {
-            status = AppInfo.Status.INSTALLING
+            status = Status.INSTALLING
             AppManager.installChanged(this, AppManager.InstallChanged.INSTALL_START)
         }
         val result = when (type) {
@@ -66,14 +66,14 @@ data class AppInfo(
             else -> false
         }
         if (result) {
-            status = AppInfo.Status.INSTALLED
+            status = Status.INSTALLED
             if (isUpdate) {
                 AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_SUCCESS)
             } else {
                 AppManager.installChanged(this, AppManager.InstallChanged.INSTALL_SUCCESS)
             }
         } else {
-            status = AppInfo.Status.UNINSTALLED
+            status = Status.UNINSTALLED
             if (isUpdate) {
                 AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_FAILURE)
             } else {
@@ -84,7 +84,7 @@ data class AppInfo(
     }
 
     fun uninstallApp(): Boolean {
-        status = AppInfo.Status.UNINSTALLING
+        status = Status.UNINSTALLING
         AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_START)
         val result = when (type) {
             Type.SYSTEM -> true
@@ -93,10 +93,10 @@ data class AppInfo(
             else -> false
         }
         if (result) {
-            status = AppInfo.Status.UNINSTALLED
+            status = Status.UNINSTALLED
             AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_SUCCESS)
         } else {
-            status = AppInfo.Status.INSTALLED
+            status = Status.INSTALLED
             AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_FAILURE)
         }
         return result

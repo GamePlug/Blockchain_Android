@@ -1,4 +1,4 @@
-package com.leichao.common.proxy
+package com.leichao.common.plugin
 
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable

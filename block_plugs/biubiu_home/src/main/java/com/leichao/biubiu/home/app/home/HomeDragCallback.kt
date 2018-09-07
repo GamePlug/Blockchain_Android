@@ -1,12 +1,14 @@
-package com.leichao.biubiu.home
+package com.leichao.biubiu.home.app.home
 
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import com.leichao.biubiu.home.app.AppInfo
+import com.leichao.biubiu.home.app.AppManager
 import java.util.*
 
-class AppDragCallback(private val mAdapter: AppListAdapter) : ItemTouchHelper.Callback() {
+class HomeDragCallback(private val mAdapter: HomeAdapter) : ItemTouchHelper.Callback() {
 
-    private val mBeanList = AppManager.getAppList()
+    private val mBeanList = AppManager.getHomeAppList()
     private val restore = ArrayList<IntArray>()
 
     override fun isLongPressDragEnabled(): Boolean {

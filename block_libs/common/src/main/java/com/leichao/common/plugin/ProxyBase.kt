@@ -1,4 +1,4 @@
-package com.leichao.common.proxy
+package com.leichao.common.plugin
 
 open class ProxyBase(className: String) {
 
