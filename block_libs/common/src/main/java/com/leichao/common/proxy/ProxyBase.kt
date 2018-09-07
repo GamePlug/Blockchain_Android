@@ -1,6 +1,6 @@
 package com.leichao.common.proxy
 
-open class BaseProxy(className: String) {
+open class ProxyBase(className: String) {
 
     private lateinit var clazz: Class<*>
     private lateinit var instance: Any

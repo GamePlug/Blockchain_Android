@@ -4,8 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import java.util.*
 
-class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAdapter: AppListAdapter) : ItemTouchHelper.Callback() {
+class AppDragCallback(private val mAdapter: AppListAdapter) : ItemTouchHelper.Callback() {
 
+    private val mBeanList = AppManager.getAppList()
     private val restore = ArrayList<IntArray>()
 
     override fun isLongPressDragEnabled(): Boolean {
@@ -15,7 +16,7 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         val position = viewHolder.adapterPosition
         val app = mBeanList[position]
-        return if (app.appType == AppInfo.AppType.EMPTY) {
+        return if (app.type == AppInfo.Type.EMPTY) {
             makeMovementFlags(0, 0)
         } else {
             val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END
@@ -29,14 +30,14 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
         val fromApp = mBeanList[from]
         val toApp = mBeanList[to]
         when {
-            toApp.appName == "回收站"
-                    && toApp.appType == AppInfo.AppType.SYSTEM
-                    && fromApp.appType != AppInfo.AppType.SYSTEM -> {
-                delete(from)
+            toApp.plugin.appName == "回收站"
+                    && toApp.type == AppInfo.Type.SYSTEM
+                    && fromApp.type != AppInfo.Type.SYSTEM -> {
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()
+                fromApp.uninstallApp()
             }
-            toApp.appType == AppInfo.AppType.EMPTY -> {
+            toApp.type == AppInfo.Type.EMPTY -> {
                 swap(from, to)
                 for (intArray in restore) move(intArray[0], intArray[1])
                 restore.clear()
@@ -73,7 +74,7 @@ class AppDragCallback(private val mBeanList: ArrayList<AppInfo>, private val mAd
      */
     private fun delete(from: Int) {
         mBeanList.removeAt(from)
-        mBeanList.add(from, AppManager.emptyApp)
+        mBeanList.add(from, AppManager.getEmptyApp())
         mAdapter.notifyDataSetChanged()
     }
 

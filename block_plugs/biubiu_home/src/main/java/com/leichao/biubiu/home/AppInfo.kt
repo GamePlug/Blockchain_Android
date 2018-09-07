@@ -1,82 +1,114 @@
 package com.leichao.biubiu.home
 
+import android.content.ComponentName
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.os.Handler
-import android.os.Looper
+import android.content.Intent
+import com.leichao.common.proxy.Plugin
+import com.leichao.common.proxy.ProxyDroidPlugin
+import com.leichao.common.proxy.ProxyRePlugin
+import com.qihoo360.replugin.RePlugin
 
 data class AppInfo(
-        var appType: AppType,
-        var installStatus: InstallStatus,
-        var appName: String,
-        var appIcon: Drawable,
-        var appSort: Int,
-        private var callback: Callback
+        var type: Type,
+        var status: Status,
+        var sort: Int,
+        var plugin: Plugin
 ) {
-    constructor(appType: AppType, appName: String, appIcon: Drawable) :
-            this(appType, InstallStatus.UNINSTALLED, appName, appIcon, 0, Callback())
+    constructor(type: Type) :
+            this(type, Status.UNINSTALLED, 0, Plugin())
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    enum class AppType {
+    enum class Type {
         //系统---RePlugin---DroidPlugin----空
         SYSTEM, PLUGIN_RE, PLUGIN_DROID, EMPTY
     }
 
-    enum class InstallStatus {
-        //已安装------安装中-------未安装--------卸载中
-        INSTALLED, INSTALLING, UNINSTALLED, UNINSTALLING
-    }
-
-    open class Callback {
-        open fun startApp(context: Context) {}
-        open fun installApp(): Boolean {return true}
-        open fun uninstallApp(): Boolean {return true}
-        open fun isAppInstalled(): Boolean {return true}
+    enum class Status {
+        //已安装------安装中-----升级中------未安装--------卸载中
+        INSTALLED, INSTALLING, UPDATING,  UNINSTALLED, UNINSTALLING
     }
 
     fun startApp(context: Context) {
-        callback.startApp(context)
+        when (type) {
+            Type.SYSTEM -> {
+                val intent = Intent()
+                intent.component = ComponentName(plugin.packageName, plugin.pluginName)
+                context.startActivity(intent)
+            }
+            Type.PLUGIN_RE -> {
+                val activities = RePlugin.fetchPackageInfo(plugin.pluginName).activities
+                if (activities != null && activities.isNotEmpty()) {
+                    val intent = RePlugin.createIntent(plugin.pluginName, activities[0].name)
+                    intent?.let { context.startActivity(it) }
+                }
+            }
+            Type.PLUGIN_DROID -> {
+                val intent = context.packageManager.getLaunchIntentForPackage(plugin.packageName)
+                intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent?.let { context.startActivity(it) }
+            }
+            else -> {}
+        }
     }
 
     fun installApp(): Boolean {
-        handler.post {
-            installStatus = AppInfo.InstallStatus.INSTALLING
-            AppManager.listeners.forEach { it.onInstallStart(this) }
+        val isUpdate = isAppInstalled()
+        if (isUpdate) {
+            status = AppInfo.Status.UPDATING
+            AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_START)
+        } else {
+            status = AppInfo.Status.INSTALLING
+            AppManager.installChanged(this, AppManager.InstallChanged.INSTALL_START)
         }
-        val result = callback.installApp()
-        handler.post {
-            if (result) {
-                installStatus = AppInfo.InstallStatus.INSTALLED
-                AppManager.listeners.forEach { it.onInstallSuccess(this) }
+        val result = when (type) {
+            Type.SYSTEM -> true
+            Type.PLUGIN_RE -> ProxyRePlugin.install(plugin.filePath)
+            Type.PLUGIN_DROID -> ProxyDroidPlugin.install(plugin.filePath)
+            else -> false
+        }
+        if (result) {
+            status = AppInfo.Status.INSTALLED
+            if (isUpdate) {
+                AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_SUCCESS)
             } else {
-                installStatus = AppInfo.InstallStatus.UNINSTALLED
-                AppManager.listeners.forEach { it.onInstallFailure(this) }
+                AppManager.installChanged(this, AppManager.InstallChanged.INSTALL_SUCCESS)
+            }
+        } else {
+            status = AppInfo.Status.UNINSTALLED
+            if (isUpdate) {
+                AppManager.installChanged(this, AppManager.InstallChanged.UPDATE_FAILURE)
+            } else {
+                AppManager.installChanged(this, AppManager.InstallChanged.INSTALL_FAILURE)
             }
         }
         return result
     }
 
     fun uninstallApp(): Boolean {
-        handler.post {
-            installStatus = AppInfo.InstallStatus.UNINSTALLING
-            AppManager.listeners.forEach { it.onUnInstallStart(this) }
+        status = AppInfo.Status.UNINSTALLING
+        AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_START)
+        val result = when (type) {
+            Type.SYSTEM -> true
+            Type.PLUGIN_RE -> ProxyRePlugin.uninstall(plugin.pluginName)
+            Type.PLUGIN_DROID -> ProxyDroidPlugin.uninstall(plugin.packageName)
+            else -> false
         }
-        val result = callback.uninstallApp()
-        handler.post {
-            if (result) {
-                installStatus = AppInfo.InstallStatus.UNINSTALLED
-                AppManager.listeners.forEach { it.onUnInstallSuccess(this) }
-            } else {
-                installStatus = AppInfo.InstallStatus.INSTALLED
-                AppManager.listeners.forEach { it.onUnInstallFailure(this) }
-            }
+        if (result) {
+            status = AppInfo.Status.UNINSTALLED
+            AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_SUCCESS)
+        } else {
+            status = AppInfo.Status.INSTALLED
+            AppManager.installChanged(this, AppManager.InstallChanged.UNINSTALL_FAILURE)
         }
         return result
     }
 
     fun isAppInstalled(): Boolean {
-        return callback.isAppInstalled()
+        return when (type) {
+            Type.SYSTEM -> true
+            Type.PLUGIN_RE -> ProxyRePlugin.isInstalled(plugin.pluginName)
+            Type.PLUGIN_DROID -> ProxyDroidPlugin.isInstalled(plugin.packageName)
+            else -> false
+        }
     }
 
 }

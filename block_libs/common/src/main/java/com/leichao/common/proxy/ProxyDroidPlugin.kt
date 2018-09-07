@@ -3,7 +3,7 @@ package com.leichao.common.proxy
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 
-object DroidPluginProxy: BaseProxy("com.leichao.biubiu.bridge.DroidPluginBridge") {
+object ProxyDroidPlugin: ProxyBase("com.leichao.biubiu.bridge.DroidPluginBridge") {
 
     /**
      * 安装DroidPlugin插件。支持安装，同版本覆盖安装，或升级。不支持降级。
@@ -33,26 +33,20 @@ object DroidPluginProxy: BaseProxy("com.leichao.biubiu.bridge.DroidPluginBridge"
      * 获取所有已安装的DroidPlugin插件。
      */
     @Suppress("UNCHECKED_CAST")
-    fun getAllInstalled(): List<DroidApp> {
+    fun getAllInstalled(): List<Plugin> {
         val result = invoke("getAllInstalled")
         val list = result as? ArrayList<Map<String, Any>> ?: ArrayList()
-        val droidAppList = ArrayList<DroidApp>()
+        val droidAppList = ArrayList<Plugin>()
         for (info in list) {
-            droidAppList.add(DroidApp(
-                    info["filePath"] as? String ?: "",
-                    info["packageName"] as? String ?: "",
+            droidAppList.add(Plugin(
                     info["appName"] as? String ?: "",
-                    info["appIcon"] as? Drawable ?: ColorDrawable()
+                    info["appIcon"] as? Drawable ?: ColorDrawable(),
+                    info["packageName"] as? String ?: "",
+                    info["packageName"] as? String ?: "",
+                    info["filePath"] as? String ?: ""
             ))
         }
         return droidAppList
     }
-
-    data class DroidApp (
-            var filePath: String,
-            var packageName: String,
-            var appName: String,
-            var appIcon: Drawable
-    )
 
 }

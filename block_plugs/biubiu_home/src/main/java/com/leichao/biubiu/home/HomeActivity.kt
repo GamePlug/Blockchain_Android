@@ -7,11 +7,9 @@ import com.leichao.common.BaseActivity
 import com.leichao.util.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_home.*
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity(), AppManager.OnInstallListener {
 
-    private lateinit var mBeanList : ArrayList<AppInfo>
-    private lateinit var mAdapter : AppListAdapter
-    private lateinit var listener: AppManager.OnInstallListener
+    private var mAdapter : AppListAdapter? = null
 
     override fun initView() {
         setContentView(R.layout.activity_home)
@@ -21,27 +19,27 @@ class HomeActivity : BaseActivity() {
     override fun initData() {
         home_rv.layoutManager = GridLayoutManager(this, 4)
         home_rv.itemAnimator = DefaultItemAnimator()
-        mBeanList = ArrayList()
-        mAdapter = AppListAdapter(this, mBeanList)
-        home_rv.adapter = mAdapter
-
-        mBeanList.addAll(AppManager.appList)
-        mAdapter.notifyDataSetChanged()
+        Thread(Runnable {
+            AppManager.getAppList()
+            mAdapter = AppListAdapter(this)
+            runOnUiThread {
+                home_rv.adapter = mAdapter
+                mAdapter?.let { ItemTouchHelper(AppDragCallback(it)).attachToRecyclerView(home_rv) }
+            }
+        }).start()
     }
 
     override fun initEvent() {
-        ItemTouchHelper(AppDragCallback(mBeanList, mAdapter)).attachToRecyclerView(home_rv)
-        listener = object : AppManager.SimpleInstallListener() {
-            override fun onStatusChanged(app: AppInfo) {
-                mAdapter.notifyDataSetChanged()
-            }
-        }
-        AppManager.addInstallListener(listener)
+        AppManager.addInstallListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        AppManager.removeInstallListener(listener)
+        AppManager.removeInstallListener(this)
+    }
+
+    override fun onInstallChanged(app: AppInfo, installChanged: AppManager.InstallChanged) {
+        mAdapter?.notifyDataSetChanged()
     }
 
 }
