@@ -1,4 +1,4 @@
-package com.mula.gradle.config;
+package com.leichao.groovy.config;
 
 /**
  * ConfigInfo

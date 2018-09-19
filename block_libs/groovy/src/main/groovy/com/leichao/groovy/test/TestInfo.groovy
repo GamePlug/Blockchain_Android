@@ -1,4 +1,4 @@
-package com.mula.gradle.test
+package com.leichao.groovy.test
 
 /**
  * TestInfo

@@ -1,18 +1,4 @@
 apply from: rootProject.ext.configs.base_app
-apply plugin: 'com.mula.test'
-apply plugin: 'com.mula.config'
-
-MulaTest {
-    name 'MuluTest你好'
-    age 18
-    boy true
-}
-
-MulaConfig {
-    setName 'MulaConfig你好'
-    setAge 19
-    setBoy false
-}
 
 android {
     defaultConfig {
@@ -33,4 +19,19 @@ dependencies {
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
     implementation rootProject.ext.dependencies.recyclerView
+}
+
+apply plugin: 'com.leichao.test'
+apply plugin: 'com.leichao.config'
+
+BiuTest {
+    name 'MuluTest你好'
+    age 18
+    boy true
+}
+
+BiuConfig {
+    setName 'MulaConfig你好'
+    setAge 19
+    setBoy false
 }

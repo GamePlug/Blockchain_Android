@@ -1,4 +1,4 @@
-package com.mula.gradle.config;
+package com.leichao.groovy.config;
 
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
@@ -12,18 +12,18 @@ public class ConfigPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.getExtensions().add("MulaConfig", new ConfigInfo());
+        project.getExtensions().add("BiuConfig", new ConfigInfo());
         System.out.println("==========================");
-        System.out.println("=======ConfigPlugin=======" + project.getExtensions().getByName("MulaConfig").toString());
+        System.out.println("=======BiuConfig=======" + project.getExtensions().getByName("BiuConfig").toString());
         System.out.println("==========================");
-        project.task("mulaConfig").doLast(new Action<Task>() {
+        project.task("biuConfig").doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
                 System.out.println("==========================");
-                System.out.println("========mulaConfig========" + project.getExtensions().getByName("MulaConfig").toString());
+                System.out.println("==========BiuConfig==========" + project.getExtensions().getByName("BiuConfig").toString());
                 System.out.println("==========================");
             }
-        }).setGroup("mula");
+        }).setGroup("leichao");
     }
 
 }

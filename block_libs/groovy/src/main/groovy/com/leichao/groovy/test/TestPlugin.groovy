@@ -1,4 +1,4 @@
-package com.mula.gradle.test
+package com.leichao.groovy.test
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -10,15 +10,15 @@ class TestPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.extensions.add("MulaTest", TestInfo)
+        project.extensions.add("BiuTest", TestInfo)
         println '=========================='
-        println '========TestPlugin========' + project.MulaTest.toString()
+        println '========BiuTest========' + project.BiuTest.toString()
         println '=========================='
-        project.task('mulaTest') {
-            group 'mula'
+        project.task('biuTest') {
+            group 'leichao'
             doLast {
                 println '=========================='
-                println '=========mulaTest=========' + project.MulaTest.toString()
+                println '==========BiuTest=========' + project.BiuTest.toString()
                 println '=========================='
             }
         }
