@@ -1,4 +1,4 @@
 include 'block_hosts:biubiu'
 include 'block_plugs:biubiu_home'
-include 'block_libs:common', 'block_libs:dependencies', 'block_libs:glide', ':block_libs:mqtt'
-include ':block_libs:retrofit', 'block_libs:droidplugin', 'block_libs:util'
+include 'block_libs:common', 'block_libs:dependencies', 'block_libs:droidplugin', 'block_libs:glide'
+include 'block_libs:groovy', ':block_libs:mqtt', ':block_libs:retrofit', 'block_libs:util'

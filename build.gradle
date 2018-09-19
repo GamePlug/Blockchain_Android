@@ -1,28 +1,11 @@
-apply from: rootProject.ext.configs.dependencies
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        config_dir = rootProject.rootDir.absolutePath + "/gradle_config/"
-        configs = [
-                dependencies    : config_dir + "dependencies.gradle",
-                base_app        : config_dir + "base_app.gradle",
-                base_lib        : config_dir + "base_lib.gradle",
-                replugin_host   : config_dir + "replugin_host.gradle",
-                replugin_plugin : config_dir + "replugin_plugin.gradle",
-                keystore        : config_dir + "mula.keystore",
-        ]
-        versions = [
-                compileSdkVersion   : 27,
-                minSdkVersion       : 14,
-                targetSdkVersion    : 27,
-                supportVersion      : '27.1.1',
-                kotlinVersion       : '1.2.61',
-                repluginVersion     : '2.3.0',
-        ]
-    }
+    apply from: rootProject.rootDir.absolutePath + "/gradle_config/dependencies.gradle"
     repositories {
         google()
         jcenter()
+        maven { url LOCAL_URL }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
@@ -30,6 +13,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${rootProject.ext.versions.kotlinVersion}"
         classpath "com.qihoo360.replugin:replugin-host-gradle:${rootProject.ext.versions.repluginVersion}"
         classpath "com.qihoo360.replugin:replugin-plugin-gradle:${rootProject.ext.versions.repluginVersion}"
+        classpath 'com.leichao:groovy:1.0.7-LOCAL'
     }
 }
 

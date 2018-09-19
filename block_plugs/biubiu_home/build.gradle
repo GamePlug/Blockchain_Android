@@ -1,4 +1,18 @@
 apply from: rootProject.ext.configs.base_app
+apply plugin: 'com.mula.test'
+apply plugin: 'com.mula.config'
+
+MulaTest {
+    name 'MuluTest你好'
+    age 18
+    boy true
+}
+
+MulaConfig {
+    setName 'MulaConfig你好'
+    setAge 19
+    setBoy false
+}
 
 android {
     defaultConfig {
