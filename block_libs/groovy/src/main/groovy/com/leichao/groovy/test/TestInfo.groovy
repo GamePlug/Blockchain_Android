@@ -11,6 +11,7 @@ class TestInfo {
 
     @Override
     String toString() {
-        return "本地，I am $name, $age years old, " + (boy ? "I am a boy" : "I am a gril")
+        return "中文不乱码，I am $name, $age years old, " + (boy ? "I am a boy" : "I am a gril")
     }
+
 }

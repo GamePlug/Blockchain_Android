@@ -14,13 +14,13 @@ public class ConfigPlugin implements Plugin<Project> {
     public void apply(Project project) {
         project.getExtensions().add("BiuConfig", new ConfigInfo());
         System.out.println("==========================");
-        System.out.println("=======BiuConfig=======" + project.getExtensions().getByName("BiuConfig").toString());
+        System.out.println("=========BiuConfig========" + project.getExtensions().getByName("BiuConfig").toString());
         System.out.println("==========================");
         project.task("biuConfig").doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
                 System.out.println("==========================");
-                System.out.println("==========BiuConfig==========" + project.getExtensions().getByName("BiuConfig").toString());
+                System.out.println("=========BiuConfig========" + project.getExtensions().getByName("BiuConfig").toString());
                 System.out.println("==========================");
             }
         }).setGroup("leichao");

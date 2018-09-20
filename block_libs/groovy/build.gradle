@@ -2,12 +2,6 @@ apply plugin: 'groovy'
 apply from: rootProject.ext.configs.maven_push
 
 dependencies {
-    //gradle sdk
-    compile gradleApi()
-    //groovy sdk
-    compile localGroovy()
-}
-
-repositories {
-    mavenCentral()
+    implementation gradleApi()//gradle sdk
+    implementation localGroovy()//groovy sdk
 }

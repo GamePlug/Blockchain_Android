@@ -25,13 +25,13 @@ apply plugin: 'com.leichao.test'
 apply plugin: 'com.leichao.config'
 
 BiuTest {
-    name 'MuluTest你好'
+    name 'MuluTest(测试)'
     age 18
     boy true
 }
 
 BiuConfig {
-    setName 'MulaConfig你好'
+    setName 'MulaConfig(配置)'
     setAge 19
     setBoy false
 }

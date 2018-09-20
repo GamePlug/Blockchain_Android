@@ -35,7 +35,7 @@ public class ConfigInfo {
 
     @Override
     public String toString() {
-        return "本地 I am " + name + ", " + age + " years old, " + (boy ? "I am a boy" : "I am a gril");
+        return "中文会乱码，I am " + name + ", " + age + " years old, " + (boy ? "I am a boy" : "I am a gril");
     }
 
 }
