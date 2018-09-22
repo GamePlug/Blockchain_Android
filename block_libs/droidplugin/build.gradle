@@ -1,4 +1,5 @@
 apply from: rootProject.ext.configs.base_lib
+apply from: rootProject.ext.configs.maven_push
 
 dependencies {
     compileOnly fileTree(dir: 'lib', include: '*.jar')// 指定compileOnly类型的lib目录,注意这里不是libs目录

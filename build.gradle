@@ -5,7 +5,8 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url LOCAL_URL }
+        //maven { url RELEASE_URL }
+        maven { url uri(rootProject.rootDir.absolutePath + "/maven") }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
@@ -13,7 +14,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${rootProject.ext.versions.kotlinVersion}"
         classpath "com.qihoo360.replugin:replugin-host-gradle:${rootProject.ext.versions.repluginVersion}"
         classpath "com.qihoo360.replugin:replugin-plugin-gradle:${rootProject.ext.versions.repluginVersion}"
-        classpath 'com.leichao:groovy:1.0.0-LOCAL'
+        classpath rootProject.ext.dependencies.lei_groovy
     }
 }
 
@@ -21,6 +22,8 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //maven { url RELEASE_URL }
+        maven { url uri(rootProject.rootDir.absolutePath + "/maven") }
     }
 }
 

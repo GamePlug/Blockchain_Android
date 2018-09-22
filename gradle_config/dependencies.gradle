@@ -36,6 +36,16 @@ ext {
             // multidex
             multidex                  : 'com.android.support:multidex:1.0.3',
 
+            // leichao
+            lei_common                : 'com.leichao:common:1.0.0-MODULE',
+            lei_droidplugin           : 'com.leichao:droidplugin:1.0.0-MODULE',
+            lei_glide                 : 'com.leichao:glide:1.0.0-MODULE',
+            lei_groovy                : 'com.leichao:groovy:1.0.0-MODULE',
+            lei_mqtt                  : 'com.leichao:mqtt:1.0.0-MODULE',
+            lei_processor             : 'com.leichao:processor:1.0.0-MODULE',
+            lei_retrofit              : 'com.leichao:retrofit:1.0.0-MODULE',
+            lei_util                  : 'com.leichao:util:1.0.0-MODULE',
+
             // replugin
             replugin_host             : "com.qihoo360.replugin:replugin-host-lib:${rootProject.ext.versions.repluginVersion}",
             replugin_plugin           : "com.qihoo360.replugin:replugin-plugin-lib:${rootProject.ext.versions.repluginVersion}",

@@ -1,5 +1,6 @@
 apply from: rootProject.ext.configs.base_lib
+apply from: rootProject.ext.configs.maven_push
 
 dependencies {
-    implementation project(':block_libs:util')
+    implementation rootProject.ext.dependencies.lei_util
 }

@@ -6,6 +6,8 @@ def getRepositoryUrl() {
         return SNAPSHOT_URL
     } else if (VERSION.contains("-LOCAL")) {
         return LOCAL_URL
+    } else if (VERSION.contains("-MODULE")) {
+        return uri(rootProject.rootDir.absolutePath + "/maven")
     }
     return RELEASE_URL
 }
@@ -30,7 +32,11 @@ task sourcesJar(type: Jar) {
     if (project.hasProperty('android')) {
         from project.android.sourceSets.main.java.sourceFiles// 用于Android项目
     } else if (sourceSets.hasProperty('main')) {
-        from sourceSets.main.groovy.srcDirs// 用于Gradle项目
+        if (sourceSets.main.hasProperty("groovy")) {
+            from sourceSets.main.groovy.srcDirs// 用于Groovy项目
+        } else if (sourceSets.main.hasProperty("java")) {
+            from sourceSets.main.java.srcDirs// 用于Java项目
+        }
     }
 }
 artifacts {
