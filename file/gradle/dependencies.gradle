@@ -1,0 +1,75 @@
+ext {
+    versions = [
+            compileSdkVersion   : 27,
+            minSdkVersion       : 14,
+            targetSdkVersion    : 27,
+            supportVersion      : '27.1.1',
+            kotlinVersion       : '1.2.61',
+            repluginVersion     : '2.3.0',
+    ]
+
+    gradle = [
+            base_app        : rootProject.rootDir.absolutePath + "/file/gradle/base_app.gradle",
+            base_lib        : rootProject.rootDir.absolutePath + "/file/gradle/base_lib.gradle",
+            dependencies    : rootProject.rootDir.absolutePath + "/file/gradle/dependencies.gradle",
+            maven_push      : rootProject.rootDir.absolutePath + "/file/gradle/maven_push.gradle",
+            replugin_host   : rootProject.rootDir.absolutePath + "/file/gradle/replugin_host.gradle",
+            replugin_plugin : rootProject.rootDir.absolutePath + "/file/gradle/replugin_plugin.gradle",
+    ]
+
+    file = [
+            keystore        : rootProject.rootDir.absolutePath + "/file/other/mula.keystore",
+            maven           : uri(rootProject.rootDir.absolutePath + "/file/maven"),
+    ]
+
+    dependencies = [
+            // test
+            testInstrumentationRunner : 'android.support.test.runner.AndroidJUnitRunner',
+            junit                     : 'junit:junit:4.12',
+            test_runner               : 'com.android.support.test:runner:1.0.2',
+            test_espresso             : 'com.android.support.test.espresso:espresso-core:3.0.2',
+
+            // kotlin
+            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.versions.kotlinVersion}",
+
+            // support
+            appcompatV7               : "com.android.support:appcompat-v7:${rootProject.ext.versions.supportVersion}",
+            recyclerView              : "com.android.support:recyclerview-v7:${rootProject.ext.versions.supportVersion}",
+
+            // multidex
+            multidex                  : 'com.android.support:multidex:1.0.3',
+
+            // leichao
+            lei_common                : 'com.leichao:common:1.0.0-MODULE',
+            lei_droidplugin           : 'com.leichao:droidplugin:1.0.0-MODULE',
+            lei_glide                 : 'com.leichao:glide:1.0.0-MODULE',
+            lei_groovy                : 'com.leichao:groovy:1.0.0-MODULE',
+            lei_mqtt                  : 'com.leichao:mqtt:1.0.0-MODULE',
+            lei_processor             : 'com.leichao:processor:1.0.0-MODULE',
+            lei_retrofit              : 'com.leichao:retrofit:1.0.0-MODULE',
+            lei_util                  : 'com.leichao:util:1.0.0-MODULE',
+
+            // replugin
+            replugin_host             : "com.qihoo360.replugin:replugin-host-lib:${rootProject.ext.versions.repluginVersion}",
+            replugin_plugin           : "com.qihoo360.replugin:replugin-plugin-lib:${rootProject.ext.versions.repluginVersion}",
+
+            // gson
+            gson                      : 'com.google.code.gson:gson:2.8.5',
+
+            // rxjava
+            rxjava                    : 'io.reactivex.rxjava2:rxjava:2.1.16',
+            rxandroid                 : 'io.reactivex.rxjava2:rxandroid:2.0.2',
+
+            // retrofit
+            retrofit                  : 'com.squareup.retrofit2:retrofit:2.4.0',
+            converter_gson            : 'com.squareup.retrofit2:converter-gson:2.4.0',
+            adapter_rxjava            : 'com.squareup.retrofit2:adapter-rxjava2:2.4.0',
+
+            // glide
+            glide                     : 'com.github.bumptech.glide:glide:4.7.1',
+
+            // mqtt
+            mqttv3                    : 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0',
+            mqttv3_android            : 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1',
+    ]
+}

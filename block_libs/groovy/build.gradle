@@ -1,5 +1,5 @@
 apply plugin: 'groovy'
-apply from: rootProject.ext.configs.maven_push
+apply from: rootProject.ext.gradle.maven_push
 
 dependencies {
     implementation gradleApi()//gradle sdk

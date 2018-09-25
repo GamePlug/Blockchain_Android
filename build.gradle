@@ -1,12 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    apply from: rootProject.rootDir.absolutePath + "/gradle_config/dependencies.gradle"
+    apply from: rootProject.rootDir.absolutePath + "/file/gradle/dependencies.gradle"
     repositories {
         google()
         jcenter()
         //maven { url RELEASE_URL }
-        maven { url uri(rootProject.rootDir.absolutePath + "/maven") }
+        maven { url rootProject.ext.file.maven }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
@@ -23,7 +23,7 @@ allprojects {
         google()
         jcenter()
         //maven { url RELEASE_URL }
-        maven { url uri(rootProject.rootDir.absolutePath + "/maven") }
+        maven { url rootProject.ext.file.maven }
     }
 }
 

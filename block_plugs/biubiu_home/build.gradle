@@ -1,4 +1,4 @@
-apply from: rootProject.ext.configs.base_app
+apply from: rootProject.ext.gradle.base_app
 
 android {
     defaultConfig {
@@ -8,7 +8,7 @@ android {
     }
 }
 
-apply from: rootProject.ext.configs.replugin_plugin
+apply from: rootProject.ext.gradle.replugin_plugin
 
 dependencies {
     /*implementation project(':block_libs:common')

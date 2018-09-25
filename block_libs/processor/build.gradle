@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
-apply from: rootProject.ext.configs.maven_push
+apply from: rootProject.ext.gradle.maven_push
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
