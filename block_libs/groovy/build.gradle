@@ -5,3 +5,7 @@ dependencies {
     implementation gradleApi()//gradle sdk
     implementation localGroovy()//groovy sdk
 }
+
+tasks.withType(GroovyCompile) {
+    options.encoding = "UTF-8"
+}

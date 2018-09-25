@@ -5,4 +5,18 @@
   <groupId>com.leichao</groupId>
   <artifactId>processor</artifactId>
   <version>1.0.0-MODULE</version>
+  <dependencies>
+    <dependency>
+      <groupId>com.squareup</groupId>
+      <artifactId>javapoet</artifactId>
+      <version>1.9.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service</artifactId>
+      <version>1.0-rc2</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
 </project>
