@@ -16,13 +16,13 @@ dependencies {
     implementation project(':block_libs:mqtt')
     implementation project(':block_libs:retrofit')
     implementation project(':block_libs:glide')
-    annotationProcessor project(':block_libs:processor')*/
+    kapt project(':block_libs:processor')*/
     implementation rootProject.ext.dependencies.lei_common
     implementation rootProject.ext.dependencies.lei_util
     implementation rootProject.ext.dependencies.lei_mqtt
     implementation rootProject.ext.dependencies.lei_retrofit
     implementation rootProject.ext.dependencies.lei_glide
-    annotationProcessor rootProject.ext.dependencies.lei_processor
+    kapt rootProject.ext.dependencies.lei_processor
 
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
