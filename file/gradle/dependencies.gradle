@@ -8,18 +8,20 @@ ext {
             repluginVersion     : '2.3.0',
     ]
 
+    rootPath = rootProject.rootDir.absolutePath
+
     gradle = [
-            base_app        : rootProject.rootDir.absolutePath + "/file/gradle/base_app.gradle",
-            base_lib        : rootProject.rootDir.absolutePath + "/file/gradle/base_lib.gradle",
-            dependencies    : rootProject.rootDir.absolutePath + "/file/gradle/dependencies.gradle",
-            maven_push      : rootProject.rootDir.absolutePath + "/file/gradle/maven_push.gradle",
-            replugin_host   : rootProject.rootDir.absolutePath + "/file/gradle/replugin_host.gradle",
-            replugin_plugin : rootProject.rootDir.absolutePath + "/file/gradle/replugin_plugin.gradle",
+            base_app        : rootPath + "/file/gradle/base_app.gradle",
+            base_lib        : rootPath + "/file/gradle/base_lib.gradle",
+            dependencies    : rootPath + "/file/gradle/dependencies.gradle",
+            maven_push      : rootPath + "/file/gradle/maven_push.gradle",
+            replugin_host   : rootPath + "/file/gradle/replugin_host.gradle",
+            replugin_plugin : rootPath + "/file/gradle/replugin_plugin.gradle",
     ]
 
     file = [
-            keystore        : rootProject.rootDir.absolutePath + "/file/other/mula.keystore",
-            maven           : uri(rootProject.rootDir.absolutePath + "/file/maven"),
+            keystore        : rootPath + "/file/other/mula.keystore",
+            maven           : uri(rootPath + "/file/maven"),
     ]
 
     dependencies = [
@@ -29,12 +31,12 @@ ext {
             test_runner               : 'com.android.support.test:runner:1.0.2',
             test_espresso             : 'com.android.support.test.espresso:espresso-core:3.0.2',
 
-            // kotlin
-            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.versions.kotlinVersion}",
-
             // support
             appcompatV7               : "com.android.support:appcompat-v7:${rootProject.ext.versions.supportVersion}",
             recyclerView              : "com.android.support:recyclerview-v7:${rootProject.ext.versions.supportVersion}",
+
+            // kotlin
+            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.versions.kotlinVersion}",
 
             // multidex
             multidex                  : 'com.android.support:multidex:1.0.3',
