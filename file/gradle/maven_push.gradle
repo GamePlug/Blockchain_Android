@@ -30,13 +30,9 @@ uploadArchives {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     if (project.hasProperty('android')) {
-        from project.android.sourceSets.main.java.sourceFiles// 用于Android项目
+        from project.android.sourceSets.main.java.srcDirs// 用于Android项目
     } else if (sourceSets.hasProperty('main')) {
-        if (sourceSets.main.hasProperty("groovy")) {
-            from sourceSets.main.groovy.srcDirs// 用于Groovy项目
-        } else if (sourceSets.main.hasProperty("java")) {
-            from sourceSets.main.java.srcDirs// 用于Java项目
-        }
+        from project.sourceSets.main.allSource// 用于非Android项目
     }
 }
 artifacts {

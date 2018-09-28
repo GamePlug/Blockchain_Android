@@ -1,6 +1,6 @@
 package com.leichao.biubiu
 
-import com.leichao.common.BaseActivity
+import com.leichao.common.base.BaseActivity
 import com.leichao.common.plugin.PluginConstant
 import com.leichao.util.StatusBarUtil
 import com.leichao.util.ToastUtil

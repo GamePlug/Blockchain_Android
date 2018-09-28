@@ -32,11 +32,11 @@ ext {
             test_espresso             : 'com.android.support.test.espresso:espresso-core:3.0.2',
 
             // support
-            appcompatV7               : "com.android.support:appcompat-v7:${rootProject.ext.versions.supportVersion}",
-            recyclerView              : "com.android.support:recyclerview-v7:${rootProject.ext.versions.supportVersion}",
+            appcompatV7               : "com.android.support:appcompat-v7:${versions.supportVersion}",
+            recyclerView              : "com.android.support:recyclerview-v7:${versions.supportVersion}",
 
             // kotlin
-            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.ext.versions.kotlinVersion}",
+            kotlin                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion}",
 
             // multidex
             multidex                  : 'com.android.support:multidex:1.0.3',
@@ -65,8 +65,8 @@ ext {
             mqttv3_android            : 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1',
 
             // replugin
-            replugin_host             : "com.qihoo360.replugin:replugin-host-lib:${rootProject.ext.versions.repluginVersion}",
-            replugin_plugin           : "com.qihoo360.replugin:replugin-plugin-lib:${rootProject.ext.versions.repluginVersion}",
+            replugin_host             : "com.qihoo360.replugin:replugin-host-lib:${versions.repluginVersion}",
+            replugin_plugin           : "com.qihoo360.replugin:replugin-plugin-lib:${versions.repluginVersion}",
 
             // leichao
             lei_common                : 'com.leichao:common:1.0.0-MODULE',

@@ -6,7 +6,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import com.leichao.biubiu.home.app.AppInfo
 import com.leichao.biubiu.home.app.AppManager
 import com.leichao.biubiu.home.R
-import com.leichao.common.BaseActivity
+import com.leichao.common.base.BaseActivity
 import com.leichao.util.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_home.*
 

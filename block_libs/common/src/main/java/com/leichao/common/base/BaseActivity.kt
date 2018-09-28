@@ -1,4 +1,4 @@
-package com.leichao.common
+package com.leichao.common.base
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
