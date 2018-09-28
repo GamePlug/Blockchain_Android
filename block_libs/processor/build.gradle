@@ -3,8 +3,8 @@ apply from: rootProject.ext.gradle.maven_push
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.squareup:javapoet:1.9.0'
-    implementation 'com.google.auto.service:auto-service:1.0-rc2'
+    implementation rootProject.ext.dependencies.javapoet
+    implementation rootProject.ext.dependencies.auto_service
 }
 
 sourceCompatibility = "1.7"

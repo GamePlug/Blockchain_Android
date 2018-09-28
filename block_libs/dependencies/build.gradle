@@ -40,6 +40,10 @@ dependencies {
     // multidex
     implementation 'com.android.support:multidex:1.0.3'
 
+    // processor
+    implementation 'com.squareup:javapoet:1.11.1'
+    implementation 'com.google.auto.service:auto-service:1.0-rc4'
+
     // gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
@@ -58,4 +62,18 @@ dependencies {
     // mqtt
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    // replugin
+    implementation 'com.qihoo360.replugin:replugin-host-lib:2.3.0'
+    implementation 'com.qihoo360.replugin:replugin-plugin-lib:2.3.0'
+
+    // leichao
+    implementation 'com.leichao:common:1.0.0-MODULE'
+    implementation 'com.leichao:droidplugin:1.0.0-MODULE'
+    implementation 'com.leichao:glide:1.0.0-MODULE'
+    implementation 'com.leichao:groovy:1.0.0-MODULE'
+    implementation 'com.leichao:mqtt:1.0.0-MODULE'
+    implementation 'com.leichao:processor:1.0.0-MODULE'
+    implementation 'com.leichao:retrofit:1.0.0-MODULE'
+    implementation 'com.leichao:util:1.0.0-MODULE'
 }
