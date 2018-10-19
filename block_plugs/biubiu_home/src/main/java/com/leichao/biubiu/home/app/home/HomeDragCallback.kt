@@ -54,19 +54,17 @@ class HomeDragCallback(private val mAdapter: HomeAdapter) : ItemTouchHelper.Call
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         super.onSelectedChanged(viewHolder, actionState)
-        if (viewHolder?.itemView != null) {// 当选中某个item时,将整个itemView变大
-            viewHolder.itemView.scaleX = 1.3F
-            viewHolder.itemView.scaleY = 1.3F
-        }
+        // 当选中某个item时,将整个itemView变大
+        viewHolder?.itemView?.scaleX = 1.3F
+        viewHolder?.itemView?.scaleY = 1.3F
     }
 
-    override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder) {
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         restore.clear()
-        if (viewHolder.itemView != null) {// 松开时,itemView恢复原状
-            viewHolder.itemView.scaleX = 1F
-            viewHolder.itemView.scaleY = 1F
-        }
+        // 松开时,itemView恢复原状
+        viewHolder.itemView.scaleX = 1F
+        viewHolder.itemView.scaleY = 1F
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}

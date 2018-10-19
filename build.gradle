@@ -7,9 +7,10 @@ buildscript {
         jcenter()
         //maven { url RELEASE_URL }
         maven { url rootProject.ext.file.maven }
+        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.ext.versions.kotlinVersion}"
         classpath "com.qihoo360.replugin:replugin-host-gradle:${rootProject.ext.versions.repluginVersion}"
         classpath "com.qihoo360.replugin:replugin-plugin-gradle:${rootProject.ext.versions.repluginVersion}"
@@ -23,6 +24,7 @@ allprojects {
         jcenter()
         //maven { url RELEASE_URL }
         maven { url rootProject.ext.file.maven }
+        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
     }
 }
 
