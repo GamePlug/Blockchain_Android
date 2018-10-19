@@ -7,5 +7,6 @@ dependencies {
     implementation rootProject.ext.dependencies.adapter_rxjava
     implementation rootProject.ext.dependencies.rxjava
     implementation rootProject.ext.dependencies.rxandroid
+    implementation rootProject.ext.dependencies.rxlifecycle
     implementation rootProject.ext.dependencies.gson
 }

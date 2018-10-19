@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
+import com.leichao.biubiu.home.MainActivity
 import com.leichao.biubiu.home.R
 import com.leichao.biubiu.home.app.copy.CopyActivity
 import com.leichao.common.plugin.Plugin
@@ -45,7 +46,7 @@ object AppManager {
             val defaultIcon = ContextCompat.getDrawable(AppUtil.getApp(), R.mipmap.ic_launcher)!!
             val defaultPackageName = AppUtil.getApp().packageName
             homeAppList.add(AppInfo(AppInfo.Type.SYSTEM, AppInfo.Status.INSTALLED, 0, Plugin(
-                    "设置", defaultIcon, CopyActivity::class.java.name, defaultPackageName, ""
+                    "设置", defaultIcon, MainActivity::class.java.name, defaultPackageName, ""
             )))
             homeAppList.add(AppInfo(AppInfo.Type.SYSTEM, AppInfo.Status.INSTALLED, 0, Plugin(
                     "回收站", defaultIcon, CopyActivity::class.java.name, defaultPackageName, ""

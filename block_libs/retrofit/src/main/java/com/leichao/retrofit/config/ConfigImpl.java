@@ -20,7 +20,7 @@ public class ConfigImpl implements IConfig {
     }
 
     public String getBaseUrl() {
-        return "http://47.52.202.193:8080/";
+        return "http://47.74.159.3:8084/";
     }
 
     public Map<String, String> getCommonParams(String url) {

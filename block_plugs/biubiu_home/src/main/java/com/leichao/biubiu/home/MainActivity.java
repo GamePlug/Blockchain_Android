@@ -2,6 +2,7 @@ package com.leichao.biubiu.home;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +18,6 @@ import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.IStores;
 import com.leichao.retrofit.config.ConfigImpl;
 import com.leichao.retrofit.loading.CarLoading;
-import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.util.AppUtil;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     TextView textView;
     EditText etInput;
 
-    private BaseObserver mObserver;
+    private MulaObserver<String> mObserver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -228,16 +228,13 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 return new CarLoading(context, message, cancelable);
             }
         });
-        mObserver = HttpManager.subscribe(HttpManager.create(IStores.class).getGoogleKey(),
-                new MulaObserver<String>(MainActivity.this) {
+        HttpManager.create(IStores.class)
+                .getGoogleKey()
+                .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
+                .subscribe(mObserver = new MulaObserver<String>() {
                     @Override
                     protected void onHttpSuccess(MulaResult<String> result) {
 
-                    }
-
-                    @Override
-                    protected void onHttpFailure(MulaResult<String> result) {
-                        super.onHttpFailure(result);
                     }
                 });
         //mObserver.cancel();
