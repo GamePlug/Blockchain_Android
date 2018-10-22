@@ -1,8 +1,8 @@
 package com.leichao.retrofit.config;
 
-import android.app.Dialog;
 import android.content.Context;
 
+import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.DefaultLoading;
 
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class ConfigImpl implements IConfig {
     }
 
     @Override
-    public Dialog getLoading(Context context, String message, boolean cancelable) {
+    public BaseLoading getLoading(Context context, String message, boolean cancelable) {
         return new DefaultLoading(context, message, cancelable);
     }
 

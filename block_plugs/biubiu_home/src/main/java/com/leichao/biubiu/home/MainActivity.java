@@ -1,7 +1,6 @@
 package com.leichao.biubiu.home;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.net.Uri;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.IStores;
 import com.leichao.retrofit.config.ConfigImpl;
+import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.result.MulaResult;
@@ -224,19 +224,25 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
             }
 
             @Override
-            public Dialog getLoading(Context context, String message, boolean cancelable) {
+            public BaseLoading getLoading(Context context, String message, boolean cancelable) {
                 return new CarLoading(context, message, cancelable);
             }
         });
+        mObserver = new MulaObserver<String>(this) {
+            @Override
+            protected void onHttpSuccess(MulaResult<String> result) {
+
+            }
+        };
         HttpManager.create(IStores.class)
                 .getGoogleKey()
                 .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
-                .subscribe(mObserver = new MulaObserver<String>() {
-                    @Override
-                    protected void onHttpSuccess(MulaResult<String> result) {
-
-                    }
-                });
+                .subscribe(mObserver);
+        //mObserver.cancel();
+        /*HttpManager.create(IStores.class)
+                .getGoogleKey()
+                .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
+                .subscribe(mObserver);*/
         //mObserver.cancel();
     }
 

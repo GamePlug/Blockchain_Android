@@ -1,7 +1,8 @@
 package com.leichao.retrofit.config;
 
-import android.app.Dialog;
 import android.content.Context;
+
+import com.leichao.retrofit.loading.BaseLoading;
 
 import java.util.Map;
 
@@ -44,6 +45,6 @@ public interface IConfig {
      * @param cancelable 是否可以返回键取消
      * @return 加载动画Dialog
      */
-    Dialog getLoading(Context context, String message, boolean cancelable);
+    BaseLoading getLoading(Context context, String message, boolean cancelable);
 
 }

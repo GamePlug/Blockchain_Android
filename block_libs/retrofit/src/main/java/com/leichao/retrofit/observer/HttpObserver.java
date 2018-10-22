@@ -2,6 +2,8 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
+import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -11,19 +13,29 @@ import retrofit2.HttpException;
 
 public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
 
+    private BaseLoading mLoading;
+
     public HttpObserver() {
+        this(null, null, true);
     }
 
     public HttpObserver(Context context) {
-        super(context);
+        this(context, null, true);
     }
 
     public HttpObserver(Context context, String message) {
-        super(context, message);
+        this(context, message, true);
     }
 
     public HttpObserver(Context context, String message, boolean cancelable) {
-        super(context, message, cancelable);
+        if (context != null) {
+            mLoading = Config.getInstance().getLoading(context, message, cancelable);
+        }
+    }
+
+    @Override
+    protected BaseLoading onHttpLoading() {
+        return mLoading;
     }
 
     @Override

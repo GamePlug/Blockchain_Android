@@ -1,5 +1,6 @@
 package com.leichao.retrofit.loading;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -13,10 +14,10 @@ import android.widget.TextView;
 import com.leichao.retrofit.R;
 
 /**
- * 加载动画
+ * 默认加载动画
  * Created by leichao on 2017/3/7.
  */
-public class DefaultLoading extends Dialog {
+public class DefaultLoading extends Dialog implements BaseLoading {
 
     private Context context;
     private String message;
@@ -66,6 +67,9 @@ public class DefaultLoading extends Dialog {
 
     @Override
     public void dismiss() {
+        if (context instanceof Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         super.dismiss();
         if (ivImage != null) {
             ivImage.clearAnimation();

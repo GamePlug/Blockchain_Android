@@ -1,5 +1,6 @@
 package com.leichao.retrofit.loading;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
@@ -10,10 +11,10 @@ import android.widget.TextView;
 import com.leichao.retrofit.R;
 
 /**
- * 加载提示dialog
+ * 汽车加载动画
  * Created by leichao on 2017/3/7.
  */
-public class CarLoading extends Dialog {
+public class CarLoading extends Dialog implements BaseLoading {
 
     private Context context;
     private String message;
@@ -60,6 +61,9 @@ public class CarLoading extends Dialog {
 
     @Override
     public void dismiss() {
+        if (context instanceof Activity && ((Activity) context).isFinishing()) {
+            return;
+        }
         super.dismiss();
         if (carView != null) {
             carView.stop();

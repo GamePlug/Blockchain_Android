@@ -24,8 +24,6 @@ dependencies {
     implementation rootProject.ext.dependencies.lei_glide
     kapt rootProject.ext.dependencies.lei_processor*/
 
-    implementation rootProject.ext.dependencies.rxjava
-    implementation rootProject.ext.dependencies.rxandroid
     implementation rootProject.ext.dependencies.recyclerView
 }
 

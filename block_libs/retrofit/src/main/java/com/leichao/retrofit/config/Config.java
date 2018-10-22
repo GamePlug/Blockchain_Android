@@ -1,7 +1,8 @@
 package com.leichao.retrofit.config;
 
-import android.app.Dialog;
 import android.content.Context;
+
+import com.leichao.retrofit.loading.BaseLoading;
 
 import java.util.Map;
 
@@ -90,9 +91,9 @@ public class Config {
     /**
      * 获取加载动画
      */
-    public Dialog getLoading(Context context, String message, boolean cancelable) {
+    public BaseLoading getLoading(Context context, String message, boolean cancelable) {
         if (mConfig != null) {
-            Dialog loading = mConfig.getLoading(context, message, cancelable);
+            BaseLoading loading = mConfig.getLoading(context, message, cancelable);
             if (loading != null) {
                 return loading;
             }

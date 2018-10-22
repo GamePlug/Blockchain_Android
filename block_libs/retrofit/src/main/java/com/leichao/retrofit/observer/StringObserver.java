@@ -2,23 +2,35 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
+import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.util.LogUtil;
 
 public abstract class StringObserver extends BaseObserver<String> {
 
+    private BaseLoading mLoading;
+
     public StringObserver() {
+        this(null, null, true);
     }
 
     public StringObserver(Context context) {
-        super(context);
+        this(context, null, true);
     }
 
     public StringObserver(Context context, String message) {
-        super(context, message);
+        this(context, message, true);
     }
 
     public StringObserver(Context context, String message, boolean cancelable) {
-        super(context, message, cancelable);
+        if (context != null) {
+            mLoading = Config.getInstance().getLoading(context, message, cancelable);
+        }
+    }
+
+    @Override
+    protected BaseLoading onHttpLoading() {
+        return mLoading;
     }
 
     @Override
