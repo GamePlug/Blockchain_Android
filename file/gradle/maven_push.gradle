@@ -31,7 +31,7 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
     if (project.hasProperty('android')) {
         from project.android.sourceSets.main.java.srcDirs// 用于Android项目
-    } else if (sourceSets.hasProperty('main')) {
+    } else if (project.sourceSets.hasProperty('main')) {
         from project.sourceSets.main.allSource// 用于非Android项目
     }
 }

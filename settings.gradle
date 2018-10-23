@@ -2,7 +2,7 @@ include 'block_hosts:biubiu'
 
 include 'block_plugs:biubiu_home'
 
-include 'block_libs:dependencies'
+//include 'block_libs:dependencies'
 include 'block_libs:common'
 include 'block_libs:droidplugin'
 include 'block_libs:glide'
