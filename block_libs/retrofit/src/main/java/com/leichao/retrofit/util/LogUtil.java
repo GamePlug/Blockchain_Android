@@ -2,7 +2,7 @@ package com.leichao.retrofit.util;
 
 import android.util.Log;
 
-import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.HttpManager;
 
 /**
  * 工具类
@@ -17,7 +17,7 @@ public class LogUtil {
      * 打印log
      */
     public static void logI(String str) {
-        if (Config.getInstance().isDebug()) {
+        if (HttpManager.config().isDebug()) {
             Log.i(TAG, str);
         }
     }
@@ -26,7 +26,7 @@ public class LogUtil {
      * 打印log
      */
     public static void logE(String str) {
-        if (Config.getInstance().isDebug()) {
+        if (HttpManager.config().isDebug()) {
             Log.e(TAG, str);
         }
     }

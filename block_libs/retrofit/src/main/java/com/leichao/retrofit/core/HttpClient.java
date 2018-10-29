@@ -1,6 +1,6 @@
-package com.leichao.retrofit;
+package com.leichao.retrofit.core;
 
-import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.converter.ConverterFactory;
 import com.leichao.retrofit.interceptor.ParamsInterceptor;
 
@@ -16,7 +16,7 @@ public class HttpClient {
     private Retrofit mRetrofit;
 
     private HttpClient() {
-        long timeout = Config.getInstance().getTimeout();
+        long timeout = HttpManager.config().getTimeout();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)// 连接失败重连，默认为true，可以不加
                 .connectTimeout(timeout, TimeUnit.SECONDS)// 链接超时
@@ -29,7 +29,7 @@ public class HttpClient {
                 .build();
 
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(Config.getInstance().getBaseUrl())
+                .baseUrl(HttpManager.config().getBaseUrl())
                 .addConverterFactory(ConverterFactory.create())// Gson解析转换工厂//GsonConverterFactory
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())// RxJava适配器
                 .client(okHttpClient)
@@ -38,7 +38,7 @@ public class HttpClient {
 
     public static HttpClient getInstance() {
         if (instance == null) {
-            synchronized (Config.class) {
+            synchronized (HttpClient.class) {
                 if (instance == null) {
                     instance = new HttpClient();
                 }

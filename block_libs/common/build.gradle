@@ -2,5 +2,6 @@ apply from: rootProject.ext.gradle.base_lib
 apply from: rootProject.ext.gradle.maven_push
 
 dependencies {
-    implementation rootProject.ext.dependencies.lei_util
+    implementation project(':block_libs:util')
+    //implementation rootProject.ext.dependencies.lei_util
 }

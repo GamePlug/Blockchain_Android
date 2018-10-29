@@ -14,11 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.IStores;
-import com.leichao.retrofit.config.ConfigImpl;
+import com.leichao.retrofit.core.HttpApi;
+import com.leichao.retrofit.core.HttpConfig;
+import com.leichao.retrofit.HttpSimple;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.MulaObserver;
+import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.util.AppUtil;
 import com.leichao.util.KeyboardUtil;
@@ -31,7 +33,8 @@ import com.leichao.util.ToastUtil;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -184,66 +187,81 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     public static final String VERSION = "version";
     public static final String CLIENT = "client";
     // 加密的key与值
-    public static final String KEY_VALUE="key=aaaaaa";
+    public static final String KEY_VALUE = "key=aaaaaa";
 
     public void test() {
-        HttpManager.config(new ConfigImpl() {
-            @Override
-            public Map<String, String> getCommonParams(String url) {
-                Map<String, String> params = new HashMap<>();
-                params.put(NONCE_STR, String.valueOf(System.currentTimeMillis()));// 增加nonce_str参数
-                params.put(LANGUAGE, "Zh");// 增加language参数
-                params.put(VERSION, "2.0.0");// 增加version参数
-                params.put(CLIENT, "android");// 增加client参数
+        HttpManager.config()
+                .setTimeout(40)
+                .setCallback(new HttpConfig.Callback() {
+                    @Override
+                    public Map<String, String> getCommonParams(String url) {
+                        Map<String, String> params = new LinkedHashMap<>();
+                        params.put(NONCE_STR, String.valueOf(System.currentTimeMillis()));// 增加nonce_str参数
+                        params.put(LANGUAGE, "Zh");// 增加language参数
+                        params.put(VERSION, "2.0.0");// 增加version参数
+                        params.put(CLIENT, "android");// 增加client参数
 
-                // 增加userId参数
-                Uri uri = Uri.parse(url);
-                if (!TextUtils.isEmpty(getUserId()) && !uri.getQueryParameterNames().contains(USER_ID)) {
-                    params.put(USER_ID, getUserId());
-                }
-                // 增加sign参数
-                for (String key : params.keySet()) {
-                    String value = params.get(key);
-                    url += (url.contains("?") ? "&" : "?") + key + "=" + value;
-                }
-                String sign = getSign(url);
-                params.put(SIGN, sign);
-                // 增加单点登录验证,不参与签名
-                if (!uri.getQueryParameterNames().contains(IS_VERIFY)) {
-                    String secret = getSecret();
-                    if (TextUtils.isEmpty(secret)) {
-                        params.put(IS_VERIFY, "0");
-                    } else {
-                        params.put(IS_VERIFY, "1");
-                        params.put(SECRET, secret);
-                        params.put(SECRET_KEY, getSecretKey());
+                        // 增加userId参数
+                        Uri uri = Uri.parse(url);
+                        if (!TextUtils.isEmpty(getUserId()) && !uri.getQueryParameterNames().contains(USER_ID)) {
+                            params.put(USER_ID, getUserId());
+                        }
+                        // 增加sign参数
+                        for (String key : params.keySet()) {
+                            String value = params.get(key);
+                            url += (url.contains("?") ? "&" : "?") + key + "=" + value;
+                        }
+                        String sign = getSign(url);
+                        params.put(SIGN, sign);
+                        // 增加单点登录验证,不参与签名
+                        if (!uri.getQueryParameterNames().contains(IS_VERIFY)) {
+                            String secret = getSecret();
+                            if (TextUtils.isEmpty(secret)) {
+                                params.put(IS_VERIFY, "0");
+                            } else {
+                                params.put(IS_VERIFY, "1");
+                                params.put(SECRET, secret);
+                                params.put(SECRET_KEY, getSecretKey());
+                            }
+                        }
+                        return params;
                     }
-                }
 
-                return params;
-            }
-
-            @Override
-            public BaseLoading getLoading(Context context, String message, boolean cancelable) {
-                return new CarLoading(context, message, cancelable);
-            }
-        });
+                    @Override
+                    public BaseLoading getLoading(Context context, String message, boolean cancelable) {
+                        return new CarLoading(context, message, cancelable);
+                    }
+                });
         mObserver = new MulaObserver<String>(this) {
             @Override
             protected void onHttpSuccess(MulaResult<String> result) {
 
             }
         };
-        HttpManager.create(IStores.class)
-                .getGoogleKey()
+        HttpManager.create(HttpApi.class)
+                .test()
                 .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
                 .subscribe(mObserver);
         //mObserver.cancel();
-        /*HttpManager.create(IStores.class)
-                .getGoogleKey()
-                .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
-                .subscribe(mObserver);*/
-        //mObserver.cancel();
+        HttpManager.create()
+                .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0", Collections.<String, Object>emptyMap())
+                .compose(HttpManager.<String>transformer(this))
+                .subscribe(new StringObserver() {
+                    @Override
+                    protected void onHttpSuccess(String result) {
+
+                    }
+                });
+        HttpSimple.create()
+                .url("api/tms/googleKey/getGoogleKey?isVerify=0")
+                .param("aaaaa", 5555555)
+                .request(this)
+                .subscribe(new StringObserver() {
+                    @Override
+                    protected void onHttpSuccess(String result) {
+
+                    }
+                });
     }
 
     private String getUserId() {
@@ -283,7 +301,6 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
     /**
      * md5加密
-     *
      */
     public String md5(String string) {
         byte[] hash;

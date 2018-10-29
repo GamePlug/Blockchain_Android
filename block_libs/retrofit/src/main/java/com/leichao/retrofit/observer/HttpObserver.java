@@ -2,7 +2,7 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
-import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.util.LogUtil;
@@ -29,7 +29,7 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
 
     public HttpObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            mLoading = Config.getInstance().getLoading(context, message, cancelable);
+            mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
         }
     }
 
@@ -47,7 +47,7 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
             httpSuccess(result);
         } else {
             result.setStatus(HttpResult.Status.TYPE_FALSE);
-            // 统一处理登录时效，登录冲突等情况
+            // 统一处理登录失效，登录冲突等情况
             if ("-2".equals(result.getCode())) {
                 // 登陆冲突
             } else {

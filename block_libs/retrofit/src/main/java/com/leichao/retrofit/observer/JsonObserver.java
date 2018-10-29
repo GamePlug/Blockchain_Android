@@ -2,7 +2,7 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
-import com.leichao.retrofit.config.Config;
+import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -24,7 +24,7 @@ public abstract class JsonObserver<T> extends BaseObserver<T> {
 
     public JsonObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            mLoading = Config.getInstance().getLoading(context, message, cancelable);
+            mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
         }
     }
 

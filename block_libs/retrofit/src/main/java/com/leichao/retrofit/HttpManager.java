@@ -3,8 +3,9 @@ package com.leichao.retrofit;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
-import com.leichao.retrofit.config.Config;
-import com.leichao.retrofit.config.IConfig;
+import com.leichao.retrofit.core.HttpApi;
+import com.leichao.retrofit.core.HttpClient;
+import com.leichao.retrofit.core.HttpConfig;
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle;
 import com.trello.rxlifecycle2.LifecycleProvider;
 
@@ -14,10 +15,19 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class HttpManager {
+public final class HttpManager {
 
-    public static void config(IConfig config) {
-        Config.getInstance().setConfig(config);
+    private static HttpConfig mConfig = new HttpConfig();
+
+    private HttpManager() {
+    }
+
+    public static HttpConfig config() {
+        return mConfig;
+    }
+
+    public static HttpApi create() {
+        return create(HttpApi.class);
     }
 
     public static <T> T create(Class<T> service) {
