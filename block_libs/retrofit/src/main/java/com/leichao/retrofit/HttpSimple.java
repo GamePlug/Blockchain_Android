@@ -22,6 +22,7 @@ public class HttpSimple {
     private HttpApi mHttpApi = HttpManager.create();
     private Method mMethod = Method.GET;
     private String mUrl;
+    private Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
     private Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
     private Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
     private Object mJsonData;// 要以json数据格式上传的对象
@@ -56,6 +57,22 @@ public class HttpSimple {
      */
     public HttpSimple post() {
         this.mMethod = Method.POST;
+        return this;
+    }
+
+    /**
+     * 请求的header
+     */
+    public HttpSimple header(String key, Object value) {
+        this.mHeaders.put(key, value);
+        return this;
+    }
+
+    /**
+     * 请求的header集合
+     */
+    public HttpSimple headers(Map<String, Object> params) {
+        this.mHeaders.putAll(params);
         return this;
     }
 
@@ -144,20 +161,20 @@ public class HttpSimple {
     public Observable<String> request() {
         Observable<String> observable;
         if (mJsonData != null) {
-            observable = mHttpApi.postJson(mUrl, mParams, mJsonData);
+            observable = mHttpApi.postJson(mUrl, mHeaders, mParams, mJsonData);
 
         } else if (!mFileParams.isEmpty()) {
-            observable = mHttpApi.postFile(mUrl, mParams, mFileParams);
+            observable = mHttpApi.postFile(mUrl, mHeaders, mParams, mFileParams);
 
         } else {
             switch (mMethod) {
                 case POST:
-                    observable = mHttpApi.postNormal(mUrl, EMPTY_MAP, mParams);
+                    observable = mHttpApi.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
                 case GET:
                 default:
-                    observable = mHttpApi.getNormal(mUrl, mParams);
+                    observable = mHttpApi.getNormal(mUrl, mHeaders, mParams);
                     break;
             }
         }
@@ -177,20 +194,20 @@ public class HttpSimple {
     public Observable<ResponseBody> download() {
         Observable<ResponseBody> observable;
         if (mJsonData != null) {
-            observable = mHttpApi.postJsonDownload(mUrl, mParams, mJsonData);
+            observable = mHttpApi.postJsonDownload(mUrl, mHeaders, mParams, mJsonData);
 
         } else if (!mFileParams.isEmpty()) {
-            observable = mHttpApi.postFileDownload(mUrl, mParams, mFileParams);
+            observable = mHttpApi.postFileDownload(mUrl, mHeaders, mParams, mFileParams);
 
         } else {
             switch (mMethod) {
                 case POST:
-                    observable = mHttpApi.postNormalDownload(mUrl, EMPTY_MAP, mParams);
+                    observable = mHttpApi.postNormalDownload(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
                 case GET:
                 default:
-                    observable = mHttpApi.getNormalDownload(mUrl, mParams);
+                    observable = mHttpApi.getNormalDownload(mUrl, mHeaders, mParams);
                     break;
             }
         }

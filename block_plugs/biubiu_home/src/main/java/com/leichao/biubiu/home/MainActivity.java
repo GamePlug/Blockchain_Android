@@ -15,11 +15,10 @@ import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.HttpSimple;
-import com.leichao.retrofit.core.HttpApi;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
-import com.leichao.retrofit.observer.BodyObserver;
+import com.leichao.retrofit.observer.FileObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
@@ -32,7 +31,7 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,8 +40,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-
-import okhttp3.ResponseBody;
 
 /**
  * Created by leichao on 2018/1/5.
@@ -243,13 +240,14 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
             }
         };
-        HttpManager.create(HttpApi.class)
+        HttpManager.create(HomeApi.class)
                 .test()
                 .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
                 .subscribe(mObserver);
         //mObserver.cancel();
         HttpManager.create()
-                .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0", Collections.<String, Object>emptyMap())
+                .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0",
+                        Collections.<String, Object>emptyMap(), Collections.<String, Object>emptyMap())
                 .compose(HttpManager.<String>transformer(this))
                 .subscribe(new StringObserver() {
                     @Override
@@ -265,15 +263,10 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                     public void onProgress(long progress, long total, boolean done) {
                         LogUtil.e( (done?"下载完成:":"下载中:") + "--progress:" + progress + "--total:" + total);
                     }
-                })
-                .download(new BodyObserver() {
+                }).download(new FileObserver() {
                     @Override
-                    protected void onHttpSuccess(ResponseBody body) {
-                        try {
-                            LogUtil.e(body.string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    protected void onHttpSuccess(File file) {
+
                     }
                 });
     }

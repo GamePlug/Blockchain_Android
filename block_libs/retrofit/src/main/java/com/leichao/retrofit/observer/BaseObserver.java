@@ -22,7 +22,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
     @Override
     public final void onNext(T t) {
         if (t instanceof ResponseBody) {// 非ResponseBody的结果在转换器中已经打印了
-            LogUtil.logE("result:" + "Http Result is ResponseBody");
+            LogUtil.logE("result:" + "The http result is a ResponseBody");
         }
         handHttpSuccess(t);
     }

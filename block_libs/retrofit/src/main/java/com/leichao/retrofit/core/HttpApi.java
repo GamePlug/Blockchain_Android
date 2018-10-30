@@ -1,7 +1,5 @@
 package com.leichao.retrofit.core;
 
-import com.leichao.retrofit.result.MulaResult;
-
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -10,6 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HeaderMap;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PartMap;
@@ -33,6 +32,7 @@ public interface HttpApi {
     @GET
     Observable<String> getNormal(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams
     );
 
@@ -44,6 +44,7 @@ public interface HttpApi {
     @GET
     Observable<ResponseBody> getNormalDownload(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams
     );
 
@@ -57,6 +58,7 @@ public interface HttpApi {
     @POST
     Observable<String> postNormal(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @FieldMap Map<String, Object> fieldParams
     );
@@ -70,6 +72,7 @@ public interface HttpApi {
     @POST
     Observable<ResponseBody> postNormalDownload(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @FieldMap Map<String, Object> fieldParams
     );
@@ -84,6 +87,7 @@ public interface HttpApi {
     @POST("api/travel/base/ocrCard")
     Observable<String> postFile(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @PartMap Map<String, Object> partParams// 此处的Map中的Object可以为RequestBody
     );
@@ -97,6 +101,7 @@ public interface HttpApi {
     @POST("api/travel/base/ocrCard")
     Observable<ResponseBody> postFileDownload(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @PartMap Map<String, Object> partParams// 此处的Map中的Object可以为RequestBody
     );
@@ -110,6 +115,7 @@ public interface HttpApi {
     @POST
     Observable<String> postJson(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @Body Object object
     );
@@ -122,12 +128,9 @@ public interface HttpApi {
     @POST
     Observable<ResponseBody> postJsonDownload(
             @Url String url,
+            @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
             @Body Object object
     );
-
-    // 测试用接口
-    @GET("api/tms/googleKey/getGoogleKey?isVerify=0")
-    Observable<MulaResult<String>> test();
 
 }
