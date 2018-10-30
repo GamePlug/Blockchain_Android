@@ -3,6 +3,8 @@ package com.leichao.retrofit.core;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.converter.ConverterFactory;
 import com.leichao.retrofit.interceptor.ParamsInterceptor;
+import com.leichao.retrofit.interceptor.ProgressInterceptor;
+import com.leichao.retrofit.progress.ProgressListener;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,10 +14,24 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 public class HttpClient {
 
-    private static volatile HttpClient instance;
-    private Retrofit mRetrofit;
+    private static Retrofit mRetrofit;
 
-    private HttpClient() {
+    public static Retrofit getRetrofit() {
+        return getRetrofit(null);
+    }
+
+    public static Retrofit getRetrofit(ProgressListener listener) {
+        if (listener != null) {
+            return createRetrofit(listener);
+        } else {
+            if (mRetrofit == null) {
+                mRetrofit = createRetrofit(null);
+            }
+            return mRetrofit;
+        }
+    }
+
+    private static Retrofit createRetrofit(ProgressListener listener) {
         long timeout = HttpManager.config().getTimeout();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)// 连接失败重连，默认为true，可以不加
@@ -27,28 +43,17 @@ public class HttpClient {
                 //.cache(cache)// 设置OkHttp缓存
                 .addInterceptor(new ParamsInterceptor())// 添加自定义拦截操作//HttpLoggingInterceptor
                 .build();
-
-        mRetrofit = new Retrofit.Builder()
+        if (listener != null) {
+            okHttpClient = okHttpClient.newBuilder()
+                    .addInterceptor(new ProgressInterceptor(listener))
+                    .build();
+        }
+        return new Retrofit.Builder()
                 .baseUrl(HttpManager.config().getBaseUrl())
                 .addConverterFactory(ConverterFactory.create())// Gson解析转换工厂//GsonConverterFactory
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())// RxJava适配器
                 .client(okHttpClient)
                 .build();
-    }
-
-    public static HttpClient getInstance() {
-        if (instance == null) {
-            synchronized (HttpClient.class) {
-                if (instance == null) {
-                    instance = new HttpClient();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public Retrofit getRetrofit() {
-        return mRetrofit;
     }
 
 }

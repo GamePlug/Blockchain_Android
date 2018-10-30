@@ -6,6 +6,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import com.leichao.retrofit.core.HttpApi;
 import com.leichao.retrofit.core.HttpClient;
 import com.leichao.retrofit.core.HttpConfig;
+import com.leichao.retrofit.progress.ProgressListener;
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle;
 import com.trello.rxlifecycle2.LifecycleProvider;
 
@@ -27,11 +28,20 @@ public final class HttpManager {
     }
 
     public static HttpApi create() {
-        return create(HttpApi.class);
+        return create(HttpApi.class, null);
     }
 
     public static <T> T create(Class<T> service) {
-        return HttpClient.getInstance().getRetrofit().create(service);
+        return create(service, null);
+    }
+
+    /**
+     * 创建Retrofit的Api接口
+     *
+     * @param listener 下载进度监听
+     */
+    public static <T> T create(Class<T> service, ProgressListener listener) {
+        return HttpClient.getRetrofit(listener).create(service);
     }
 
     public static <T> ObservableTransformer<T, T> transformer() {
@@ -42,6 +52,11 @@ public final class HttpManager {
         return transformer(owner, null);
     }
 
+    /**
+     * 线程调度和生命周期绑定
+     *
+     * @param owner SupportActivity或者Fragment都实现了LifecycleOwner接口
+     */
     public static <T> ObservableTransformer<T, T> transformer(final LifecycleOwner owner, final Lifecycle.Event event) {
         return new ObservableTransformer<T, T>() {
             @Override

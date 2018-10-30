@@ -19,9 +19,10 @@ import com.leichao.retrofit.core.HttpApi;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
-import com.leichao.retrofit.observer.FileObserver;
+import com.leichao.retrofit.observer.BodyObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.observer.StringObserver;
+import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.util.AppUtil;
 import com.leichao.util.KeyboardUtil;
@@ -31,7 +32,7 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -40,6 +41,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
+import okhttp3.ResponseBody;
 
 /**
  * Created by leichao on 2018/1/5.
@@ -257,10 +260,20 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
         HttpSimple.create("api/tms/googleKey/getGoogleKey?isVerify=0")
                 .param("aaaaa", 5555555)
                 .bindLifecycle(this)
-                .download(new FileObserver() {
+                .progress(new ProgressListener() {
                     @Override
-                    protected void onHttpSuccess(File file) {
-                        LogUtil.e(file.getAbsolutePath());
+                    public void onProgress(long progress, long total, boolean done) {
+                        LogUtil.e( (done?"下载完成:":"下载中:") + "--progress:" + progress + "--total:" + total);
+                    }
+                })
+                .download(new BodyObserver() {
+                    @Override
+                    protected void onHttpSuccess(ResponseBody body) {
+                        try {
+                            LogUtil.e(body.string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
     }

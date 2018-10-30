@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
 import com.leichao.retrofit.core.HttpApi;
+import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.util.DataUtil;
 
 import java.util.Collections;
@@ -35,6 +36,7 @@ public class HttpSimple {
 
     /**
      * 创建请求工具
+     *
      * @param url 请求的url
      */
     public static HttpSimple create(String url) {
@@ -99,6 +101,7 @@ public class HttpSimple {
 
     /**
      * 绑定生命周期
+     *
      * @param owner 与Activity或者Fragment的生命周期绑定，在destroy时结束请求
      */
     public HttpSimple bindLifecycle(LifecycleOwner owner) {
@@ -108,12 +111,23 @@ public class HttpSimple {
 
     /**
      * 绑定生命周期
+     *
      * @param owner 与Activity或者Fragment的生命周期绑定
      * @param event 在Activity或者Fragment的生命周期状态event时结束请求
      */
     public HttpSimple bindLifecycle(LifecycleOwner owner, Lifecycle.Event event) {
         this.mLifeOwner = owner;
         this.mLifeEvent = event;
+        return this;
+    }
+
+    /**
+     * 下载进度监听
+     *
+     * @param listener 进度监听器
+     */
+    public HttpSimple progress(ProgressListener listener) {
+        this.mHttpApi = HttpManager.create(HttpApi.class, listener);
         return this;
     }
 
