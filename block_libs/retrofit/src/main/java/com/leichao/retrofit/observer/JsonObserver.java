@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
-import com.leichao.retrofit.util.LogUtil;
 
 public abstract class JsonObserver<T> extends BaseObserver<T> {
 
@@ -40,7 +39,6 @@ public abstract class JsonObserver<T> extends BaseObserver<T> {
 
     @Override
     protected final void handHttpFailure(Throwable throwable) {
-        LogUtil.logE("result:" + throwable.toString());
         httpFailure(throwable);
     }
 

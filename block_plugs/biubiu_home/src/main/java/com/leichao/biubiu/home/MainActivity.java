@@ -14,11 +14,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
+import com.leichao.retrofit.HttpSimple;
 import com.leichao.retrofit.core.HttpApi;
 import com.leichao.retrofit.core.HttpConfig;
-import com.leichao.retrofit.HttpSimple;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
+import com.leichao.retrofit.observer.FileObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.result.MulaResult;
@@ -30,6 +31,7 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -252,14 +254,13 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
                     }
                 });
-        HttpSimple.create()
-                .url("api/tms/googleKey/getGoogleKey?isVerify=0")
+        HttpSimple.create("api/tms/googleKey/getGoogleKey?isVerify=0")
                 .param("aaaaa", 5555555)
-                .request(this)
-                .subscribe(new StringObserver() {
+                .bindLifecycle(this)
+                .download(new FileObserver() {
                     @Override
-                    protected void onHttpSuccess(String result) {
-
+                    protected void onHttpSuccess(File file) {
+                        LogUtil.e(file.getAbsolutePath());
                     }
                 });
     }

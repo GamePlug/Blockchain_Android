@@ -9,7 +9,7 @@ import okhttp3.RequestBody;
 
 public class DataUtil {
 
-    public static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
     public static Map<String, Object> formatParams(Map<String, Object> params) {
         Map<String, Object> newParams = new LinkedHashMap<>();

@@ -1,27 +1,35 @@
 package com.leichao.retrofit.observer;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
+import com.leichao.retrofit.util.FileUtil;
 
-public abstract class StringObserver extends BaseObserver<String> {
+import java.io.File;
+import java.util.UUID;
+
+import okhttp3.ResponseBody;
+
+public abstract class FileObserver extends BaseObserver<ResponseBody> {
 
     private BaseLoading mLoading;
 
-    public StringObserver() {
+    public FileObserver() {
         this(null, null, true);
     }
 
-    public StringObserver(Context context) {
+    public FileObserver(Context context) {
         this(context, null, true);
     }
 
-    public StringObserver(Context context, String message) {
+    public FileObserver(Context context, String message) {
         this(context, message, true);
     }
 
-    public StringObserver(Context context, String message, boolean cancelable) {
+    public FileObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
             mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
         }
@@ -33,8 +41,21 @@ public abstract class StringObserver extends BaseObserver<String> {
     }
 
     @Override
-    protected final void handHttpSuccess(String result) {
-        httpSuccess(result);
+    protected final void handHttpSuccess(final ResponseBody result) {
+        // 由于接口方法增加了注释@Streaming，所以流的读取和写入要在子线程中执行,否则会有NetworkOnMainThreadException
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final File file = new File(HttpManager.config().getDownloadDir(), UUID.randomUUID().toString());
+                FileUtil.inputStreamToFile(result.byteStream(), file);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        httpSuccess(file);
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override
@@ -47,7 +68,7 @@ public abstract class StringObserver extends BaseObserver<String> {
         httpCompleted();
     }
 
-    private void httpSuccess(String result) {
+    private void httpSuccess(File result) {
         try {
             onHttpSuccess(result);
         } catch (Exception e) {
@@ -71,7 +92,7 @@ public abstract class StringObserver extends BaseObserver<String> {
         }
     }
 
-    protected abstract void onHttpSuccess(String result);
+    protected abstract void onHttpSuccess(File file);
 
     protected void onHttpFailure(Throwable throwable) {
     }

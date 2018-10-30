@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import okhttp3.ResponseBody;
 
 public class HttpSimple {
@@ -23,14 +24,21 @@ public class HttpSimple {
     private Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
     private Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
     private Object mJsonData;// 要以json数据格式上传的对象
+    private LifecycleOwner mLifeOwner;
+    private Lifecycle.Event mLifeEvent;
 
     public enum Method {GET, POST}
 
-    private HttpSimple() {
+    private HttpSimple(String url) {
+        this.mUrl = url;
     }
 
-    public static HttpSimple create() {
-        return new HttpSimple();
+    /**
+     * 创建请求工具
+     * @param url 请求的url
+     */
+    public static HttpSimple create(String url) {
+        return new HttpSimple(url);
     }
 
     /**
@@ -46,14 +54,6 @@ public class HttpSimple {
      */
     public HttpSimple post() {
         this.mMethod = Method.POST;
-        return this;
-    }
-
-    /**
-     * 请求的url
-     */
-    public HttpSimple url(String url) {
-        this.mUrl = url;
         return this;
     }
 
@@ -97,30 +97,37 @@ public class HttpSimple {
         return this;
     }
 
+    /**
+     * 绑定生命周期
+     * @param owner 与Activity或者Fragment的生命周期绑定，在destroy时结束请求
+     */
+    public HttpSimple bindLifecycle(LifecycleOwner owner) {
+        this.mLifeOwner = owner;
+        return this;
+    }
+
+    /**
+     * 绑定生命周期
+     * @param owner 与Activity或者Fragment的生命周期绑定
+     * @param event 在Activity或者Fragment的生命周期状态event时结束请求
+     */
+    public HttpSimple bindLifecycle(LifecycleOwner owner, Lifecycle.Event event) {
+        this.mLifeOwner = owner;
+        this.mLifeEvent = event;
+        return this;
+    }
+
+    /**
+     * 执行请求
+     */
+    public void request(Observer<String> observer) {
+        request().subscribe(observer);
+    }
 
     /**
      * 执行请求
      */
     public Observable<String> request() {
-        return request(null, null);
-    }
-
-    /**
-     * 执行请求
-     *
-     * @param owner 与Activity或者Fragment的生命周期绑定，在destroy时结束请求
-     */
-    public Observable<String> request(LifecycleOwner owner) {
-        return request(owner, null);
-    }
-
-    /**
-     * 执行请求
-     *
-     * @param owner 与Activity或者Fragment的生命周期绑定
-     * @param event 在Activity或者Fragment的生命周期状态event是结束请求
-     */
-    public Observable<String> request(LifecycleOwner owner, Lifecycle.Event event) {
         Observable<String> observable;
         if (mJsonData != null) {
             observable = mHttpApi.postJson(mUrl, mParams, mJsonData);
@@ -140,32 +147,20 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<String>transformer(owner, event));
+        return observable.compose(HttpManager.<String>transformer(mLifeOwner, mLifeEvent));
+    }
+
+    /**
+     * 执行下载类型请求
+     */
+    public void download(Observer<ResponseBody> observer) {
+        download().subscribe(observer);
     }
 
     /**
      * 执行下载类型请求
      */
     public Observable<ResponseBody> download() {
-        return download(null, null);
-    }
-
-    /**
-     * 执行下载类型请求
-     *
-     * @param owner 与Activity或者Fragment的生命周期绑定，在destroy时结束请求
-     */
-    public Observable<ResponseBody> download(LifecycleOwner owner) {
-        return download(owner, null);
-    }
-
-    /**
-     * 执行下载类型请求
-     *
-     * @param owner 与Activity或者Fragment的生命周期绑定
-     * @param event 在Activity或者Fragment的生命周期状态event是结束请求
-     */
-    public Observable<ResponseBody> download(LifecycleOwner owner, Lifecycle.Event event) {
         Observable<ResponseBody> observable;
         if (mJsonData != null) {
             observable = mHttpApi.postJsonDownload(mUrl, mParams, mJsonData);
@@ -185,7 +180,7 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<ResponseBody>transformer(owner, event));
+        return observable.compose(HttpManager.<ResponseBody>transformer(mLifeOwner, mLifeEvent));
     }
 
 }

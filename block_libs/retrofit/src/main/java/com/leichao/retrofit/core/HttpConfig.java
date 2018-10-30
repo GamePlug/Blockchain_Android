@@ -1,6 +1,7 @@
 package com.leichao.retrofit.core;
 
 import android.content.Context;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.leichao.retrofit.loading.BaseLoading;
@@ -15,10 +16,19 @@ import java.util.Map;
 
 public class HttpConfig {
 
-    private boolean debug = true;// 日志打印开关，true打印，false不打印
-    private long timeout = 30;// 超时时间，单位秒
-    private String baseUrl = "http://47.74.159.3:8084/";// 全局域名
-    private Callback callback = new Callback();// 动态设置回调
+    private boolean debug;// 日志打印开关，true打印，false不打印
+    private long timeout;// 超时时间，单位秒
+    private String baseUrl;// 全局域名
+    private String downloadDir;// 下载缓存地址
+    private Callback callback;// 动态设置回调
+
+    public HttpConfig() {
+        this.debug = true;
+        this.timeout = 30;
+        this.baseUrl = "http://47.74.159.3:8084/";
+        this.downloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache/download";
+        this.callback = new Callback();
+    }
 
     public boolean isDebug() {
         return debug;
@@ -26,8 +36,6 @@ public class HttpConfig {
 
     /**
      * 设置日志打印开关
-     *
-     * @return true打印，false不打印
      */
     public HttpConfig setDebug(boolean debug) {
         this.debug = debug;
@@ -40,8 +48,6 @@ public class HttpConfig {
 
     /**
      * 设置超时时间，单位秒
-     *
-     * @return 超时时间
      */
     public HttpConfig setTimeout(long timeout) {
         if (timeout > 0) this.timeout = timeout;
@@ -54,12 +60,21 @@ public class HttpConfig {
 
     /**
      * 设置全局域名
-     *
-     * @return 全局域名
      */
     public HttpConfig setBaseUrl(String baseUrl) {
         if (!TextUtils.isEmpty(baseUrl)) this.baseUrl = baseUrl;
         return this;
+    }
+
+    public String getDownloadDir() {
+        return downloadDir;
+    }
+
+    /**
+     * 设置缓存地址
+     */
+    public void setDownloadDir(String downloadDir) {
+        this.downloadDir = downloadDir;
     }
 
     public Callback getCallback() {

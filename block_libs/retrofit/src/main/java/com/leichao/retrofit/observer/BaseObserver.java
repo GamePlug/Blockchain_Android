@@ -1,9 +1,11 @@
 package com.leichao.retrofit.observer;
 
 import com.leichao.retrofit.loading.BaseLoading;
+import com.leichao.retrofit.util.LogUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import okhttp3.ResponseBody;
 
 public abstract class BaseObserver<T> implements Observer<T> {
 
@@ -19,11 +21,15 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     @Override
     public final void onNext(T t) {
+        if (t instanceof ResponseBody) {// 非ResponseBody的结果在转换器中已经打印了
+            LogUtil.logE("result:" + "Http Result is ResponseBody");
+        }
         handHttpSuccess(t);
     }
 
     @Override
     public final void onError(Throwable e) {
+        LogUtil.logE("result:" + e.toString());
         handHttpFailure(e);
         onComplete();
     }

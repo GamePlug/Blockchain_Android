@@ -5,23 +5,25 @@ import android.content.Context;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 
-public abstract class StringObserver extends BaseObserver<String> {
+import okhttp3.ResponseBody;
+
+public abstract class BodyObserver extends BaseObserver<ResponseBody> {
 
     private BaseLoading mLoading;
 
-    public StringObserver() {
+    public BodyObserver() {
         this(null, null, true);
     }
 
-    public StringObserver(Context context) {
+    public BodyObserver(Context context) {
         this(context, null, true);
     }
 
-    public StringObserver(Context context, String message) {
+    public BodyObserver(Context context, String message) {
         this(context, message, true);
     }
 
-    public StringObserver(Context context, String message, boolean cancelable) {
+    public BodyObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
             mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
         }
@@ -33,7 +35,7 @@ public abstract class StringObserver extends BaseObserver<String> {
     }
 
     @Override
-    protected final void handHttpSuccess(String result) {
+    protected final void handHttpSuccess(ResponseBody result) {
         httpSuccess(result);
     }
 
@@ -47,7 +49,7 @@ public abstract class StringObserver extends BaseObserver<String> {
         httpCompleted();
     }
 
-    private void httpSuccess(String result) {
+    private void httpSuccess(ResponseBody result) {
         try {
             onHttpSuccess(result);
         } catch (Exception e) {
@@ -71,7 +73,7 @@ public abstract class StringObserver extends BaseObserver<String> {
         }
     }
 
-    protected abstract void onHttpSuccess(String result);
+    protected abstract void onHttpSuccess(ResponseBody body);
 
     protected void onHttpFailure(Throwable throwable) {
     }

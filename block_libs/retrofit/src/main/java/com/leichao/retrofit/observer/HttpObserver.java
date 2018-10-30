@@ -5,7 +5,6 @@ import android.content.Context;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.util.LogUtil;
 
 import java.io.IOException;
 
@@ -58,7 +57,6 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
 
     @Override
     protected final void handHttpFailure(Throwable throwable) {
-        LogUtil.logE("result:" + throwable.toString());
         HttpResult<T> result = new HttpResult<>();
         if (throwable instanceof HttpException) {
             HttpException httpException = (HttpException) throwable;
