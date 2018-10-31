@@ -3,23 +3,23 @@ package com.leichao.retrofit;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
-import com.leichao.retrofit.core.HttpApi;
+import com.leichao.retrofit.api.FileApi;
+import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.util.DataUtil;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import okhttp3.ResponseBody;
 
 public class HttpSimple {
 
     private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
 
-    private HttpApi mHttpApi = HttpManager.create();
     private Method mMethod = Method.GET;
     private String mUrl;
     private Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
@@ -28,6 +28,7 @@ public class HttpSimple {
     private Object mJsonData;// 要以json数据格式上传的对象
     private LifecycleOwner mLifeOwner;
     private Lifecycle.Event mLifeEvent;
+    private ProgressListener mListener;
 
     public enum Method {GET, POST}
 
@@ -144,37 +145,38 @@ public class HttpSimple {
      * @param listener 进度监听器
      */
     public HttpSimple progress(ProgressListener listener) {
-        this.mHttpApi = HttpManager.create(HttpApi.class, listener);
+        this.mListener = listener;
         return this;
     }
 
     /**
      * 执行请求
      */
-    public void request(Observer<String> observer) {
-        request().subscribe(observer);
+    public void getString(Observer<String> observer) {
+        getString().subscribe(observer);
     }
 
     /**
      * 执行请求
      */
-    public Observable<String> request() {
+    public Observable<String> getString() {
+        StringApi api = HttpManager.create(StringApi.class, mListener);
         Observable<String> observable;
         if (mJsonData != null) {
-            observable = mHttpApi.postJson(mUrl, mHeaders, mParams, mJsonData);
+            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
 
         } else if (!mFileParams.isEmpty()) {
-            observable = mHttpApi.postFile(mUrl, mHeaders, mParams, mFileParams);
+            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
 
         } else {
             switch (mMethod) {
                 case POST:
-                    observable = mHttpApi.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
+                    observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
                 case GET:
                 default:
-                    observable = mHttpApi.getNormal(mUrl, mHeaders, mParams);
+                    observable = api.getNormal(mUrl, mHeaders, mParams);
                     break;
             }
         }
@@ -184,34 +186,35 @@ public class HttpSimple {
     /**
      * 执行下载类型请求
      */
-    public void download(Observer<ResponseBody> observer) {
-        download().subscribe(observer);
+    public void getFile(Observer<File> observer) {
+        getFile().subscribe(observer);
     }
 
     /**
      * 执行下载类型请求
      */
-    public Observable<ResponseBody> download() {
-        Observable<ResponseBody> observable;
+    public Observable<File> getFile() {
+        FileApi api = HttpManager.create(FileApi.class, mListener);
+        Observable<File> observable;
         if (mJsonData != null) {
-            observable = mHttpApi.postJsonDownload(mUrl, mHeaders, mParams, mJsonData);
+            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
 
         } else if (!mFileParams.isEmpty()) {
-            observable = mHttpApi.postFileDownload(mUrl, mHeaders, mParams, mFileParams);
+            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
 
         } else {
             switch (mMethod) {
                 case POST:
-                    observable = mHttpApi.postNormalDownload(mUrl, mHeaders, EMPTY_MAP, mParams);
+                    observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
                 case GET:
                 default:
-                    observable = mHttpApi.getNormalDownload(mUrl, mHeaders, mParams);
+                    observable = api.getNormal(mUrl, mHeaders, mParams);
                     break;
             }
         }
-        return observable.compose(HttpManager.<ResponseBody>transformer(mLifeOwner, mLifeEvent));
+        return observable.compose(HttpManager.<File>transformer(mLifeOwner, mLifeEvent));
     }
 
 }

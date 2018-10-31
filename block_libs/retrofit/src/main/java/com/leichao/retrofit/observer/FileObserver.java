@@ -1,19 +1,13 @@
 package com.leichao.retrofit.observer;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
-import com.leichao.retrofit.util.FileUtil;
 
 import java.io.File;
-import java.util.UUID;
 
-import okhttp3.ResponseBody;
-
-public abstract class FileObserver extends BaseObserver<ResponseBody> {
+public abstract class FileObserver extends BaseObserver<File> {
 
     private BaseLoading mLoading;
 
@@ -41,21 +35,8 @@ public abstract class FileObserver extends BaseObserver<ResponseBody> {
     }
 
     @Override
-    protected final void handHttpSuccess(final ResponseBody result) {
-        // 由于接口方法增加了注释@Streaming，所以流的读取和写入要在子线程中执行,否则会有NetworkOnMainThreadException
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final File file = new File(HttpManager.config().getDownloadDir(), UUID.randomUUID().toString());
-                FileUtil.inputStreamToFile(result.byteStream(), file);
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        httpSuccess(file);
-                    }
-                });
-            }
-        }).start();
+    protected final void handHttpSuccess(File result) {
+        httpSuccess(result);
     }
 
     @Override

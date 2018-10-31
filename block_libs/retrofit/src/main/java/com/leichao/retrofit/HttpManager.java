@@ -3,7 +3,6 @@ package com.leichao.retrofit;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
-import com.leichao.retrofit.core.HttpApi;
 import com.leichao.retrofit.core.HttpClient;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.progress.ProgressListener;
@@ -25,10 +24,6 @@ public final class HttpManager {
 
     public static HttpConfig config() {
         return mConfig;
-    }
-
-    public static HttpApi create() {
-        return create(HttpApi.class, null);
     }
 
     public static <T> T create(Class<T> service) {

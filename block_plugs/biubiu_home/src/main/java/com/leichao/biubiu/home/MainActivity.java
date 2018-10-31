@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.HttpSimple;
+import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
                 .subscribe(mObserver);
         //mObserver.cancel();
-        HttpManager.create()
+        HttpManager.create(StringApi.class)
                 .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0",
                         Collections.<String, Object>emptyMap(), Collections.<String, Object>emptyMap())
                 .compose(HttpManager.<String>transformer(this))
@@ -261,9 +262,10 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 .progress(new ProgressListener() {
                     @Override
                     public void onProgress(long progress, long total, boolean done) {
-                        LogUtil.e( (done?"下载完成:":"下载中:") + "--progress:" + progress + "--total:" + total);
+                        LogUtil.e((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
                     }
-                }).download(new FileObserver() {
+                })
+                .getFile(new FileObserver() {
                     @Override
                     protected void onHttpSuccess(File file) {
 

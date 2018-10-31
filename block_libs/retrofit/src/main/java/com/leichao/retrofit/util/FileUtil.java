@@ -12,43 +12,33 @@ import java.io.InputStream;
  */
 public class FileUtil {
 
-    public static void delete(File file) {
-        if (file.isFile()) {
-            file.delete();
-            return;
-        }
+    public static boolean delete(File file) {
         if (file.isDirectory()) {
             File[] childFiles = file.listFiles();
-            if (childFiles == null || childFiles.length == 0) {
-                file.delete();
-                return;
+            if (childFiles != null) {
+                for (File childFile : childFiles) {
+                    delete(childFile);
+                }
             }
-            for (int i = 0; i < childFiles.length; i++) {
-                delete(childFiles[i]);
-            }
-            file.delete();
         }
+        return file.delete();
     }
 
-    public static void inputStreamToFile(InputStream is, File file) {
-        try {
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = bis.read(buffer)) != -1) {
-                fos.write(buffer, 0, len);
-                fos.flush();
-            }
-            fos.close();
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void saveFile(File file, InputStream is) throws IOException {
+        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+            return;
         }
+        FileOutputStream fos = new FileOutputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(is);
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = bis.read(buffer)) != -1) {
+            fos.write(buffer, 0, len);
+            fos.flush();
+        }
+        fos.close();
+        bis.close();
+        is.close();
     }
 
 }

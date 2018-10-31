@@ -3,6 +3,7 @@ package com.leichao.retrofit.converter;
 import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.result.MulaResult;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -56,17 +57,21 @@ public final class ConverterFactory extends Converter.Factory {
                 || type == int.class || type == Integer.class
                 || type == long.class || type == Long.class
                 || type == short.class || type == Short.class) {
-            // 如果是String或者基本类型，则转换成文本
+            // 如果type是String或者基本类型，则转换成String
             return new StringResponseConverter();
+
+        } else if (type == File.class) {
+            // 如果type是File类型，则转换成File
+            return new FileResponseConverter();
 
         } else if (type instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) type).getRawType();
             if (rawType == HttpResult.class) {
-                // 如果是HttpResult对象，则转换成HttpResult对象
+                // 如果type是HttpResult<T>类型，则转换成HttpResult<T>
                 return new HttpResponseConverter<>(type);
 
             } else if (rawType == MulaResult.class) {
-                // 如果是MulaResult对象，则转换成MulaResult对象
+                // 如果type是MulaResult<T>类型，则转换成MulaResult<T>
                 return new MulaResponseConverter<>(type);
 
             }
