@@ -15,7 +15,7 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
 /**
- * 返回String的接口
+ * 返回{@link String}的接口
  * Created by leichao on 2017/3/7.
  */
 public interface StringApi {

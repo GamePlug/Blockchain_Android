@@ -26,6 +26,11 @@ public final class HttpManager {
         return mConfig;
     }
 
+    /**
+     * 创建Retrofit的Api接口
+     *
+     * @param service Api接口
+     */
     public static <T> T create(Class<T> service) {
         return create(service, null);
     }
@@ -33,40 +38,54 @@ public final class HttpManager {
     /**
      * 创建Retrofit的Api接口
      *
+     * @param service  Api接口
      * @param listener 下载进度监听
      */
     public static <T> T create(Class<T> service, ProgressListener listener) {
         return HttpClient.getRetrofit(listener).create(service);
     }
 
-    public static <T> ObservableTransformer<T, T> transformer() {
-        return transformer(null, null);
-    }
-
-    public static <T> ObservableTransformer<T, T> transformer(LifecycleOwner owner) {
-        return transformer(owner, null);
-    }
-
     /**
-     * 线程调度和生命周期绑定
-     *
-     * @param owner SupportActivity或者Fragment都实现了LifecycleOwner接口
+     * 线程调度
      */
-    public static <T> ObservableTransformer<T, T> transformer(final LifecycleOwner owner, final Lifecycle.Event event) {
+    public static <T> ObservableTransformer<T, T> composeThread() {
         return new ObservableTransformer<T, T>() {
             @Override
             public ObservableSource<T> apply(Observable<T> upstream) {
-                Observable<T> observable = upstream.subscribeOn(Schedulers.io())
+                return upstream.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
+    }
+
+    /**
+     * 生命周期绑定
+     *
+     * @param owner SupportActivity或者Fragment都实现了LifecycleOwner接口
+     */
+    public static <T> ObservableTransformer<T, T> composeLifecycle(LifecycleOwner owner) {
+        return composeLifecycle(owner, null);
+    }
+
+    /**
+     * 生命周期绑定
+     *
+     * @param owner SupportActivity或者Fragment都实现了LifecycleOwner接口
+     * @param event {@link Lifecycle.Event}
+     */
+    public static <T> ObservableTransformer<T, T> composeLifecycle(final LifecycleOwner owner, final Lifecycle.Event event) {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
                 if (owner != null) {
                     LifecycleProvider<Lifecycle.Event> lifecycleProvider = AndroidLifecycle.createLifecycleProvider(owner);
                     if (event != null) {
-                        return observable.compose(lifecycleProvider.<T>bindUntilEvent(event));
+                        return upstream.compose(lifecycleProvider.<T>bindUntilEvent(event));
                     } else {
-                        return observable.compose(lifecycleProvider.<T>bindUntilEvent(Lifecycle.Event.ON_DESTROY));
+                        return upstream.compose(lifecycleProvider.<T>bindUntilEvent(Lifecycle.Event.ON_DESTROY));
                     }
                 }
-                return observable;
+                return upstream;
             }
         };
     }

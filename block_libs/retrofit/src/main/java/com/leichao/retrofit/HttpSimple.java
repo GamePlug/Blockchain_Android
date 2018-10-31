@@ -150,14 +150,15 @@ public class HttpSimple {
     }
 
     /**
-     * 执行请求
+     * 执行获取String的请求
      */
     public void getString(Observer<String> observer) {
-        getString().subscribe(observer);
+        getString().compose(HttpManager.<String>composeThread())
+                .subscribe(observer);
     }
 
     /**
-     * 执行请求
+     * 执行获取String的请求
      */
     public Observable<String> getString() {
         StringApi api = HttpManager.create(StringApi.class, mListener);
@@ -180,18 +181,19 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<String>transformer(mLifeOwner, mLifeEvent));
+        return observable.compose(HttpManager.<String>composeLifecycle(mLifeOwner, mLifeEvent));
     }
 
     /**
-     * 执行下载类型请求
+     * 执行获取File的请求
      */
     public void getFile(Observer<File> observer) {
-        getFile().subscribe(observer);
+        getFile().compose(HttpManager.<File>composeThread())
+                .subscribe(observer);
     }
 
     /**
-     * 执行下载类型请求
+     * 执行获取File的请求
      */
     public Observable<File> getFile() {
         FileApi api = HttpManager.create(FileApi.class, mListener);
@@ -214,7 +216,7 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<File>transformer(mLifeOwner, mLifeEvent));
+        return observable.compose(HttpManager.<File>composeLifecycle(mLifeOwner, mLifeEvent));
     }
 
 }

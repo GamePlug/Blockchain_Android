@@ -17,7 +17,7 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
- * 返回File的接口，注解多了一个 @{@link Streaming}，参数规则同 {@link StringApi}
+ * 返回{@link File}的接口，注解多了一个 @{@link Streaming}，参数规则同 {@link StringApi}
  * Created by leichao on 2017/3/7.
  */
 public interface FileApi {

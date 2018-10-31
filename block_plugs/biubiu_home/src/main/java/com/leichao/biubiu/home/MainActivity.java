@@ -243,13 +243,15 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
         };
         HttpManager.create(HomeApi.class)
                 .test()
-                .compose(HttpManager.<MulaResult<String>>transformer(this, Lifecycle.Event.ON_PAUSE))
+                .compose(HttpManager.<MulaResult<String>>composeThread())
+                .compose(HttpManager.<MulaResult<String>>composeLifecycle(this, Lifecycle.Event.ON_PAUSE))
                 .subscribe(mObserver);
         //mObserver.cancel();
         HttpManager.create(StringApi.class)
                 .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0",
                         Collections.<String, Object>emptyMap(), Collections.<String, Object>emptyMap())
-                .compose(HttpManager.<String>transformer(this))
+                .compose(HttpManager.<String>composeLifecycle(this))
+                .compose(HttpManager.<String>composeThread())
                 .subscribe(new StringObserver() {
                     @Override
                     protected void onHttpSuccess(String result) {
@@ -271,6 +273,15 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
                     }
                 });
+                /*.getFile()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FileObserver() {
+                    @Override
+                    protected void onHttpSuccess(File file) {
+
+                    }
+                });*/
     }
 
     private String getUserId() {
