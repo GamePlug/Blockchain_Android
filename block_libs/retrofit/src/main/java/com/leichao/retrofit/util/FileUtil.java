@@ -2,6 +2,7 @@ package com.leichao.retrofit.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ public class FileUtil {
 
     public static void saveFile(File file, InputStream is) throws IOException {
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            return;
+            throw new FileNotFoundException(file.getAbsolutePath() + "(Path error or Permission denied)");
         }
         FileOutputStream fos = new FileOutputStream(file);
         BufferedInputStream bis = new BufferedInputStream(is);

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LifecycleOwner;
 
 import com.leichao.retrofit.core.HttpClient;
 import com.leichao.retrofit.core.HttpConfig;
+import com.leichao.retrofit.core.HttpSimple;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle;
 import com.trello.rxlifecycle2.LifecycleProvider;
@@ -22,8 +23,20 @@ public final class HttpManager {
     private HttpManager() {
     }
 
+    /**
+     * Retrofit配置
+     */
     public static HttpConfig config() {
         return mConfig;
+    }
+
+    /**
+     * 创建Retrofit的极度简化模式
+     *
+     * @param url 访问链接
+     */
+    public static HttpSimple create(String url) {
+        return HttpSimple.create(url);
     }
 
     /**
@@ -32,7 +45,7 @@ public final class HttpManager {
      * @param service Api接口
      */
     public static <T> T create(Class<T> service) {
-        return create(service, null);
+        return HttpClient.getRetrofit().create(service);
     }
 
     /**

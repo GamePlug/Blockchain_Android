@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.HttpSimple;
 import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.loading.BaseLoading;
@@ -258,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
                     }
                 });
-        HttpSimple.create("api/tms/googleKey/getGoogleKey?isVerify=0")
+        HttpManager.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
                 .param("aaaaa", 5555555)
                 .bindLifecycle(this)
                 .progress(new ProgressListener() {
@@ -271,6 +270,11 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                     @Override
                     protected void onHttpSuccess(File file) {
 
+                    }
+
+                    @Override
+                    protected void onHttpFailure(Throwable throwable) {
+                        throwable.printStackTrace();
                     }
                 });
                 /*.getFile()

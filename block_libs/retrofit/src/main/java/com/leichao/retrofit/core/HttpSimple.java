@@ -1,8 +1,9 @@
-package com.leichao.retrofit;
+package com.leichao.retrofit.core;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
+import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.api.FileApi;
 import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.progress.ProgressListener;
