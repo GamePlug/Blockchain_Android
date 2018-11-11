@@ -19,6 +19,6 @@ public interface HomeApi {
 
     // 测试用接口
     @GET("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
-    Observable<HttpResult<String>> test2();
+    Observable<HttpResult<TestBean>> test2();
 
 }

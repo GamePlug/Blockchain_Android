@@ -259,8 +259,15 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 });
         HttpManager.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
                 .param("aaaaa", 5555555)
+                .post()
                 .bindLifecycle(this)
-                .progress(new ProgressListener() {
+                .upListener(new ProgressListener() {
+                    @Override
+                    public void onProgress(long progress, long total, boolean done) {
+                        LogUtil.e((done ? "上传完成:" : "上传中:") + "--progress:" + progress + "--total:" + total);
+                    }
+                })
+                .downListener(new ProgressListener() {
                     @Override
                     public void onProgress(long progress, long total, boolean done) {
                         LogUtil.e((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
@@ -283,28 +290,18 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                         throwable.printStackTrace();
                     }
                 });*/
-                .getHttp(new HttpObserver<String>() {
+                .getHttp(new HttpObserver<TestBean>() {
                     @Override
-                    protected void onHttpSuccess(HttpResult<String> result) {
+                    protected void onHttpSuccess(HttpResult<TestBean> result) {
                         LogUtil.e(result.toString());
-                    }
-
-                    @Override
-                    protected void onHttpFailure(HttpResult<String> result) {
-                        super.onHttpFailure(result);
                     }
                 });
 
-        /*HttpManager.create(HomeApi.class).test2().compose(HttpManager.<HttpResult<String>>composeThread())
-                .subscribe(new HttpObserver<String>() {
+        /*HttpManager.create(HomeApi.class).test2().compose(HttpManager.<HttpResult<TestBean>>composeThread())
+                .subscribe(new HttpObserver<TestBean>() {
                     @Override
-                    protected void onHttpSuccess(HttpResult<String> result) {
+                    protected void onHttpSuccess(HttpResult<TestBean> result) {
                         LogUtil.e(result.toString());
-                    }
-
-                    @Override
-                    protected void onHttpFailure(HttpResult<String> result) {
-                        super.onHttpFailure(result);
                     }
                 });*/
     }

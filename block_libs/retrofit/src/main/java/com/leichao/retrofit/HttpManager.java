@@ -52,10 +52,11 @@ public final class HttpManager {
      * 创建Retrofit的Api接口
      *
      * @param service  Api接口
-     * @param listener 下载进度监听
+     * @param upListener 上传进度监听
+     * @param downListener 下载进度监听
      */
-    public static <T> T create(Class<T> service, ProgressListener listener) {
-        return HttpClient.getRetrofit(listener).create(service);
+    public static <T> T create(Class<T> service, ProgressListener upListener, ProgressListener downListener) {
+        return HttpClient.getRetrofit(upListener, downListener).create(service);
     }
 
     /**

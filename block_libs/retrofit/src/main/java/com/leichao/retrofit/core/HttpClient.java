@@ -17,21 +17,21 @@ public class HttpClient {
     private static Retrofit mRetrofit;
 
     public static Retrofit getRetrofit() {
-        return getRetrofit(null);
+        return getRetrofit(null, null);
     }
 
-    public static Retrofit getRetrofit(ProgressListener listener) {
-        if (listener != null) {
-            return createRetrofit(listener);
+    public static Retrofit getRetrofit(ProgressListener upListener, ProgressListener downListener) {
+        if (upListener != null || downListener != null) {
+            return createRetrofit(upListener, downListener);
         } else {
             if (mRetrofit == null) {
-                mRetrofit = createRetrofit(null);
+                mRetrofit = createRetrofit(null, null);
             }
             return mRetrofit;
         }
     }
 
-    private static Retrofit createRetrofit(ProgressListener listener) {
+    private static Retrofit createRetrofit(ProgressListener upListener, ProgressListener downListener) {
         long timeout = HttpManager.config().getTimeout();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)// 连接失败重连，默认为true，可以不加
@@ -43,9 +43,9 @@ public class HttpClient {
                 //.cache(cache)// 设置OkHttp缓存
                 .addInterceptor(new ParamsInterceptor())// 添加自定义拦截操作//HttpLoggingInterceptor
                 .build();
-        if (listener != null) {
+        if (upListener != null || downListener != null) {
             okHttpClient = okHttpClient.newBuilder()
-                    .addInterceptor(new ProgressInterceptor(listener))
+                    .addInterceptor(new ProgressInterceptor(upListener, downListener))
                     .build();
         }
         return new Retrofit.Builder()

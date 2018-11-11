@@ -1,30 +1,43 @@
 package com.leichao.retrofit.interceptor;
 
 import com.leichao.retrofit.progress.ProgressListener;
+import com.leichao.retrofit.progress.ProgressRequestBody;
 import com.leichao.retrofit.progress.ProgressResponseBody;
 
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
  * 下载进度拦截器
  */
 public class ProgressInterceptor implements Interceptor {
+
+    private ProgressListener upListener;
+    private ProgressListener downListener;
  
-    private ProgressListener listener;
- 
-    public ProgressInterceptor(ProgressListener listener) {
-        this.listener = listener;
+    public ProgressInterceptor(ProgressListener upListener, ProgressListener downListener) {
+        this.upListener = upListener;
+        this.downListener = downListener;
     }
  
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Response originalResponse = chain.proceed(chain.request());
-        return originalResponse.newBuilder()
-                .body(new ProgressResponseBody(originalResponse.body(), listener))
-                .build();
+        Request request = chain.request();
+        if (upListener != null && "POST".equals(request.method()) && request.body() != null) {
+            request = request.newBuilder()
+                    .post(new ProgressRequestBody(request.body(), upListener))
+                    .build();
+        }
+        Response response = chain.proceed(request);
+        if (downListener != null) {
+            response = response.newBuilder()
+                    .body(new ProgressResponseBody(response.body(), downListener))
+                    .build();
+        }
+        return response;
     }
 
 }
