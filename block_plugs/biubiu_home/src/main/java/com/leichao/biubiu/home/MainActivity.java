@@ -18,10 +18,11 @@ import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
-import com.leichao.retrofit.observer.FileObserver;
+import com.leichao.retrofit.observer.HttpObserver;
 import com.leichao.retrofit.observer.MulaObserver;
 import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
+import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.util.AppUtil;
 import com.leichao.util.KeyboardUtil;
@@ -31,7 +32,6 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -266,24 +266,45 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                         LogUtil.e((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
                     }
                 })
-                .getFile(new FileObserver() {
+                /*.getString(new StringObserver() {
+                    @Override
+                    protected void onHttpSuccess(String result) {
+                        LogUtil.e(result);
+                    }
+                });*/
+                /*.getFile(new FileObserver() {
                     @Override
                     protected void onHttpSuccess(File file) {
-
+                        LogUtil.e(file.toString());
                     }
 
                     @Override
                     protected void onHttpFailure(Throwable throwable) {
                         throwable.printStackTrace();
                     }
-                });
-                /*.getFile()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FileObserver() {
+                });*/
+                .getHttp(new HttpObserver<String>() {
                     @Override
-                    protected void onHttpSuccess(File file) {
+                    protected void onHttpSuccess(HttpResult<String> result) {
+                        LogUtil.e(result.toString());
+                    }
 
+                    @Override
+                    protected void onHttpFailure(HttpResult<String> result) {
+                        super.onHttpFailure(result);
+                    }
+                });
+
+        /*HttpManager.create(HomeApi.class).test2().compose(HttpManager.<HttpResult<String>>composeThread())
+                .subscribe(new HttpObserver<String>() {
+                    @Override
+                    protected void onHttpSuccess(HttpResult<String> result) {
+                        LogUtil.e(result.toString());
+                    }
+
+                    @Override
+                    protected void onHttpFailure(HttpResult<String> result) {
+                        super.onHttpFailure(result);
                     }
                 });*/
     }

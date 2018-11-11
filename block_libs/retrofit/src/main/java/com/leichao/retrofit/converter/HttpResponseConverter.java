@@ -1,8 +1,6 @@
 package com.leichao.retrofit.converter;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -26,22 +24,14 @@ public final class HttpResponseConverter<T> implements Converter<ResponseBody, H
         String responseStr = value.string();
         LogUtil.logE("result:" + responseStr);
         HttpResult<T> httpResult;
-        try {
-            JsonObject jsonObject = new JsonParser().parse(responseStr).getAsJsonObject();
-            String code = jsonObject.get("code").getAsString();
-            if ("success".equals(code) || "00".equals(code)) {
-                httpResult = new Gson().fromJson(responseStr, type);
-            } else {
-                httpResult = new HttpResult<>();
-                httpResult.setType(false);
-                httpResult.setCode(code);
-                httpResult.setMessage(jsonObject.get("message").getAsString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        Gson gson = new Gson();
+        HttpResult temp = gson.fromJson(responseStr, HttpResult.class);
+        if ("success".equals(temp.getCode())) {
+            httpResult = gson.fromJson(responseStr, type);
+        } else {
             httpResult = new HttpResult<>();
-            httpResult.setStatus(HttpResult.Status.ERROR_JSON);
-            httpResult.setMessage("json_error");
+            httpResult.setCode(temp.getCode());
+            httpResult.setMessage(temp.getMessage());
         }
         httpResult.setJsonStr(responseStr);
         return httpResult;

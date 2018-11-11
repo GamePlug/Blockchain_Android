@@ -23,61 +23,76 @@ public final class ConverterFactory extends Converter.Factory {
 
     }
 
+    // 当接口参数是@Body或者@Part时，才会执行此转换
     @Override
     public Converter<?, RequestBody> requestBodyConverter(
             Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        // 当接口参数是@Body或者@Part时，才会执行此转换
-        if (type == String.class
-                || type == boolean.class || type == Boolean.class
-                || type == byte.class || type == Byte.class
-                || type == char.class || type == Character.class
-                || type == double.class || type == Double.class
-                || type == float.class || type == Float.class
-                || type == int.class || type == Integer.class
-                || type == long.class || type == Long.class
-                || type == short.class || type == Short.class) {
+        Class clazz = getClassFromType(type);
+        if (clazz == String.class
+                || clazz == boolean.class || clazz == Boolean.class
+                || clazz == byte.class || clazz == Byte.class
+                || clazz == char.class || clazz == Character.class
+                || clazz == double.class || clazz == Double.class
+                || clazz == float.class || clazz == Float.class
+                || clazz == int.class || clazz == Integer.class
+                || clazz == long.class || clazz == Long.class
+                || clazz == short.class || clazz == Short.class) {
             // 如果是String或者基本类型，则转换成文本
             return new StringRequestConverter<>();
 
+        } else {
+            // 如果是其他类型，则转换成json
+            return new JsonRequestConverter<>(type);
         }
-        // 如果是其他对象，则转换成json对象
-        return new JsonRequestConverter<>(type);
     }
 
+    // 当接口返回值不是ResponseBody时，才会执行此转换
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(
             Type type, Annotation[] annotations, Retrofit retrofit) {
-        // 当接口返回值不是ResponseBody时，才会执行此转换
-        if (type == String.class
-                || type == boolean.class || type == Boolean.class
-                || type == byte.class || type == Byte.class
-                || type == char.class || type == Character.class
-                || type == double.class || type == Double.class
-                || type == float.class || type == Float.class
-                || type == int.class || type == Integer.class
-                || type == long.class || type == Long.class
-                || type == short.class || type == Short.class) {
+        Class clazz = getClassFromType(type);
+        if (clazz == String.class
+                || clazz == boolean.class || clazz == Boolean.class
+                || clazz == byte.class || clazz == Byte.class
+                || clazz == char.class || clazz == Character.class
+                || clazz == double.class || clazz == Double.class
+                || clazz == float.class || clazz == Float.class
+                || clazz == int.class || clazz == Integer.class
+                || clazz == long.class || clazz == Long.class
+                || clazz == short.class || clazz == Short.class) {
             // 如果type是String或者基本类型，则转换成String
             return new StringResponseConverter();
 
-        } else if (type == File.class) {
+        } else if (clazz == File.class) {
             // 如果type是File类型，则转换成File
             return new FileResponseConverter();
 
+        } else if (clazz == HttpResult.class) {
+            // 如果type是HttpResult类型，则转换成HttpResult
+            return new HttpResponseConverter<>(type);
+
+        } else if (clazz == MulaResult.class) {
+            // 如果type是MulaResult类型，则转换成MulaResult
+            return new MulaResponseConverter<>(type);
+
+        } else {
+            // 如果是其他类型，则转换成json
+            return new JsonResponseConverter<>(type);
+        }
+    }
+
+    // 从type中获取class类型
+    private Class getClassFromType(Type type) {
+        if (type instanceof Class) {
+            return (Class) type;
+
         } else if (type instanceof ParameterizedType) {
             Type rawType = ((ParameterizedType) type).getRawType();
-            if (rawType == HttpResult.class) {
-                // 如果type是HttpResult<T>类型，则转换成HttpResult<T>
-                return new HttpResponseConverter<>(type);
-
-            } else if (rawType == MulaResult.class) {
-                // 如果type是MulaResult<T>类型，则转换成MulaResult<T>
-                return new MulaResponseConverter<>(type);
-
+            if (rawType instanceof Class) {
+                return  (Class) rawType;
             }
         }
-        // 如果是其他对象，则转换成json对象
-        return new JsonResponseConverter<>(type);
+        return null;
     }
 
 }

@@ -2,6 +2,7 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
+import com.google.gson.JsonParseException;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.result.HttpResult;
@@ -39,13 +40,11 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
 
     @Override
     protected final void handHttpSuccess(HttpResult<T> result) {
-        if (HttpResult.Status.ERROR_JSON == result.getStatus()) {
-            httpFailure(result);
-        } else if ("success".equals(result.getCode())) {
-            result.setStatus(HttpResult.Status.TYPE_TRUE);
+        if ("success".equals(result.getCode())) {
+            result.setStatus(HttpResult.Status.CODE_SUCCESS);
             httpSuccess(result);
         } else {
-            result.setStatus(HttpResult.Status.TYPE_FALSE);
+            result.setStatus(HttpResult.Status.CODE_FAILURE);
             // 统一处理登录失效，登录冲突等情况
             if ("-2".equals(result.getCode())) {
                 // 登陆冲突
@@ -78,6 +77,11 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
             // 网络异常
             result.setStatus(HttpResult.Status.ERROR_NET);
             result.setMessage("网络不给力");
+        } else if (throwable instanceof JsonParseException) {
+            // Json解析异常
+            throwable.printStackTrace();
+            result.setStatus(HttpResult.Status.ERROR_JSON);
+            result.setMessage("Json解析异常");
         } else {
             // 客户端程序异常，一般是开发者在回调方法中发生了异常
             throwable.printStackTrace();

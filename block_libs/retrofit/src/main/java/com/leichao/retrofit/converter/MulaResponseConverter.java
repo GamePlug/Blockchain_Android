@@ -1,8 +1,6 @@
 package com.leichao.retrofit.converter;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.leichao.retrofit.result.MulaResult;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -25,26 +23,18 @@ public final class MulaResponseConverter<T> implements Converter<ResponseBody, M
     public MulaResult<T> convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
         LogUtil.logE("result:" + responseStr);
-        MulaResult<T> result;
-        try {
-            JsonObject jsonObject = new JsonParser().parse(responseStr).getAsJsonObject();
-            String code = jsonObject.get("code").getAsString();
-            if ("success".equals(code) || "00".equals(code)) {
-                result = new Gson().fromJson(responseStr, type);
-            } else {
-                result = new MulaResult<>();
-                result.setType(false);
-                result.setCode(code);
-                result.setMessage(jsonObject.get("message").getAsString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = new MulaResult<>();
-            result.setStatus(MulaResult.Status.ERROR_JSON);
-            result.setMessage("json_error");
+        MulaResult<T> mulaResult;
+        Gson gson = new Gson();
+        MulaResult temp = gson.fromJson(responseStr, MulaResult.class);
+        if ("success".equals(temp.getCode())) {
+            mulaResult = gson.fromJson(responseStr, type);
+        } else {
+            mulaResult = new MulaResult<>();
+            mulaResult.setCode(temp.getCode());
+            mulaResult.setMessage(temp.getMessage());
         }
-        result.setJsonStr(responseStr);
-        return result;
+        mulaResult.setJsonStr(responseStr);
+        return mulaResult;
     }
 
 }

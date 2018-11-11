@@ -11,14 +11,13 @@ public class MulaResult<T> {
     private transient String jsonStr;
     private String code = "";
     private String message = "";
-    private boolean type = true;
     private T result;
 
     public enum Status {
-        TYPE_TRUE,// 后台code返回了"success"
-        TYPE_FALSE,// 后台code返回了非"success"
+        CODE_SUCCESS,// 后台code返回了"success"
+        CODE_FAILURE,// 后台code返回了非"success"
         ERROR_NET,// 网络异常
-        ERROR_JSON,// Gson解析错误，需在上线前避免此类异常
+        ERROR_JSON,// Json解析异常，需在上线前避免此类异常
         ERROR_OTHER// 服务器程序异常或安卓端程序异常，需在上线前避免此类异常
     }
 
@@ -52,14 +51,6 @@ public class MulaResult<T> {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public boolean isType() {
-        return type;
-    }
-
-    public void setType(boolean type) {
-        this.type = type;
     }
 
     public T getResult() {

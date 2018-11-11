@@ -3,19 +3,28 @@ package com.leichao.retrofit.core;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.api.FileApi;
+import com.leichao.retrofit.api.HttpApi;
 import com.leichao.retrofit.api.StringApi;
+import com.leichao.retrofit.observer.FileObserver;
+import com.leichao.retrofit.observer.HttpObserver;
+import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
+import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.util.DataUtil;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.functions.Function;
 
 public class HttpSimple {
 
@@ -153,15 +162,7 @@ public class HttpSimple {
     /**
      * 执行获取String的请求
      */
-    public void getString(Observer<String> observer) {
-        getString().compose(HttpManager.<String>composeThread())
-                .subscribe(observer);
-    }
-
-    /**
-     * 执行获取String的请求
-     */
-    public Observable<String> getString() {
+    public void getString(StringObserver observer) {
         StringApi api = HttpManager.create(StringApi.class, mListener);
         Observable<String> observable;
         if (mJsonData != null) {
@@ -182,21 +183,16 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<String>composeLifecycle(mLifeOwner, mLifeEvent));
-    }
-
-    /**
-     * 执行获取File的请求
-     */
-    public void getFile(Observer<File> observer) {
-        getFile().compose(HttpManager.<File>composeThread())
+        observable
+                .compose(HttpManager.<String>composeThread())
+                .compose(HttpManager.<String>composeLifecycle(mLifeOwner, mLifeEvent))
                 .subscribe(observer);
     }
 
     /**
      * 执行获取File的请求
      */
-    public Observable<File> getFile() {
+    public void getFile(FileObserver observer) {
         FileApi api = HttpManager.create(FileApi.class, mListener);
         Observable<File> observable;
         if (mJsonData != null) {
@@ -217,7 +213,56 @@ public class HttpSimple {
                     break;
             }
         }
-        return observable.compose(HttpManager.<File>composeLifecycle(mLifeOwner, mLifeEvent));
+        observable
+                .compose(HttpManager.<File>composeThread())
+                .compose(HttpManager.<File>composeLifecycle(mLifeOwner, mLifeEvent))
+                .subscribe(observer);
+    }
+
+    /**
+     * 执行获取HttpResult的请求
+     */
+    public <T> void getHttp(final HttpObserver<T> observer) {
+        HttpApi api = HttpManager.create(HttpApi.class, mListener);
+        Observable<HttpResult> observable;
+        if (mJsonData != null) {
+            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
+
+        } else if (!mFileParams.isEmpty()) {
+            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
+
+        } else {
+            switch (mMethod) {
+                case POST:
+                    observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
+                    break;
+
+                case GET:
+                default:
+                    observable = api.getNormal(mUrl, mHeaders, mParams);
+                    break;
+            }
+        }
+        observable
+                .map(new Function<HttpResult, HttpResult<T>>() {
+                    @Override
+                    public HttpResult<T> apply(HttpResult httpResult) throws Exception {
+                        Type type = TypeToken.get(HttpResult.class).getType();
+                        Class clazz = observer.getClass();
+                        while (clazz != null) {
+                            if (clazz.getSuperclass() == HttpObserver.class) {
+                                Type paramType = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+                                type = TypeToken.getParameterized(HttpResult.class, paramType).getType();
+                                break;
+                            }
+                            clazz = clazz.getSuperclass();
+                        }
+                        return new Gson().fromJson(httpResult.getJsonStr(), type);
+                    }
+                })
+                .compose(HttpManager.<HttpResult<T>>composeThread())
+                .compose(HttpManager.<HttpResult<T>>composeLifecycle(mLifeOwner, mLifeEvent))
+                .subscribe(observer);
     }
 
 }
