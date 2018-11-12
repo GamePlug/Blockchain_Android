@@ -6,7 +6,6 @@ import android.arch.lifecycle.LifecycleOwner;
 import com.leichao.retrofit.core.HttpClient;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.core.HttpSimple;
-import com.leichao.retrofit.progress.ProgressListener;
 import com.trello.lifecycle2.android.lifecycle.AndroidLifecycle;
 import com.trello.rxlifecycle2.LifecycleProvider;
 
@@ -18,7 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public final class HttpManager {
 
-    private static HttpConfig mConfig = new HttpConfig();
+    private static final HttpConfig mConfig = new HttpConfig();
 
     private HttpManager() {
     }
@@ -45,18 +44,17 @@ public final class HttpManager {
      * @param service Api接口
      */
     public static <T> T create(Class<T> service) {
-        return HttpClient.getRetrofit().create(service);
+        return create(service, HttpClient.builder());
     }
 
     /**
      * 创建Retrofit的Api接口
      *
      * @param service  Api接口
-     * @param upListener 上传进度监听
-     * @param downListener 下载进度监听
+     * @param client HttpClient
      */
-    public static <T> T create(Class<T> service, ProgressListener upListener, ProgressListener downListener) {
-        return HttpClient.getRetrofit(upListener, downListener).create(service);
+    public static <T> T create(Class<T> service, HttpClient client) {
+        return client.build().create(service);
     }
 
     /**

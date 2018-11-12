@@ -36,10 +36,9 @@ public class HttpSimple {
     private Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
     private Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
     private Object mJsonData;// 要以json数据格式上传的对象
-    private LifecycleOwner mLifeOwner;
-    private Lifecycle.Event mLifeEvent;
-    private ProgressListener mUpListener;// 上传进度监听
-    private ProgressListener mDownListener;// 下载进度监听
+    private LifecycleOwner mLifeOwner;// 用于生命周期绑定
+    private Lifecycle.Event mLifeEvent;// 用于生命周期绑定
+    private HttpClient mHttpClient = HttpClient.builder();// 用于构建Retrofit
 
     public enum Method {GET, POST}
 
@@ -151,12 +150,28 @@ public class HttpSimple {
     }
 
     /**
+     * 设置超时时间，单位秒
+     */
+    public HttpSimple timeout(long timeout) {
+        mHttpClient.timeout(timeout);
+        return this;
+    }
+
+    /**
+     * 设置baseUrl
+     */
+    public HttpSimple baseUrl(String baseUrl) {
+        mHttpClient.baseUrl(baseUrl);
+        return this;
+    }
+
+    /**
      * 上传进度监听,POST请求才生效
      *
      * @param listener 进度监听器
      */
     public HttpSimple upListener(ProgressListener listener) {
-        this.mUpListener = listener;
+        mHttpClient.upListener(listener);
         return this;
     }
 
@@ -166,7 +181,7 @@ public class HttpSimple {
      * @param listener 进度监听器
      */
     public HttpSimple downListener(ProgressListener listener) {
-        this.mDownListener = listener;
+        mHttpClient.downListener(listener);
         return this;
     }
 
@@ -174,7 +189,7 @@ public class HttpSimple {
      * 执行获取String的请求
      */
     public void getString(StringObserver observer) {
-        StringApi api = HttpManager.create(StringApi.class, mUpListener, mDownListener);
+        StringApi api = HttpManager.create(StringApi.class, mHttpClient);
         Observable<String> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -204,7 +219,7 @@ public class HttpSimple {
      * 执行获取File的请求
      */
     public void getFile(FileObserver observer) {
-        FileApi api = HttpManager.create(FileApi.class, mUpListener, mDownListener);
+        FileApi api = HttpManager.create(FileApi.class, mHttpClient);
         Observable<File> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -234,7 +249,7 @@ public class HttpSimple {
      * 执行获取HttpResult的请求
      */
     public <T> void getHttp(final HttpObserver<T> observer) {
-        HttpApi api = HttpManager.create(HttpApi.class, mUpListener, mDownListener);
+        HttpApi api = HttpManager.create(HttpApi.class, mHttpClient);
         Observable<HttpResult> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);

@@ -60,7 +60,7 @@ public class HttpConfig {
     }
 
     /**
-     * 设置全局域名
+     * 设置baseUrl
      */
     public HttpConfig setBaseUrl(String baseUrl) {
         if (!TextUtils.isEmpty(baseUrl)) this.baseUrl = baseUrl;
