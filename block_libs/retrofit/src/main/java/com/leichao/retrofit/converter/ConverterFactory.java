@@ -37,7 +37,7 @@ public final class ConverterFactory extends Converter.Factory {
                 || clazz == int.class || clazz == Integer.class
                 || clazz == long.class || clazz == Long.class
                 || clazz == short.class || clazz == Short.class) {
-            // 如果是String或者基本类型，则转换成文本
+            // 如果是String或者基本类型，则转换成String
             return new StringRequestConverter<>();
 
         } else {
@@ -60,19 +60,19 @@ public final class ConverterFactory extends Converter.Factory {
                 || clazz == int.class || clazz == Integer.class
                 || clazz == long.class || clazz == Long.class
                 || clazz == short.class || clazz == Short.class) {
-            // 如果type是String或者基本类型，则转换成String
+            // 如果是String或者基本类型，则转换成String
             return new StringResponseConverter();
 
         } else if (clazz == File.class) {
-            // 如果type是File类型，则转换成File
+            // 如果是File类型，则转换成File
             return new FileResponseConverter();
 
         } else if (clazz == HttpResult.class) {
-            // 如果type是HttpResult类型，则转换成HttpResult
+            // 如果是HttpResult类型，则转换成HttpResult
             return new HttpResponseConverter<>(type);
 
         } else if (clazz == MulaResult.class) {
-            // 如果type是MulaResult类型，则转换成MulaResult
+            // 如果是MulaResult类型，则转换成MulaResult
             return new MulaResponseConverter<>(type);
 
         } else {

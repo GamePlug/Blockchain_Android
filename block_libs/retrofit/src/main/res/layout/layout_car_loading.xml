@@ -5,7 +5,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <com.leichao.retrofit.loading.CarView
+    <view class="com.leichao.retrofit.loading.CarLoading$CarView"
         android:id="@+id/carView"
         android:layout_width="80dp"
         android:layout_height="80dp" />

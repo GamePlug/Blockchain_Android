@@ -11,7 +11,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * 下载进度拦截器
+ * 上传和下载进度拦截器
  */
 public class ProgressInterceptor implements Interceptor {
 
