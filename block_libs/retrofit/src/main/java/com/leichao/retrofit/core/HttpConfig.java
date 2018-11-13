@@ -4,10 +4,9 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.leichao.retrofit.interceptor.ParamsInterceptor;
+import com.leichao.retrofit.interceptor.ParamsMulaInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Retrofit配置类
@@ -27,6 +26,9 @@ public class HttpConfig {
 
     // 下载缓存地址
     private String downloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache/download";
+
+    // 参数处理
+    private ParamsInterceptor paramsInterceptor = new ParamsMulaInterceptor();
 
     // 动态设置回调
     private Callback callback = new Callback();
@@ -78,6 +80,17 @@ public class HttpConfig {
         this.downloadDir = downloadDir;
     }
 
+    public ParamsInterceptor getParamsInterceptor() {
+        return paramsInterceptor;
+    }
+
+    /**
+     * 参数处理器
+     */
+    public void setParamsInterceptor(ParamsInterceptor paramsInterceptor) {
+        this.paramsInterceptor = paramsInterceptor;
+    }
+
     public Callback getCallback() {
         return callback;
     }
@@ -93,16 +106,6 @@ public class HttpConfig {
     }
 
     public static class Callback {
-        /**
-         * 添加公共参数
-         *
-         * @param url 访问链接，包含了所有的键值对参数
-         * @return 公共的参数
-         */
-        public Map<String, String> getCommonParams(String url) {
-            return Collections.emptyMap();
-        }
-
         /**
          * 生成加载动画Dialog
          *

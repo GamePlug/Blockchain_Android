@@ -4,31 +4,21 @@ import android.text.TextUtils;
 
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.converter.ConverterFactory;
-import com.leichao.retrofit.interceptor.ParamsInterceptor;
-import com.leichao.retrofit.interceptor.ProgressInterceptor;
-import com.leichao.retrofit.progress.ProgressListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 public class HttpClient {
 
-    private static Retrofit mRetrofit;
-
-    private HttpConfig mConfig;
     private long mTimeout;
     private String mBaseUrl;
-    private ProgressListener mUpListener;// 上传进度监听
-    private ProgressListener mDownListener;// 下载进度监听
-
-    private HttpClient() {
-        mConfig = HttpManager.config();
-        mTimeout = mConfig.getTimeout();
-        mBaseUrl = mConfig.getBaseUrl();
-    }
+    private final List<Interceptor> interceptorList = new ArrayList<>();
 
     public static HttpClient builder() {
         return new HttpClient();
@@ -51,59 +41,33 @@ public class HttpClient {
     }
 
     /**
-     * 上传进度监听,POST请求才生效
-     *
-     * @param listener 进度监听器
+     * 添加拦截器
      */
-    public HttpClient upListener(ProgressListener listener) {
-        this.mUpListener = listener;
-        return this;
-    }
-
-    /**
-     * 下载进度监听
-     *
-     * @param listener 进度监听器
-     */
-    public HttpClient downListener(ProgressListener listener) {
-        this.mDownListener = listener;
+    public HttpClient addInterceptor(Interceptor interceptor) {
+        if (interceptor != null) this.interceptorList.add(interceptor);
         return this;
     }
 
     public Retrofit build() {
-        if (mTimeout == mConfig.getTimeout()
-                && mBaseUrl.equals(mConfig.getBaseUrl())
-                && mUpListener == null
-                && mDownListener == null) {
-            if (mRetrofit == null) {
-                mRetrofit = getRetrofit();
-            }
-            return mRetrofit;
+        HttpConfig config = HttpManager.config();
+        if (mTimeout == 0) {
+            mTimeout = config.getTimeout();
         }
-        return getRetrofit();
-    }
-
-    private Retrofit getRetrofit() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .retryOnConnectionFailure(true)// 连接失败重连，默认为true，可以不加
-                .connectTimeout(mTimeout, TimeUnit.SECONDS)// 链接超时
-                .writeTimeout(mTimeout, TimeUnit.SECONDS)// 写入超时
-                .readTimeout(mTimeout, TimeUnit.SECONDS)// 读取超时
-                //.cookieJar(new CookiesManager())// 开启cookie功能，将cookie序列化到本地，暂不开启
-                //.sslSocketFactory(new SSLSocketFactory())// 支持https协议，暂时未支持
-                //.cache(cache)// 设置OkHttp缓存
-                .addInterceptor(new ParamsInterceptor())// 添加自定义拦截操作//HttpLoggingInterceptor
-                .build();
-        if (mUpListener != null || mDownListener != null) {
-            okHttpClient = okHttpClient.newBuilder()
-                    .addInterceptor(new ProgressInterceptor(mUpListener, mDownListener))
-                    .build();
+        if (TextUtils.isEmpty(mBaseUrl)) {
+            mBaseUrl = config.getBaseUrl();
+        }
+        OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
+                .connectTimeout(mTimeout, TimeUnit.SECONDS)
+                .writeTimeout(mTimeout, TimeUnit.SECONDS)
+                .readTimeout(mTimeout, TimeUnit.SECONDS);
+        for (Interceptor interceptor : interceptorList) {
+            okHttpBuilder.addInterceptor(interceptor);
         }
         return new Retrofit.Builder()
                 .baseUrl(mBaseUrl)
-                .addConverterFactory(ConverterFactory.create())// Gson解析转换工厂//GsonConverterFactory
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())// RxJava适配器
-                .client(okHttpClient)
+                .addConverterFactory(ConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(okHttpBuilder.build())
                 .build();
     }
 

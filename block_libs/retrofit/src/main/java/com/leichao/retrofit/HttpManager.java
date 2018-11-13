@@ -18,6 +18,7 @@ import io.reactivex.schedulers.Schedulers;
 public final class HttpManager {
 
     private static final HttpConfig mConfig = new HttpConfig();
+    public static final HttpClient COMMON_CLIENT = HttpClient.builder().addInterceptor(mConfig.getParamsInterceptor());
 
     private HttpManager() {
     }
@@ -44,7 +45,7 @@ public final class HttpManager {
      * @param service Api接口
      */
     public static <T> T create(Class<T> service) {
-        return create(service, HttpClient.builder());
+        return COMMON_CLIENT.build().create(service);
     }
 
     /**

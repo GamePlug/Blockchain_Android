@@ -2,7 +2,6 @@ package com.leichao.retrofit.interceptor;
 
 import android.text.TextUtils;
 
-import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.util.LogUtil;
 
 import java.io.IOException;
@@ -20,9 +19,9 @@ import okhttp3.Response;
 import okio.Buffer;
 
 /**
- * 参数拦截器
+ * 基础参数拦截器
  */
-public class ParamsInterceptor implements Interceptor {
+public abstract class ParamsInterceptor implements Interceptor {
 
     private static final String APPLICATION_FORM_URL = "application/x-www-form-urlencoded;charset=UTF-8";
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
@@ -56,7 +55,7 @@ public class ParamsInterceptor implements Interceptor {
     private Request getNormal(Request request) {
         // 获取公共参数
         String originUrl = request.url().toString();
-        Map<String, String> params = HttpManager.config().getCallback().getCommonParams(originUrl);
+        Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
         HttpUrl.Builder builder = request.url().newBuilder();
         for (String key : params.keySet()) {
@@ -81,7 +80,7 @@ public class ParamsInterceptor implements Interceptor {
         String postBodyString = bodyToString(request.body());
         // 获取公共参数
         String originUrl = getAppendUrl(request, postBodyString);
-        Map<String, String> params = HttpManager.config().getCallback().getCommonParams(originUrl);
+        Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
         StringBuilder sb = new StringBuilder(postBodyString);
         for (String key : params.keySet()) {
@@ -117,7 +116,7 @@ public class ParamsInterceptor implements Interceptor {
         String uploadBodyString = partsToString(parts);
         // 获取公共参数
         String originUrl = getAppendUrl(request, uploadBodyString);// 不包含文件数据
-        Map<String, String> params = HttpManager.config().getCallback().getCommonParams(originUrl);
+        Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
         StringBuilder sb = new StringBuilder(uploadBodyString);
         for (String key : params.keySet()) {
@@ -143,7 +142,7 @@ public class ParamsInterceptor implements Interceptor {
     private Request postJson(Request request) {
         // 获取公共参数
         String originUrl = request.url().toString();// 不包含json数据
-        Map<String, String> params = HttpManager.config().getCallback().getCommonParams(originUrl);
+        Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
         HttpUrl.Builder builder = request.url().newBuilder();
         for (String key : params.keySet()) {
@@ -207,5 +206,7 @@ public class ParamsInterceptor implements Interceptor {
         }
         return partBuilder.toString();
     }
+
+    public abstract Map<String, String> getCommonParams(String url);
 
 }

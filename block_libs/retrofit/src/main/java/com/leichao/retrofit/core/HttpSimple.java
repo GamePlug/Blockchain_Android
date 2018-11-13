@@ -9,6 +9,8 @@ import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.api.FileApi;
 import com.leichao.retrofit.api.HttpApi;
 import com.leichao.retrofit.api.StringApi;
+import com.leichao.retrofit.interceptor.ParamsInterceptor;
+import com.leichao.retrofit.interceptor.ProgressInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.FileObserver;
@@ -34,19 +36,27 @@ public class HttpSimple {
 
     private Method mMethod = Method.GET;
     private String mUrl;
-    private Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
-    private Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
-    private Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
+    private final Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
+    private final Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
+    private final Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
     private Object mJsonData;// 要以json数据格式上传的对象
     private LifecycleOwner mLifeOwner;// 用于生命周期绑定
     private Lifecycle.Event mLifeEvent;// 用于生命周期绑定
-    private HttpClient mHttpClient = HttpClient.builder();// 用于构建Retrofit
     private BaseLoading mLoading;// 加载loading
+    private long mTimeout;// 超时时间
+    private String mBaseUrl;// BaseUrl
+    private ParamsInterceptor mParamsInterceptor;// 参数拦截器
+    private ProgressListener mUpListener;// 上传进度监听
+    private ProgressListener mDownListener;// 下载进度监听
 
     public enum Method {GET, POST}
 
     private HttpSimple(String url) {
         this.mUrl = url;
+        HttpConfig config = HttpManager.config();
+        this.mTimeout = config.getTimeout();
+        this.mBaseUrl = config.getBaseUrl();
+        this.mParamsInterceptor = config.getParamsInterceptor();
     }
 
     /**
@@ -153,10 +163,18 @@ public class HttpSimple {
     }
 
     /**
+     * 显示加载loading
+     */
+    public HttpSimple loading(BaseLoading loading) {
+        this.mLoading = loading;
+        return this;
+    }
+
+    /**
      * 设置超时时间，单位秒
      */
     public HttpSimple timeout(long timeout) {
-        mHttpClient.timeout(timeout);
+        this.mTimeout = timeout;
         return this;
     }
 
@@ -164,7 +182,15 @@ public class HttpSimple {
      * 设置baseUrl
      */
     public HttpSimple baseUrl(String baseUrl) {
-        mHttpClient.baseUrl(baseUrl);
+        this.mBaseUrl = baseUrl;
+        return this;
+    }
+
+    /**
+     * 参数拦截器
+     */
+    public HttpSimple paramsInterceptor(ParamsInterceptor interceptor) {
+        this.mParamsInterceptor = interceptor;
         return this;
     }
 
@@ -174,7 +200,7 @@ public class HttpSimple {
      * @param listener 进度监听器
      */
     public HttpSimple upListener(ProgressListener listener) {
-        mHttpClient.upListener(listener);
+        this.mUpListener = listener;
         return this;
     }
 
@@ -184,23 +210,15 @@ public class HttpSimple {
      * @param listener 进度监听器
      */
     public HttpSimple downListener(ProgressListener listener) {
-        mHttpClient.downListener(listener);
-        return this;
-    }
-
-    /**
-     * 显示加载loading
-     */
-    public HttpSimple loading(BaseLoading loading) {
-        this.mLoading = loading;
+        this.mDownListener = listener;
         return this;
     }
 
     /**
      * 执行获取String的请求
      */
-    public void getString(StringObserver observer) {
-        StringApi api = HttpManager.create(StringApi.class, mHttpClient);
+    public void subscribe(StringObserver observer) {
+        StringApi api = HttpManager.create(StringApi.class, getHttpClient());
         Observable<String> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -226,8 +244,8 @@ public class HttpSimple {
     /**
      * 执行获取File的请求
      */
-    public void getFile(FileObserver observer) {
-        FileApi api = HttpManager.create(FileApi.class, mHttpClient);
+    public void subscribe(FileObserver observer) {
+        FileApi api = HttpManager.create(FileApi.class, getHttpClient());
         Observable<File> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -253,8 +271,8 @@ public class HttpSimple {
     /**
      * 执行获取HttpResult的请求
      */
-    public <T> void getHttp(final HttpObserver<T> observer) {
-        HttpApi api = HttpManager.create(HttpApi.class, mHttpClient);
+    public <T> void subscribe(final HttpObserver<T> observer) {
+        HttpApi api = HttpManager.create(HttpApi.class, getHttpClient());
         Observable<HttpResult> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -290,6 +308,23 @@ public class HttpSimple {
                 return new Gson().fromJson(httpResult.getJsonStr(), type);
             }
         }), observer);
+    }
+
+    // 获取HttpClient
+    private HttpClient getHttpClient() {
+        HttpConfig config = HttpManager.config();
+        if (config.getTimeout() == mTimeout
+                && config.getBaseUrl().equals(mBaseUrl)
+                && config.getParamsInterceptor().equals(mParamsInterceptor)
+                && mUpListener == null
+                && mDownListener == null) {
+            return HttpManager.COMMON_CLIENT;
+        }
+        return HttpClient.builder()
+                .timeout(mTimeout)
+                .baseUrl(mBaseUrl)
+                .addInterceptor(mParamsInterceptor)
+                .addInterceptor(new ProgressInterceptor(mUpListener, mDownListener));
     }
 
     // 执行请求订阅
