@@ -3,11 +3,8 @@ package com.leichao.retrofit.observer;
 import android.content.Context;
 
 import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.loading.BaseLoading;
 
 public abstract class StringObserver extends BaseObserver<String> {
-
-    private BaseLoading mLoading;
 
     public StringObserver() {
         this(null, null, true);
@@ -23,13 +20,8 @@ public abstract class StringObserver extends BaseObserver<String> {
 
     public StringObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
+            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
         }
-    }
-
-    @Override
-    protected BaseLoading onHttpLoading() {
-        return mLoading;
     }
 
     @Override

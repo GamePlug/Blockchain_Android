@@ -9,6 +9,8 @@ import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.api.FileApi;
 import com.leichao.retrofit.api.HttpApi;
 import com.leichao.retrofit.api.StringApi;
+import com.leichao.retrofit.loading.BaseLoading;
+import com.leichao.retrofit.observer.BaseObserver;
 import com.leichao.retrofit.observer.FileObserver;
 import com.leichao.retrofit.observer.HttpObserver;
 import com.leichao.retrofit.observer.StringObserver;
@@ -39,6 +41,7 @@ public class HttpSimple {
     private LifecycleOwner mLifeOwner;// 用于生命周期绑定
     private Lifecycle.Event mLifeEvent;// 用于生命周期绑定
     private HttpClient mHttpClient = HttpClient.builder();// 用于构建Retrofit
+    private BaseLoading mLoading;// 加载loading
 
     public enum Method {GET, POST}
 
@@ -186,6 +189,14 @@ public class HttpSimple {
     }
 
     /**
+     * 显示加载loading
+     */
+    public HttpSimple loading(BaseLoading loading) {
+        this.mLoading = loading;
+        return this;
+    }
+
+    /**
      * 执行获取String的请求
      */
     public void getString(StringObserver observer) {
@@ -209,10 +220,7 @@ public class HttpSimple {
                     break;
             }
         }
-        observable
-                .compose(HttpManager.<String>composeThread())
-                .compose(HttpManager.<String>composeLifecycle(mLifeOwner, mLifeEvent))
-                .subscribe(observer);
+        subscribe(observable, observer);
     }
 
     /**
@@ -239,10 +247,7 @@ public class HttpSimple {
                     break;
             }
         }
-        observable
-                .compose(HttpManager.<File>composeThread())
-                .compose(HttpManager.<File>composeLifecycle(mLifeOwner, mLifeEvent))
-                .subscribe(observer);
+        subscribe(observable, observer);
     }
 
     /**
@@ -269,25 +274,31 @@ public class HttpSimple {
                     break;
             }
         }
-        observable
-                .map(new Function<HttpResult, HttpResult<T>>() {
-                    @Override
-                    public HttpResult<T> apply(HttpResult httpResult) throws Exception {
-                        Type type = TypeToken.get(HttpResult.class).getType();
-                        Class clazz = observer.getClass();
-                        while (clazz != null) {
-                            if (clazz.getSuperclass() == HttpObserver.class) {
-                                Type paramType = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-                                type = TypeToken.getParameterized(HttpResult.class, paramType).getType();
-                                break;
-                            }
-                            clazz = clazz.getSuperclass();
-                        }
-                        return new Gson().fromJson(httpResult.getJsonStr(), type);
+        subscribe(observable.map(new Function<HttpResult, HttpResult<T>>() {
+            @Override
+            public HttpResult<T> apply(HttpResult httpResult) throws Exception {
+                Type type = TypeToken.get(HttpResult.class).getType();
+                Class clazz = observer.getClass();
+                while (clazz != null) {
+                    if (clazz.getSuperclass() == HttpObserver.class) {
+                        Type paramType = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+                        type = TypeToken.getParameterized(HttpResult.class, paramType).getType();
+                        break;
                     }
-                })
-                .compose(HttpManager.<HttpResult<T>>composeThread())
-                .compose(HttpManager.<HttpResult<T>>composeLifecycle(mLifeOwner, mLifeEvent))
+                    clazz = clazz.getSuperclass();
+                }
+                return new Gson().fromJson(httpResult.getJsonStr(), type);
+            }
+        }), observer);
+    }
+
+    // 执行请求订阅
+    private <T> void subscribe(Observable<T> observable, BaseObserver<T> observer) {
+        if (mLoading != null) {
+            observer.setLoading(mLoading);
+        }
+        observable.compose(HttpManager.<T>composeThread())
+                .compose(HttpManager.<T>composeLifecycle(mLifeOwner, mLifeEvent))
                 .subscribe(observer);
     }
 

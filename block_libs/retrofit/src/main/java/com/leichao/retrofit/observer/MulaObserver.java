@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.google.gson.JsonParseException;
 import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.result.MulaResult;
 
 import java.io.IOException;
@@ -12,8 +11,6 @@ import java.io.IOException;
 import retrofit2.HttpException;
 
 public abstract class MulaObserver<T> extends BaseObserver<MulaResult<T>> {
-
-    private BaseLoading mLoading;
 
     public MulaObserver() {
         this(null, null, true);
@@ -29,13 +26,8 @@ public abstract class MulaObserver<T> extends BaseObserver<MulaResult<T>> {
 
     public MulaObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
+            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
         }
-    }
-
-    @Override
-    protected BaseLoading onHttpLoading() {
-        return mLoading;
     }
 
     @Override

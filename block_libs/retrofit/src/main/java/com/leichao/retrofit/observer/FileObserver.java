@@ -3,13 +3,10 @@ package com.leichao.retrofit.observer;
 import android.content.Context;
 
 import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.loading.BaseLoading;
 
 import java.io.File;
 
 public abstract class FileObserver extends BaseObserver<File> {
-
-    private BaseLoading mLoading;
 
     public FileObserver() {
         this(null, null, true);
@@ -25,13 +22,8 @@ public abstract class FileObserver extends BaseObserver<File> {
 
     public FileObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            mLoading = HttpManager.config().getCallback().getLoading(context, message, cancelable);
+            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
         }
-    }
-
-    @Override
-    protected BaseLoading onHttpLoading() {
-        return mLoading;
     }
 
     @Override

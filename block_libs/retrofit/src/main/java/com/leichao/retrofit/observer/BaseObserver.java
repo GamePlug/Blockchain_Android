@@ -15,7 +15,6 @@ public abstract class BaseObserver<T> implements Observer<T> {
     @Override
     public final void onSubscribe(Disposable d) {
         mDisposable = d;
-        mLoading = onHttpLoading();
         showLoading();
     }
 
@@ -50,6 +49,13 @@ public abstract class BaseObserver<T> implements Observer<T> {
         }
     }
 
+    /**
+     * 设置具体请求的loading显示
+     */
+    public final void setLoading(BaseLoading loading) {
+        mLoading = loading;
+    }
+
     private void showLoading() {
         if (mLoading != null) {
             mLoading.show();
@@ -60,13 +66,6 @@ public abstract class BaseObserver<T> implements Observer<T> {
         if (mLoading != null) {
             mLoading.dismiss();
         }
-    }
-
-    /**
-     * 重写该方法可以控制具体请求的loading显示
-     */
-    protected BaseLoading onHttpLoading() {
-        return null;
     }
 
     protected abstract void handHttpSuccess(T result);
