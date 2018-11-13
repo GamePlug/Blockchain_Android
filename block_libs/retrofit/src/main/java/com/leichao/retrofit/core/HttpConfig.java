@@ -5,7 +5,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.leichao.retrofit.interceptor.ParamsInterceptor;
-import com.leichao.retrofit.interceptor.ParamsMulaInterceptor;
+import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 
 /**
@@ -24,14 +24,14 @@ public class HttpConfig {
     // 全局域名
     private String baseUrl = "http://47.74.159.3:8084/";
 
-    // 下载缓存地址
-    private String downloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache/download";
-
     // 参数处理
-    private ParamsInterceptor paramsInterceptor = new ParamsMulaInterceptor();
+    private ParamsInterceptor paramsInterceptor = new MulaParamsInterceptor();
 
-    // 动态设置回调
-    private Callback callback = new Callback();
+    // 下载缓存地址
+    private String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache/download";
+
+    // 加载loading回调
+    private LoadingCallback loadingCallback = new LoadingCallback();
 
     public boolean isDebug() {
         return debug;
@@ -69,17 +69,6 @@ public class HttpConfig {
         return this;
     }
 
-    public String getDownloadDir() {
-        return downloadDir;
-    }
-
-    /**
-     * 设置缓存地址
-     */
-    public void setDownloadDir(String downloadDir) {
-        this.downloadDir = downloadDir;
-    }
-
     public ParamsInterceptor getParamsInterceptor() {
         return paramsInterceptor;
     }
@@ -87,32 +76,43 @@ public class HttpConfig {
     /**
      * 参数处理器
      */
-    public void setParamsInterceptor(ParamsInterceptor paramsInterceptor) {
+    public HttpConfig setParamsInterceptor(ParamsInterceptor paramsInterceptor) {
         this.paramsInterceptor = paramsInterceptor;
-    }
-
-    public Callback getCallback() {
-        return callback;
-    }
-
-    /**
-     * 设置动态设置回调
-     *
-     * @param callback 动态设置回调
-     */
-    public HttpConfig setCallback(Callback callback) {
-        if (callback != null) this.callback = callback;
         return this;
     }
 
-    public static class Callback {
+    public String getDownloadPath() {
+        return downloadPath;
+    }
+
+    /**
+     * 设置缓存地址
+     */
+    public HttpConfig setDownloadPath(String downloadPath) {
+        this.downloadPath = downloadPath;
+        return this;
+    }
+
+    public LoadingCallback getLoadingCallback() {
+        return loadingCallback;
+    }
+
+    /**
+     * 设置加载loading回调
+     */
+    public HttpConfig setLoadingCallback(LoadingCallback callback) {
+        if (callback != null) this.loadingCallback = callback;
+        return this;
+    }
+
+    public static class LoadingCallback {
         /**
-         * 生成加载动画Dialog
+         * 生成加载loading
          *
          * @param context 上下文
          * @param message 加载信息提示
          * @param cancelable 是否可以返回键取消
-         * @return 加载动画Dialog
+         * @return BaseLoading
          */
         public BaseLoading getLoading(Context context, String message, boolean cancelable) {
             return null;

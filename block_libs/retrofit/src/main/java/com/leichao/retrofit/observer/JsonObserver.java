@@ -20,7 +20,7 @@ public abstract class JsonObserver<T> extends BaseObserver<T> {
 
     public JsonObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
+            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
         }
     }
 

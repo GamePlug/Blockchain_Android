@@ -26,7 +26,7 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
 
     public HttpObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
+            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
         }
     }
 

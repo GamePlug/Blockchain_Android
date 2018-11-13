@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     public void test() {
         HttpManager.config()
                 .setTimeout(40)
-                .setCallback(new HttpConfig.Callback() {
+                .setLoadingCallback(new HttpConfig.LoadingCallback() {
                     @Override
                     public BaseLoading getLoading(Context context, String message, boolean cancelable) {
                         return new CarLoading(context, message, cancelable);

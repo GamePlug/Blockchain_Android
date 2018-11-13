@@ -20,7 +20,7 @@ public abstract class StringObserver extends BaseObserver<String> {
 
     public StringObserver(Context context, String message, boolean cancelable) {
         if (context != null) {
-            setLoading(HttpManager.config().getCallback().getLoading(context, message, cancelable));
+            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
         }
     }
 

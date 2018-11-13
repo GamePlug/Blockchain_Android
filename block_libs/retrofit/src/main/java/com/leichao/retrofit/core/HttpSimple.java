@@ -312,14 +312,6 @@ public class HttpSimple {
 
     // 获取HttpClient
     private HttpClient getHttpClient() {
-        HttpConfig config = HttpManager.config();
-        if (config.getTimeout() == mTimeout
-                && config.getBaseUrl().equals(mBaseUrl)
-                && config.getParamsInterceptor().equals(mParamsInterceptor)
-                && mUpListener == null
-                && mDownListener == null) {
-            return HttpManager.COMMON_CLIENT;
-        }
         return HttpClient.builder()
                 .timeout(mTimeout)
                 .baseUrl(mBaseUrl)

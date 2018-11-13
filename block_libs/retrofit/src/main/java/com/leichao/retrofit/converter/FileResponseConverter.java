@@ -16,7 +16,7 @@ public final class FileResponseConverter implements Converter<ResponseBody, File
 
     @Override
     public File convert(ResponseBody value) throws IOException {
-        File file = new File(HttpManager.config().getDownloadDir(), UUID.randomUUID().toString());
+        File file = new File(HttpManager.config().getDownloadPath(), UUID.randomUUID().toString());
         FileUtil.saveFile(file, value.byteStream());
         LogUtil.logE("result:" + "file://"+file.getAbsolutePath());
         return file;

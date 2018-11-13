@@ -14,7 +14,7 @@ import java.util.TreeSet;
  * App相关请求添加默认的参数及签名
  * Created by Administrator on 2017/3/3.
  */
-public class ParamsMulaInterceptor extends ParamsInterceptor {
+public class MulaParamsInterceptor extends ParamsInterceptor {
 
     // 单点登录传递的参数
     public static final String SECRET = "secret";
