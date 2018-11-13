@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.TreeSet;
 
 /**
- * App相关请求添加默认的参数及签名
- * Created by Administrator on 2017/3/3.
+ * Mula相关请求添加默认的参数及签名
+ * Created by leichao on 2017/3/3.
  */
 public class MulaParamsInterceptor extends ParamsInterceptor {
 

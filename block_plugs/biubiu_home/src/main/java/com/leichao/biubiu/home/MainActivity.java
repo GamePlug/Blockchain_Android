@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.api.StringApi;
 import com.leichao.retrofit.core.HttpConfig;
+import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.HttpObserver;
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     public void test() {
         HttpManager.config()
                 .setTimeout(40)
+                .setParamsInterceptor(new MulaParamsInterceptor())
                 .setLoadingCallback(new HttpConfig.LoadingCallback() {
                     @Override
                     public BaseLoading getLoading(Context context, String message, boolean cancelable) {

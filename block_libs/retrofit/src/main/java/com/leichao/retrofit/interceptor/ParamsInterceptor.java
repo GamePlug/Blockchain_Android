@@ -20,6 +20,7 @@ import okio.Buffer;
 
 /**
  * 基础参数拦截器
+ * Created by leichao on 2017/3/3.
  */
 public abstract class ParamsInterceptor implements Interceptor {
 

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.leichao.retrofit.interceptor.DefaultParamsInterceptor;
 import com.leichao.retrofit.interceptor.ParamsInterceptor;
-import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 
 /**
@@ -25,7 +25,7 @@ public class HttpConfig {
     private String baseUrl = "http://47.74.159.3:8084/";
 
     // 参数处理
-    private ParamsInterceptor paramsInterceptor = new MulaParamsInterceptor();
+    private ParamsInterceptor paramsInterceptor = new DefaultParamsInterceptor();
 
     // 下载缓存地址
     private String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cache/download";

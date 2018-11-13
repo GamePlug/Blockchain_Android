@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Google相关请求添加默认的参数及签名
- * Created by Administrator on 2017/3/3.
+ * Created by leichao on 2017/3/3.
  */
 public class GoogleParamsInterceptor extends ParamsInterceptor {
 
