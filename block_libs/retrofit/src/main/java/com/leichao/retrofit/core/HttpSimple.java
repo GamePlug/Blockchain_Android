@@ -2,6 +2,7 @@ package com.leichao.retrofit.core;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
+import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -165,6 +166,27 @@ public class HttpSimple {
     /**
      * 显示加载loading
      */
+    public HttpSimple loading(Context context) {
+        return loading(context, null);
+    }
+
+    /**
+     * 显示加载loading
+     */
+    public HttpSimple loading(Context context, String message) {
+        return loading(context, message, true);
+    }
+
+    /**
+     * 显示加载loading
+     */
+    public HttpSimple loading(Context context, String message, boolean cancelable) {
+        return loading(HttpManager.config().getLoadingCallback().newLoading(context, message, cancelable));
+    }
+
+    /**
+     * 显示加载loading
+     */
     public HttpSimple loading(BaseLoading loading) {
         this.mLoading = loading;
         return this;
@@ -322,7 +344,7 @@ public class HttpSimple {
     // 执行请求订阅
     private <T> void subscribe(Observable<T> observable, BaseObserver<T> observer) {
         if (mLoading != null) {
-            observer.setLoading(mLoading);
+            observer.loading(mLoading);
         }
         observable.compose(HttpManager.<T>composeThread())
                 .compose(HttpManager.<T>composeLifecycle(mLifeOwner, mLifeEvent))

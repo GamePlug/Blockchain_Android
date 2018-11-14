@@ -1,9 +1,6 @@
 package com.leichao.retrofit.observer;
 
-import android.content.Context;
-
 import com.google.gson.JsonParseException;
-import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.result.HttpResult;
 
 import java.io.IOException;
@@ -11,24 +8,6 @@ import java.io.IOException;
 import retrofit2.HttpException;
 
 public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
-
-    public HttpObserver() {
-        this(null, null, true);
-    }
-
-    public HttpObserver(Context context) {
-        this(context, null, true);
-    }
-
-    public HttpObserver(Context context, String message) {
-        this(context, message, true);
-    }
-
-    public HttpObserver(Context context, String message, boolean cancelable) {
-        if (context != null) {
-            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
-        }
-    }
 
     @Override
     protected final void handHttpSuccess(HttpResult<T> result) {
@@ -83,11 +62,6 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
         httpFailure(result);
     }
 
-    @Override
-    protected final void handHttpCompleted() {
-        httpCompleted();
-    }
-
     private void httpSuccess(HttpResult<T> result) {
         try {
             onHttpSuccess(result);
@@ -104,19 +78,9 @@ public abstract class HttpObserver<T> extends BaseObserver<HttpResult<T>> {
         }
     }
 
-    private void httpCompleted() {
-        try {
-            onHttpCompleted();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     protected abstract void onHttpSuccess(HttpResult<T> result);
 
     protected void onHttpFailure(HttpResult<T> result) {
     }
 
-    protected void onHttpCompleted() {
-    }
 }

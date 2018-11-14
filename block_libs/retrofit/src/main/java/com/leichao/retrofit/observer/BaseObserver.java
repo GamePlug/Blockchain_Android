@@ -1,5 +1,8 @@
 package com.leichao.retrofit.observer;
 
+import android.content.Context;
+
+import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -15,6 +18,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
     @Override
     public final void onSubscribe(Disposable d) {
         mDisposable = d;
+        httpStart();
         showLoading();
     }
 
@@ -35,7 +39,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
 
     @Override
     public final void onComplete() {
-        handHttpCompleted();
+        httpCompleted();
         dismissLoading();
     }
 
@@ -52,8 +56,18 @@ public abstract class BaseObserver<T> implements Observer<T> {
     /**
      * 设置具体请求的loading显示
      */
-    public final void setLoading(BaseLoading loading) {
+    public final <N extends BaseObserver<T>> N loading(Context context) {
+        return loading(context, null);
+    }
+    public final <N extends BaseObserver<T>> N loading(Context context, String message) {
+        return loading(context, message, true);
+    }
+    public final <N extends BaseObserver<T>> N loading(Context context, String message, boolean cancelable) {
+        return loading(HttpManager.config().getLoadingCallback().newLoading(context, message, cancelable));
+    }
+    public final <N extends BaseObserver<T>> N loading(BaseLoading loading) {
         mLoading = loading;
+        return (N)this;
     }
 
     private void showLoading() {
@@ -68,10 +82,30 @@ public abstract class BaseObserver<T> implements Observer<T> {
         }
     }
 
+    private void httpStart() {
+        try {
+            onHttpStart();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void httpCompleted() {
+        try {
+            onHttpCompleted();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void onHttpStart() {
+    }
+
+    protected void onHttpCompleted() {
+    }
+
     protected abstract void handHttpSuccess(T result);
 
     protected abstract void handHttpFailure(Throwable throwable);
-
-    protected abstract void handHttpCompleted();
 
 }

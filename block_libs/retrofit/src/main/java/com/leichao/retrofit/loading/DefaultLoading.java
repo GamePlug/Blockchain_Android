@@ -35,8 +35,8 @@ public class DefaultLoading extends Dialog implements BaseLoading {
     public DefaultLoading(Context context, String message, boolean cancelable) {
         super(context, R.style.dialog_light_bg);
         this.context = context;
-        this.cancelable = cancelable;
         this.message = message;
+        this.cancelable = cancelable;
         init();
     }
 

@@ -77,7 +77,7 @@ public class HttpConfig {
      * 参数处理器
      */
     public HttpConfig setParamsInterceptor(ParamsInterceptor paramsInterceptor) {
-        this.paramsInterceptor = paramsInterceptor;
+        if (paramsInterceptor != null) this.paramsInterceptor = paramsInterceptor;
         return this;
     }
 
@@ -89,7 +89,7 @@ public class HttpConfig {
      * 设置缓存地址
      */
     public HttpConfig setDownloadPath(String downloadPath) {
-        this.downloadPath = downloadPath;
+        if (!TextUtils.isEmpty(downloadPath)) this.downloadPath = downloadPath;
         return this;
     }
 
@@ -114,7 +114,7 @@ public class HttpConfig {
          * @param cancelable 是否可以返回键取消
          * @return BaseLoading
          */
-        public BaseLoading getLoading(Context context, String message, boolean cancelable) {
+        public BaseLoading newLoading(Context context, String message, boolean cancelable) {
             return null;
         }
     }

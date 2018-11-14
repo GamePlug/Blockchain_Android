@@ -42,8 +42,8 @@ public class CarLoading extends Dialog implements BaseLoading {
     public CarLoading(Context context, String message, boolean cancelable) {
         super(context, R.style.dialog_dim_bg);
         this.context = context;
-        this.cancelable = cancelable;
         this.message = message;
+        this.cancelable = cancelable;
         init();
     }
 

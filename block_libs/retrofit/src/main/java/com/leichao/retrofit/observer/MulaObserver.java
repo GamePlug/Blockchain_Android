@@ -1,9 +1,6 @@
 package com.leichao.retrofit.observer;
 
-import android.content.Context;
-
 import com.google.gson.JsonParseException;
-import com.leichao.retrofit.HttpManager;
 import com.leichao.retrofit.result.MulaResult;
 
 import java.io.IOException;
@@ -11,24 +8,6 @@ import java.io.IOException;
 import retrofit2.HttpException;
 
 public abstract class MulaObserver<T> extends BaseObserver<MulaResult<T>> {
-
-    public MulaObserver() {
-        this(null, null, true);
-    }
-
-    public MulaObserver(Context context) {
-        this(context, null, true);
-    }
-
-    public MulaObserver(Context context, String message) {
-        this(context, message, true);
-    }
-
-    public MulaObserver(Context context, String message, boolean cancelable) {
-        if (context != null) {
-            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
-        }
-    }
 
     @Override
     protected final void handHttpSuccess(MulaResult<T> result) {
@@ -82,11 +61,6 @@ public abstract class MulaObserver<T> extends BaseObserver<MulaResult<T>> {
         httpFailure(result);
     }
 
-    @Override
-    protected final void handHttpCompleted() {
-        httpCompleted();
-    }
-
     private void httpSuccess(MulaResult<T> result) {
         try {
             onHttpSuccess(result);
@@ -103,19 +77,9 @@ public abstract class MulaObserver<T> extends BaseObserver<MulaResult<T>> {
         }
     }
 
-    private void httpCompleted() {
-        try {
-            onHttpCompleted();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     protected abstract void onHttpSuccess(MulaResult<T> result);
 
     protected void onHttpFailure(MulaResult<T> result) {
     }
 
-    protected void onHttpCompleted() {
-    }
 }

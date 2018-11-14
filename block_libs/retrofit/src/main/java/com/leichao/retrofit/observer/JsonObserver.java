@@ -1,28 +1,6 @@
 package com.leichao.retrofit.observer;
 
-import android.content.Context;
-
-import com.leichao.retrofit.HttpManager;
-
 public abstract class JsonObserver<T> extends BaseObserver<T> {
-
-    public JsonObserver() {
-        this(null, null, true);
-    }
-
-    public JsonObserver(Context context) {
-        this(context, null, true);
-    }
-
-    public JsonObserver(Context context, String message) {
-        this(context, message, true);
-    }
-
-    public JsonObserver(Context context, String message, boolean cancelable) {
-        if (context != null) {
-            setLoading(HttpManager.config().getLoadingCallback().getLoading(context, message, cancelable));
-        }
-    }
 
     @Override
     protected final void handHttpSuccess(T result) {
@@ -32,11 +10,6 @@ public abstract class JsonObserver<T> extends BaseObserver<T> {
     @Override
     protected final void handHttpFailure(Throwable throwable) {
         httpFailure(throwable);
-    }
-
-    @Override
-    protected final void handHttpCompleted() {
-        httpCompleted();
     }
 
     private void httpSuccess(T result) {
@@ -55,19 +28,9 @@ public abstract class JsonObserver<T> extends BaseObserver<T> {
         }
     }
 
-    private void httpCompleted() {
-        try {
-            onHttpCompleted();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     protected abstract void onHttpSuccess(T result);
 
     protected void onHttpFailure(Throwable throwable) {
     }
 
-    protected void onHttpCompleted() {
-    }
 }

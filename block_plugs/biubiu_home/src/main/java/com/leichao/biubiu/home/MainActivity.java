@@ -176,11 +176,11 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                 .setParamsInterceptor(new MulaParamsInterceptor())
                 .setLoadingCallback(new HttpConfig.LoadingCallback() {
                     @Override
-                    public BaseLoading getLoading(Context context, String message, boolean cancelable) {
+                    public BaseLoading newLoading(Context context, String message, boolean cancelable) {
                         return new CarLoading(context, message, cancelable);
                     }
                 });
-        mObserver = new MulaObserver<String>(this) {
+        mObserver = new MulaObserver<String>() {
             @Override
             protected void onHttpSuccess(MulaResult<String> result) {
 
@@ -202,7 +202,22 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
                     protected void onHttpSuccess(String result) {
 
                     }
-                });
+
+                    @Override
+                    protected void onHttpFailure(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    protected void onHttpStart() {
+
+                    }
+
+                    @Override
+                    protected void onHttpCompleted() {
+
+                    }
+                }.loading(this, "加载啦", true));
         HttpManager.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
                 .param("aaaaa", 5555555)
                 .post()
