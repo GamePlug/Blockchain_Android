@@ -2,7 +2,7 @@ package com.leichao.retrofit.observer;
 
 import android.content.Context;
 
-import com.leichao.retrofit.HttpManager;
+import com.leichao.retrofit.Http;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.util.LogUtil;
 
@@ -25,14 +25,14 @@ public abstract class BaseObserver<T> implements Observer<T> {
     @Override
     public final void onNext(T t) {
         if (t instanceof ResponseBody) {// 非ResponseBody的结果在转换器中已经打印了
-            LogUtil.logE("result:" + "The http result is a ResponseBody");
+            LogUtil.e("result:" + "The http result is a ResponseBody");
         }
         handHttpSuccess(t);
     }
 
     @Override
     public final void onError(Throwable e) {
-        LogUtil.logE("result:" + e.toString());
+        LogUtil.e("result:" + e.toString());
         handHttpFailure(e);
         onComplete();
     }
@@ -63,7 +63,7 @@ public abstract class BaseObserver<T> implements Observer<T> {
         return loading(context, message, true);
     }
     public final <N extends BaseObserver<T>> N loading(Context context, String message, boolean cancelable) {
-        return loading(HttpManager.config().getLoadingCallback().newLoading(context, message, cancelable));
+        return loading(Http.config().getLoadingCallback().newLoading(context, message, cancelable));
     }
     public final <N extends BaseObserver<T>> N loading(BaseLoading loading) {
         mLoading = loading;

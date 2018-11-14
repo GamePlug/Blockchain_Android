@@ -22,7 +22,7 @@ public final class HttpResponseConverter<T> implements Converter<ResponseBody, H
     @Override
     public HttpResult<T> convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.logE("result:" + responseStr);
+        LogUtil.e("result:" + responseStr);
         HttpResult<T> httpResult;
         Gson gson = new Gson();
         HttpResult temp = gson.fromJson(responseStr, HttpResult.class);

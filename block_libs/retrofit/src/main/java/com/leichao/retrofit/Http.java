@@ -15,11 +15,11 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public final class HttpManager {
+public final class Http {
 
     private static final HttpConfig mConfig = new HttpConfig();
 
-    private HttpManager() {
+    private Http() {
     }
 
     /**

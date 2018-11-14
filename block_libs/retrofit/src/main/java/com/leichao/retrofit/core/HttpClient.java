@@ -2,7 +2,7 @@ package com.leichao.retrofit.core;
 
 import android.text.TextUtils;
 
-import com.leichao.retrofit.HttpManager;
+import com.leichao.retrofit.Http;
 import com.leichao.retrofit.converter.ConverterFactory;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class HttpClient {
     }
 
     public Retrofit build() {
-        HttpConfig config = HttpManager.config();
+        HttpConfig config = Http.config();
         if (mTimeout == 0) {
             mTimeout = config.getTimeout();
         }

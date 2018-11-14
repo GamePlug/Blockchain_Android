@@ -1,8 +1,6 @@
 package com.leichao.biubiu.home;
 
 import android.Manifest;
-import android.arch.lifecycle.Lifecycle;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,18 +9,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.leichao.retrofit.HttpManager;
-import com.leichao.retrofit.api.StringApi;
-import com.leichao.retrofit.core.HttpConfig;
-import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
-import com.leichao.retrofit.loading.BaseLoading;
-import com.leichao.retrofit.loading.CarLoading;
-import com.leichao.retrofit.observer.HttpObserver;
-import com.leichao.retrofit.observer.MulaObserver;
-import com.leichao.retrofit.observer.StringObserver;
-import com.leichao.retrofit.progress.ProgressListener;
-import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.result.MulaResult;
+import com.leichao.retrofit.example.TestHttp;
 import com.leichao.util.AppUtil;
 import com.leichao.util.KeyboardUtil;
 import com.leichao.util.LogUtil;
@@ -31,7 +18,6 @@ import com.leichao.util.PermissionUtil;
 import com.leichao.util.StatusBarUtil;
 import com.leichao.util.ToastUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,8 +27,6 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
 
     TextView textView;
     EditText etInput;
-
-    private MulaObserver<String> mObserver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     protected void onDestroy() {
         KeyboardUtil.fixSoftInputLeaks(this);
         super.onDestroy();
-        mObserver.cancel();
         AppUtil.removeStatusListener(this);
         KeyboardUtil.removeStatusListener(this, this);
         NetworkUtil.removeStatusListener(this);
@@ -171,100 +154,7 @@ public class MainActivity extends AppCompatActivity implements AppUtil.OnAppStat
     }*/
 
     public void test() {
-        HttpManager.config()
-                .setTimeout(40)
-                .setParamsInterceptor(new MulaParamsInterceptor())
-                .setLoadingCallback(new HttpConfig.LoadingCallback() {
-                    @Override
-                    public BaseLoading newLoading(Context context, String message, boolean cancelable) {
-                        return new CarLoading(context, message, cancelable);
-                    }
-                });
-        mObserver = new MulaObserver<String>() {
-            @Override
-            protected void onHttpSuccess(MulaResult<String> result) {
-
-            }
-        };
-        HttpManager.create(HomeApi.class)
-                .test()
-                .compose(HttpManager.<MulaResult<String>>composeThread())
-                .compose(HttpManager.<MulaResult<String>>composeLifecycle(this, Lifecycle.Event.ON_PAUSE))
-                .subscribe(mObserver);
-        //mObserver.cancel();
-        HttpManager.create(StringApi.class)
-                .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0",
-                        Collections.<String, Object>emptyMap(), Collections.<String, Object>emptyMap())
-                .compose(HttpManager.<String>composeLifecycle(this))
-                .compose(HttpManager.<String>composeThread())
-                .subscribe(new StringObserver() {
-                    @Override
-                    protected void onHttpSuccess(String result) {
-
-                    }
-
-                    @Override
-                    protected void onHttpFailure(Throwable throwable) {
-
-                    }
-
-                    @Override
-                    protected void onHttpStart() {
-
-                    }
-
-                    @Override
-                    protected void onHttpCompleted() {
-
-                    }
-                }.loading(this, "加载啦", true));
-        HttpManager.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
-                .param("aaaaa", 5555555)
-                .post()
-                .bindLifecycle(this)
-                .upListener(new ProgressListener() {
-                    @Override
-                    public void onProgress(long progress, long total, boolean done) {
-                        LogUtil.e((done ? "上传完成:" : "上传中:") + "--progress:" + progress + "--total:" + total);
-                    }
-                })
-                .downListener(new ProgressListener() {
-                    @Override
-                    public void onProgress(long progress, long total, boolean done) {
-                        LogUtil.e((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
-                    }
-                })
-                /*.subscribe(new StringObserver() {
-                    @Override
-                    protected void onHttpSuccess(String result) {
-                        LogUtil.e(result);
-                    }
-                });*/
-                /*.subscribe(new FileObserver() {
-                    @Override
-                    protected void onHttpSuccess(File file) {
-                        LogUtil.e(file.toString());
-                    }
-
-                    @Override
-                    protected void onHttpFailure(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });*/
-                .subscribe(new HttpObserver<TestBean>() {
-                    @Override
-                    protected void onHttpSuccess(HttpResult<TestBean> result) {
-                        LogUtil.e(result.toString());
-                    }
-                });
-
-        /*HttpManager.create(HomeApi.class).test2().compose(HttpManager.<HttpResult<TestBean>>composeThread())
-                .subscribe(new HttpObserver<TestBean>() {
-                    @Override
-                    protected void onHttpSuccess(HttpResult<TestBean> result) {
-                        LogUtil.e(result.toString());
-                    }
-                });*/
+        TestHttp.test(this);
     }
 
 }

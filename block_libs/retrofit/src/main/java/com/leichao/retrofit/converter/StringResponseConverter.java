@@ -13,7 +13,7 @@ public final class StringResponseConverter implements Converter<ResponseBody, St
     @Override
     public String convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.logE("result:" + responseStr);
+        LogUtil.e("result:" + responseStr);
         return responseStr;
     }
 

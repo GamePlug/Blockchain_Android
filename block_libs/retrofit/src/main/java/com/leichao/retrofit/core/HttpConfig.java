@@ -24,7 +24,7 @@ public class HttpConfig {
     // 全局域名
     private String baseUrl = "http://47.74.159.3:8084/";
 
-    // 参数处理
+    // 参数处理，可以设置为空
     private ParamsInterceptor paramsInterceptor = new DefaultParamsInterceptor();
 
     // 下载缓存地址
@@ -74,10 +74,10 @@ public class HttpConfig {
     }
 
     /**
-     * 参数处理器
+     * 参数处理器，可以设置为空
      */
     public HttpConfig setParamsInterceptor(ParamsInterceptor paramsInterceptor) {
-        if (paramsInterceptor != null) this.paramsInterceptor = paramsInterceptor;
+        this.paramsInterceptor = paramsInterceptor;
         return this;
     }
 

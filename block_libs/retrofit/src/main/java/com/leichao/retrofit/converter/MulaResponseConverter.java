@@ -22,7 +22,7 @@ public final class MulaResponseConverter<T> implements Converter<ResponseBody, M
     @Override
     public MulaResult<T> convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.logE("result:" + responseStr);
+        LogUtil.e("result:" + responseStr);
         MulaResult<T> mulaResult;
         Gson gson = new Gson();
         MulaResult temp = gson.fromJson(responseStr, MulaResult.class);

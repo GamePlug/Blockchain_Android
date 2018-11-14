@@ -70,7 +70,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         request = request.newBuilder()
                 .url(url)
                 .build();
-        LogUtil.logE("url:" + request.url());
+        LogUtil.e("url:" + request.url());
         return request;
     }
 
@@ -97,7 +97,7 @@ public abstract class ParamsInterceptor implements Interceptor {
                         MediaType.parse(APPLICATION_FORM_URL),
                         postBodyString))
                 .build();
-        LogUtil.logE("url:" + getAppendUrl(request, postBodyString));
+        LogUtil.e("url:" + getAppendUrl(request, postBodyString));
         return request;
     }
 
@@ -133,7 +133,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         request = request.newBuilder()
                 .post(multiBody)
                 .build();
-        LogUtil.logE("url:" + getAppendUrl(request, uploadBodyString));
+        LogUtil.e("url:" + getAppendUrl(request, uploadBodyString));
         return request;
     }
 
@@ -158,7 +158,7 @@ public abstract class ParamsInterceptor implements Interceptor {
                 .url(url)
                 .build();
         String postBodyString = bodyToString(request.body());
-        LogUtil.logE("url:" + getAppendUrl(request, postBodyString));
+        LogUtil.e("url:" + getAppendUrl(request, postBodyString));
         return request;
     }
 

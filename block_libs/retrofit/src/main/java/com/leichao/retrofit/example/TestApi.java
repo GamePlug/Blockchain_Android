@@ -1,4 +1,4 @@
-package com.leichao.biubiu.home;
+package com.leichao.retrofit.example;
 
 import com.leichao.retrofit.result.HttpResult;
 import com.leichao.retrofit.result.MulaResult;
@@ -6,12 +6,7 @@ import com.leichao.retrofit.result.MulaResult;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 
-/**
- * api接口
- * Created by leichao on 2017/3/7.
- */
-
-public interface HomeApi {
+public interface TestApi {
 
     // 测试用接口
     @GET("api/tms/googleKey/getGoogleKey?isVerify=0")

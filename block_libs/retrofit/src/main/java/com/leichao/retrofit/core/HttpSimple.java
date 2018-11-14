@@ -6,7 +6,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.leichao.retrofit.HttpManager;
+import com.leichao.retrofit.Http;
 import com.leichao.retrofit.api.FileApi;
 import com.leichao.retrofit.api.HttpApi;
 import com.leichao.retrofit.api.StringApi;
@@ -54,7 +54,7 @@ public class HttpSimple {
 
     private HttpSimple(String url) {
         this.mUrl = url;
-        HttpConfig config = HttpManager.config();
+        HttpConfig config = Http.config();
         this.mTimeout = config.getTimeout();
         this.mBaseUrl = config.getBaseUrl();
         this.mParamsInterceptor = config.getParamsInterceptor();
@@ -181,7 +181,7 @@ public class HttpSimple {
      * 显示加载loading
      */
     public HttpSimple loading(Context context, String message, boolean cancelable) {
-        return loading(HttpManager.config().getLoadingCallback().newLoading(context, message, cancelable));
+        return loading(Http.config().getLoadingCallback().newLoading(context, message, cancelable));
     }
 
     /**
@@ -240,7 +240,7 @@ public class HttpSimple {
      * 执行获取String的请求
      */
     public void subscribe(StringObserver observer) {
-        StringApi api = HttpManager.create(StringApi.class, getHttpClient());
+        StringApi api = Http.create(StringApi.class, getHttpClient());
         Observable<String> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -267,7 +267,7 @@ public class HttpSimple {
      * 执行获取File的请求
      */
     public void subscribe(FileObserver observer) {
-        FileApi api = HttpManager.create(FileApi.class, getHttpClient());
+        FileApi api = Http.create(FileApi.class, getHttpClient());
         Observable<File> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -294,7 +294,7 @@ public class HttpSimple {
      * 执行获取HttpResult的请求
      */
     public <T> void subscribe(final HttpObserver<T> observer) {
-        HttpApi api = HttpManager.create(HttpApi.class, getHttpClient());
+        HttpApi api = Http.create(HttpApi.class, getHttpClient());
         Observable<HttpResult> observable;
         if (mJsonData != null) {
             observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
@@ -346,8 +346,8 @@ public class HttpSimple {
         if (mLoading != null) {
             observer.loading(mLoading);
         }
-        observable.compose(HttpManager.<T>composeThread())
-                .compose(HttpManager.<T>composeLifecycle(mLifeOwner, mLifeEvent))
+        observable.compose(Http.<T>composeThread())
+                .compose(Http.<T>composeLifecycle(mLifeOwner, mLifeEvent))
                 .subscribe(observer);
     }
 
