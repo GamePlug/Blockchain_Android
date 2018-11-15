@@ -5,13 +5,13 @@ import android.support.v4.app.SupportActivity;
 
 import com.leichao.retrofit.Http;
 import com.leichao.retrofit.core.HttpConfig;
+import com.leichao.retrofit.core.Util;
 import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.HttpObserver;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.util.LogUtil;
 
 import java.io.File;
 
@@ -73,13 +73,13 @@ public class TestHttp {
                 .upListener(new ProgressListener() {
                     @Override
                     public void onProgress(long progress, long total, boolean done) {
-                        LogUtil.e((done ? "上传完成:" : "上传中:") + "--progress:" + progress + "--total:" + total);
+                        Util.log((done ? "上传完成:" : "上传中:") + "--progress:" + progress + "--total:" + total);
                     }
                 })
                 .downListener(new ProgressListener() {
                     @Override
                     public void onProgress(long progress, long total, boolean done) {
-                        LogUtil.e((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
+                        Util.log((done ? "下载完成:" : "下载中:") + "--progress:" + progress + "--total:" + total);
                     }
                 })
                 /*.subscribe(new StringObserver() {
@@ -102,7 +102,7 @@ public class TestHttp {
                 .subscribe(new HttpObserver<TestBean>() {
                     @Override
                     protected void onHttpSuccess(HttpResult<TestBean> result) {
-                        LogUtil.e(result.toString());
+                        Util.log(result.toString());
                     }
                 });
 

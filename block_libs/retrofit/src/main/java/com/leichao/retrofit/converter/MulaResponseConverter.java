@@ -1,8 +1,8 @@
 package com.leichao.retrofit.converter;
 
 import com.google.gson.Gson;
+import com.leichao.retrofit.core.Util;
 import com.leichao.retrofit.result.MulaResult;
-import com.leichao.retrofit.util.LogUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -22,7 +22,7 @@ public final class MulaResponseConverter<T> implements Converter<ResponseBody, M
     @Override
     public MulaResult<T> convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.e("result:" + responseStr);
+        Util.log("result:" + responseStr);
         MulaResult<T> mulaResult;
         Gson gson = new Gson();
         MulaResult temp = gson.fromJson(responseStr, MulaResult.class);

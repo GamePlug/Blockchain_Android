@@ -3,8 +3,8 @@ package com.leichao.retrofit.observer;
 import android.content.Context;
 
 import com.leichao.retrofit.Http;
+import com.leichao.retrofit.core.Util;
 import com.leichao.retrofit.loading.BaseLoading;
-import com.leichao.retrofit.util.LogUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -25,14 +25,14 @@ public abstract class BaseObserver<T> implements Observer<T> {
     @Override
     public final void onNext(T t) {
         if (t instanceof ResponseBody) {// 非ResponseBody的结果在转换器中已经打印了
-            LogUtil.e("result:" + "The http result is a ResponseBody");
+            Util.log("result:" + "The http result is a ResponseBody");
         }
         handHttpSuccess(t);
     }
 
     @Override
     public final void onError(Throwable e) {
-        LogUtil.e("result:" + e.toString());
+        Util.log("result:" + e.toString());
         handHttpFailure(e);
         onComplete();
     }

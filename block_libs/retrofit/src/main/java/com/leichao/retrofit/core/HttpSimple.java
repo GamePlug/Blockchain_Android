@@ -19,7 +19,6 @@ import com.leichao.retrofit.observer.HttpObserver;
 import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.util.Constant;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
@@ -105,7 +104,7 @@ public class HttpSimple {
     public HttpSimple param(String key, Object value) {
         if (value instanceof File) {
             mContainFile = true;
-            key += "\"; filename=\"" + ((File) value).getName();
+            key = Util.fileKey(key, (File) value);
         }
         this.mParams.put(key, value);
         return this;

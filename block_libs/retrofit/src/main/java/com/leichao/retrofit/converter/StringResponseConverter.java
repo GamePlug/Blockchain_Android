@@ -1,6 +1,6 @@
 package com.leichao.retrofit.converter;
 
-import com.leichao.retrofit.util.LogUtil;
+import com.leichao.retrofit.core.Util;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ public final class StringResponseConverter implements Converter<ResponseBody, St
     @Override
     public String convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.e("result:" + responseStr);
+        Util.log("result:" + responseStr);
         return responseStr;
     }
 

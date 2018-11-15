@@ -1,4 +1,4 @@
-package com.leichao.retrofit.util;
+package com.leichao.retrofit.core;
 
 public class Constant {
 

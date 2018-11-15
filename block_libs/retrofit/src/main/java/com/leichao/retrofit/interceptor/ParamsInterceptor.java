@@ -2,8 +2,8 @@ package com.leichao.retrofit.interceptor;
 
 import android.text.TextUtils;
 
-import com.leichao.retrofit.util.Constant;
-import com.leichao.retrofit.util.LogUtil;
+import com.leichao.retrofit.core.Constant;
+import com.leichao.retrofit.core.Util;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,14 +31,19 @@ public abstract class ParamsInterceptor implements Interceptor {
         switch (request.method()) {
             case Constant.GET:
                 request = getNormal(request);
+
                 break;
             case Constant.POST:
                 RequestBody body = request.body();
                 MediaType contentType = body != null ? body.contentType() : null;
-                if (contentType != null && contentType.toString().contains(Constant.CONTENT_TYPE_URL)) {
+                if (contentType != null
+                        && contentType.toString().contains(Constant.CONTENT_TYPE_URL)) {
                     request = postNormal(request);
-                } else if (contentType != null && contentType.toString().contains(Constant.CONTENT_TYPE_PART)) {
+
+                } else if (body instanceof MultipartBody && contentType != null
+                        && contentType.toString().contains(Constant.CONTENT_TYPE_PART)) {
                     request = postPart(request);
+
                 } else {
                     request = postBody(request);
                 }
@@ -67,7 +72,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         request = request.newBuilder()
                 .url(url)
                 .build();
-        LogUtil.e("url:" + request.url());
+        Util.log("url:" + request.url());
         return request;
     }
 
@@ -94,7 +99,7 @@ public abstract class ParamsInterceptor implements Interceptor {
                         MediaType.parse(Constant.CONTENT_TYPE_URL + Constant.CHARSET_UTF_8),
                         postBodyString))
                 .build();
-        LogUtil.e("url:" + getAppendUrl(request, postBodyString));
+        Util.log("url:" + getAppendUrl(request, postBodyString));
         return request;
     }
 
@@ -103,9 +108,6 @@ public abstract class ParamsInterceptor implements Interceptor {
      */
     private Request postPart(Request request) {
         RequestBody body = request.body();
-        if (body == null || !(body instanceof MultipartBody)) {
-            return request;
-        }
         List<MultipartBody.Part> parts = ((MultipartBody) body).parts();
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         for (MultipartBody.Part part : parts) {
@@ -130,7 +132,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         request = request.newBuilder()
                 .post(multiBody)
                 .build();
-        LogUtil.e("url:" + getAppendUrl(request, uploadBodyString));
+        Util.log("url:" + getAppendUrl(request, uploadBodyString));
         return request;
     }
 
@@ -155,7 +157,7 @@ public abstract class ParamsInterceptor implements Interceptor {
                 .url(url)
                 .build();
         String postBodyString = bodyToString(request.body());
-        LogUtil.e("url:" + getAppendUrl(request, postBodyString));
+        Util.log("url:" + getAppendUrl(request, postBodyString));
         return request;
     }
 

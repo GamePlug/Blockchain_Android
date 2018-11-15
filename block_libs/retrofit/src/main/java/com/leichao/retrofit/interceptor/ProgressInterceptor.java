@@ -3,7 +3,7 @@ package com.leichao.retrofit.interceptor;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.progress.ProgressRequestBody;
 import com.leichao.retrofit.progress.ProgressResponseBody;
-import com.leichao.retrofit.util.Constant;
+import com.leichao.retrofit.core.Constant;
 
 import java.io.IOException;
 

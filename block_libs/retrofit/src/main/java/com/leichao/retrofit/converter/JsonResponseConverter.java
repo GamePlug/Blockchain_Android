@@ -1,7 +1,7 @@
 package com.leichao.retrofit.converter;
 
 import com.google.gson.Gson;
-import com.leichao.retrofit.util.LogUtil;
+import com.leichao.retrofit.core.Util;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -21,7 +21,7 @@ public final class JsonResponseConverter<T> implements Converter<ResponseBody, T
     @Override
     public T convert(ResponseBody value) throws IOException {
         String responseStr = value.string();
-        LogUtil.e("result:" + responseStr);
+        Util.log("result:" + responseStr);
         T jsonResult = null;
         try {
             jsonResult = new Gson().fromJson(responseStr, type);

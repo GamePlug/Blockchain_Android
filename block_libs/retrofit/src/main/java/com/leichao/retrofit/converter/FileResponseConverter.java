@@ -1,8 +1,7 @@
 package com.leichao.retrofit.converter;
 
 import com.leichao.retrofit.Http;
-import com.leichao.retrofit.util.FileUtil;
-import com.leichao.retrofit.util.LogUtil;
+import com.leichao.retrofit.core.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +16,8 @@ public final class FileResponseConverter implements Converter<ResponseBody, File
     @Override
     public File convert(ResponseBody value) throws IOException {
         File file = new File(Http.config().getDownloadPath(), UUID.randomUUID().toString());
-        FileUtil.saveFile(file, value.byteStream());
-        LogUtil.e("result:" + "file://"+file.getAbsolutePath());
+        Util.saveFile(file, value.byteStream());
+        Util.log("result:" + "file://"+file.getAbsolutePath());
         return file;
     }
 
