@@ -43,7 +43,7 @@ public interface FileApi {
     @Streaming
     @Multipart
     @POST
-    Observable<File> postFile(
+    Observable<File> postPart(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
@@ -52,7 +52,7 @@ public interface FileApi {
 
     @Streaming
     @POST
-    Observable<File> postJson(
+    Observable<File> postBody(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,

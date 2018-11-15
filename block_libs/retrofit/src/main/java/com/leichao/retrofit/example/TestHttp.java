@@ -1,26 +1,19 @@
 package com.leichao.retrofit.example;
 
-import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.v4.app.SupportActivity;
 
 import com.leichao.retrofit.Http;
-import com.leichao.retrofit.api.StringApi;
-import com.leichao.retrofit.core.HttpClient;
 import com.leichao.retrofit.core.HttpConfig;
-import com.leichao.retrofit.interceptor.GoogleParamsInterceptor;
 import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 import com.leichao.retrofit.loading.CarLoading;
 import com.leichao.retrofit.observer.HttpObserver;
-import com.leichao.retrofit.observer.MulaObserver;
-import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.result.MulaResult;
 import com.leichao.retrofit.util.LogUtil;
 
-import java.util.Collections;
+import java.io.File;
 
 public class TestHttp {
 
@@ -34,7 +27,7 @@ public class TestHttp {
                         return new CarLoading(context, message, cancelable);
                     }
                 });
-        MulaObserver<String> mObserver = new MulaObserver<String>() {
+        /*MulaObserver<String> mObserver = new MulaObserver<String>() {
             @Override
             protected void onHttpSuccess(MulaResult<String> result) {
 
@@ -44,9 +37,9 @@ public class TestHttp {
                 .test()
                 .compose(Http.<MulaResult<String>>composeThread())
                 .compose(Http.<MulaResult<String>>composeLifecycle(activity, Lifecycle.Event.ON_PAUSE))
-                .subscribe(mObserver);
+                .subscribe(mObserver);*/
         //mObserver.cancel();
-        Http.create(StringApi.class, HttpClient.builder().addInterceptor(new GoogleParamsInterceptor()))
+        /*Http.create(StringApi.class, HttpClient.builder().addInterceptor(new GoogleParamsInterceptor()))
                 .getNormal("api/tms/googleKey/getGoogleKey?isVerify=0",
                         Collections.<String, Object>emptyMap(), Collections.<String, Object>emptyMap())
                 .compose(Http.<String>composeLifecycle(activity))
@@ -71,9 +64,10 @@ public class TestHttp {
                     protected void onHttpCompleted() {
 
                     }
-                }.loading(activity, "加载啦", true));
+                }.loading(activity, "加载啦", true));*/
         Http.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
-                .param("aaaaa", 5555555)
+                .param("aaaaa", new File(activity.getPackageManager().getInstalledApplications(0).get(0).sourceDir))
+                //.body("123456789")
                 .post()
                 .bindLifecycle(activity)
                 .upListener(new ProgressListener() {

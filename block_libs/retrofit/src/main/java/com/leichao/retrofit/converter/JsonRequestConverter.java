@@ -1,6 +1,7 @@
 package com.leichao.retrofit.converter;
 
 import com.google.gson.Gson;
+import com.leichao.retrofit.util.Constant;
 
 import java.lang.reflect.Type;
 
@@ -11,7 +12,7 @@ import retrofit2.Converter;
 // 转换成Json
 public final class JsonRequestConverter<T> implements Converter<T, RequestBody> {
 
-    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=UTF-8");
+    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse(Constant.CONTENT_TYPE_JSON + Constant.CHARSET_UTF_8);
 
     private final Type type;
 

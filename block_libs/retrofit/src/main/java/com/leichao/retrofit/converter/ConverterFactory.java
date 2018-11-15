@@ -38,7 +38,11 @@ public final class ConverterFactory extends Converter.Factory {
                 || clazz == long.class || clazz == Long.class
                 || clazz == short.class || clazz == Short.class) {
             // 如果是String或者基本类型，则转换成String
-            return new StringRequestConverter<>();
+            return new StringRequestConverter();
+
+        } else if (clazz == File.class) {
+            // 如果是File类型，则转换成File
+            return new FileRequestConverter();
 
         } else {
             // 如果是其他类型，则转换成json

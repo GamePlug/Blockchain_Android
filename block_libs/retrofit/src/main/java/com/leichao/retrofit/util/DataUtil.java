@@ -9,8 +9,6 @@ import okhttp3.RequestBody;
 
 public class DataUtil {
 
-    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
-
     public static Map<String, Object> formatParams(Map<String, Object> params) {
         Map<String, Object> newParams = new LinkedHashMap<>();
         for (String key : params.keySet()) {
@@ -23,12 +21,12 @@ public class DataUtil {
         if (object instanceof File) {
             File file = (File) object;
             RequestBody requestBody = RequestBody
-                    .create(MediaType.parse(MULTIPART_FORM_DATA), file);
+                    .create(MediaType.parse(Constant.CONTENT_TYPE_PART), file);
             params.put(key + "\"; filename=\"" + file.getName(), requestBody);
         } else {
             String string = object.toString();
             RequestBody requestBody = RequestBody
-                    .create(MediaType.parse(MULTIPART_FORM_DATA), string);
+                    .create(MediaType.parse(Constant.CONTENT_TYPE_PART), string);
             params.put(key, requestBody);
         }
     }

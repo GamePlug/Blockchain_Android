@@ -2,6 +2,7 @@ package com.leichao.retrofit.interceptor;
 
 import android.text.TextUtils;
 
+import com.leichao.retrofit.util.Constant;
 import com.leichao.retrofit.util.LogUtil;
 
 import java.io.IOException;
@@ -24,26 +25,22 @@ import okio.Buffer;
  */
 public abstract class ParamsInterceptor implements Interceptor {
 
-    private static final String APPLICATION_FORM_URL = "application/x-www-form-urlencoded;charset=UTF-8";
-    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
-    private static final String APPLICATION_JSON = "application/json";
-
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         switch (request.method()) {
-            case "GET":
+            case Constant.GET:
                 request = getNormal(request);
                 break;
-            case "POST":
+            case Constant.POST:
                 RequestBody body = request.body();
                 MediaType contentType = body != null ? body.contentType() : null;
-                if (body != null && contentType != null && contentType.toString().contains(MULTIPART_FORM_DATA)) {
-                    request = postFile(request);
-                } else if (body != null && contentType != null && contentType.toString().contains(APPLICATION_JSON)) {
-                    request = postJson(request);
-                } else {
+                if (contentType != null && contentType.toString().contains(Constant.CONTENT_TYPE_URL)) {
                     request = postNormal(request);
+                } else if (contentType != null && contentType.toString().contains(Constant.CONTENT_TYPE_PART)) {
+                    request = postPart(request);
+                } else {
+                    request = postBody(request);
                 }
                 break;
         }
@@ -75,7 +72,7 @@ public abstract class ParamsInterceptor implements Interceptor {
     }
 
     /**
-     * 普通post请求统一处理的操作
+     * 普通post请求(键值对参数方式)统一处理的操作
      */
     private Request postNormal(Request request) {
         String postBodyString = bodyToString(request.body());
@@ -94,7 +91,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         // 生成新的Request
         request = request.newBuilder()
                 .post(RequestBody.create(
-                        MediaType.parse(APPLICATION_FORM_URL),
+                        MediaType.parse(Constant.CONTENT_TYPE_URL + Constant.CHARSET_UTF_8),
                         postBodyString))
                 .build();
         LogUtil.e("url:" + getAppendUrl(request, postBodyString));
@@ -102,9 +99,9 @@ public abstract class ParamsInterceptor implements Interceptor {
     }
 
     /**
-     * 上传文件数据(表单请求)统一处理的操作
+     * 表单上传统一处理的操作
      */
-    private Request postFile(Request request) {
+    private Request postPart(Request request) {
         RequestBody body = request.body();
         if (body == null || !(body instanceof MultipartBody)) {
             return request;
@@ -138,9 +135,9 @@ public abstract class ParamsInterceptor implements Interceptor {
     }
 
     /**
-     * 上传json数据请求统一处理的操作
+     * Body上传统一处理的操作
      */
-    private Request postJson(Request request) {
+    private Request postBody(Request request) {
         // 获取公共参数
         String originUrl = request.url().toString();// 不包含json数据
         Map<String, String> params = getCommonParams(originUrl);

@@ -19,7 +19,7 @@ import com.leichao.retrofit.observer.HttpObserver;
 import com.leichao.retrofit.observer.StringObserver;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.result.HttpResult;
-import com.leichao.retrofit.util.DataUtil;
+import com.leichao.retrofit.util.Constant;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
@@ -35,12 +35,12 @@ public class HttpSimple {
 
     private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
 
-    private Method mMethod = Method.GET;
+    private String mMethod = Constant.GET;
     private String mUrl;
     private final Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
     private final Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
-    private final Map<String, Object> mFileParams = new LinkedHashMap<>();// 要以文件数据格式上传的参数
-    private Object mJsonData;// 要以json数据格式上传的对象
+    private boolean mContainFile = false;// 要上传的参数是否包含文件
+    private Object mBody;// 要以Body数据格式上传的对象
     private LifecycleOwner mLifeOwner;// 用于生命周期绑定
     private Lifecycle.Event mLifeEvent;// 用于生命周期绑定
     private BaseLoading mLoading;// 加载loading
@@ -49,8 +49,6 @@ public class HttpSimple {
     private ParamsInterceptor mParamsInterceptor;// 参数拦截器
     private ProgressListener mUpListener;// 上传进度监听
     private ProgressListener mDownListener;// 下载进度监听
-
-    public enum Method {GET, POST}
 
     private HttpSimple(String url) {
         this.mUrl = url;
@@ -73,7 +71,7 @@ public class HttpSimple {
      * 使用get请求方式，默认请求方式，但上传文件或上传json时会强制使用post
      */
     public HttpSimple get() {
-        this.mMethod = Method.GET;
+        this.mMethod = Constant.GET;
         return this;
     }
 
@@ -81,7 +79,7 @@ public class HttpSimple {
      * 使用post请求方式
      */
     public HttpSimple post() {
-        this.mMethod = Method.POST;
+        this.mMethod = Constant.POST;
         return this;
     }
 
@@ -102,42 +100,33 @@ public class HttpSimple {
     }
 
     /**
-     * 请求的参数
+     * 请求的参数，参数包含File时代表上传文件
      */
     public HttpSimple param(String key, Object value) {
+        if (value instanceof File) {
+            mContainFile = true;
+            key += "\"; filename=\"" + ((File) value).getName();
+        }
         this.mParams.put(key, value);
         return this;
     }
 
     /**
-     * 请求的参数集合
+     * 请求的参数集合，参数包含File时代表上传文件
      */
     public HttpSimple params(Map<String, Object> params) {
-        this.mParams.putAll(params);
+        for (String key : params.keySet()) {
+            Object value = params.get(key);
+            param(key, value);
+        }
         return this;
     }
 
     /**
-     * 请求的文件参数
+     * 将数据直接写入Body请求体中，此时Body请求体中不再写入其他参数，其他参数会以Query方式上传
      */
-    public HttpSimple fileParam(String key, Object value) {
-        DataUtil.addParams(this.mFileParams, key, value);
-        return this;
-    }
-
-    /**
-     * 请求的文件参数集合
-     */
-    public HttpSimple fileParams(Map<String, Object> params) {
-        this.mFileParams.putAll(DataUtil.formatParams(params));
-        return this;
-    }
-
-    /**
-     * 请求的json数据参数
-     */
-    public HttpSimple jsonData(Object jsonData) {
-        this.mJsonData = jsonData;
+    public HttpSimple body(Object body) {
+        this.mBody = body;
         return this;
     }
 
@@ -242,19 +231,19 @@ public class HttpSimple {
     public void subscribe(StringObserver observer) {
         StringApi api = Http.create(StringApi.class, getHttpClient());
         Observable<String> observable;
-        if (mJsonData != null) {
-            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
+        if (mBody != null) {
+            observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (!mFileParams.isEmpty()) {
-            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
+        } else if (mContainFile) {
+            observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
             switch (mMethod) {
-                case POST:
+                case Constant.POST:
                     observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
-                case GET:
+                case Constant.GET:
                 default:
                     observable = api.getNormal(mUrl, mHeaders, mParams);
                     break;
@@ -269,19 +258,19 @@ public class HttpSimple {
     public void subscribe(FileObserver observer) {
         FileApi api = Http.create(FileApi.class, getHttpClient());
         Observable<File> observable;
-        if (mJsonData != null) {
-            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
+        if (mBody != null) {
+            observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (!mFileParams.isEmpty()) {
-            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
+        } else if (mContainFile) {
+            observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
             switch (mMethod) {
-                case POST:
+                case Constant.POST:
                     observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
-                case GET:
+                case Constant.GET:
                 default:
                     observable = api.getNormal(mUrl, mHeaders, mParams);
                     break;
@@ -296,19 +285,19 @@ public class HttpSimple {
     public <T> void subscribe(final HttpObserver<T> observer) {
         HttpApi api = Http.create(HttpApi.class, getHttpClient());
         Observable<HttpResult> observable;
-        if (mJsonData != null) {
-            observable = api.postJson(mUrl, mHeaders, mParams, mJsonData);
+        if (mBody != null) {
+            observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (!mFileParams.isEmpty()) {
-            observable = api.postFile(mUrl, mHeaders, mParams, mFileParams);
+        } else if (mContainFile) {
+            observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
             switch (mMethod) {
-                case POST:
+                case Constant.POST:
                     observable = api.postNormal(mUrl, mHeaders, EMPTY_MAP, mParams);
                     break;
 
-                case GET:
+                case Constant.GET:
                 default:
                     observable = api.getNormal(mUrl, mHeaders, mParams);
                     break;

@@ -49,14 +49,14 @@ public interface StringApi {
     );
 
     /**
-     * 上传表单数据方式，比如上传多文件,图片,参数等
+     * 表单上传数据方式，比如上传多文件,图片,参数等，以表单方式写入body中，而不是键值对
      * 注:
      * 1.参数只能使用@Path，@Query，@QueryMap，@Part，@PartMap注解
      * 2.此时必须为post请求，即使用@POST注解，且必须使用@Multipart注解
      */
     @Multipart
     @POST
-    Observable<String> postFile(
+    Observable<String> postPart(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
@@ -64,13 +64,13 @@ public interface StringApi {
     );
 
     /**
-     * 上传纯Json数据，是以json的格式写入body中，而不是键值对，使用@Body注解标记要上传的json实体类即可
+     * 将指定数据写入Body的方式，比如将json、file、string等数据写入body中，而不是键值对，使用@Body注解标记要上传的json实体类即可
      * 注：
      * 1.参数只能使用@Path，@Query，@QueryMap，@Body注解，其中最多只能有一个@Body
      * 2.此时必须为post请求，即使用@POST注解，且不能使用@FormUrlEncoded和@Multipart注解
      */
     @POST
-    Observable<String> postJson(
+    Observable<String> postBody(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,

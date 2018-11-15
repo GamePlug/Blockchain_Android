@@ -41,7 +41,7 @@ public interface HttpApi {
 
     @Multipart
     @POST
-    Observable<HttpResult> postFile(
+    Observable<HttpResult> postPart(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
@@ -49,7 +49,7 @@ public interface HttpApi {
     );
 
     @POST
-    Observable<HttpResult> postJson(
+    Observable<HttpResult> postBody(
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,

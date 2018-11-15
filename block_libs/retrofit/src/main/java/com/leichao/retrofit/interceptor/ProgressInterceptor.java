@@ -3,6 +3,7 @@ package com.leichao.retrofit.interceptor;
 import com.leichao.retrofit.progress.ProgressListener;
 import com.leichao.retrofit.progress.ProgressRequestBody;
 import com.leichao.retrofit.progress.ProgressResponseBody;
+import com.leichao.retrofit.util.Constant;
 
 import java.io.IOException;
 
@@ -27,7 +28,7 @@ public class ProgressInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if (upListener != null && "POST".equals(request.method()) && request.body() != null) {
+        if (upListener != null && Constant.POST.equals(request.method()) && request.body() != null) {
             request = request.newBuilder()
                     .post(new ProgressRequestBody(request.body(), upListener))
                     .build();
