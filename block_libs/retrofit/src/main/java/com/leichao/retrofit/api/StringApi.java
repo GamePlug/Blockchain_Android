@@ -21,10 +21,10 @@ import retrofit2.http.Url;
 public interface StringApi {
 
     /**
-     * 普通get请求，此时Field参数会以键值对的形式写在body中
+     * 普通Get请求，Query类型的参数会以键值对的形式拼接在Url中
      * 注:
      * 1.参数只能使用@Path，@Query，@QueryMap注解
-     * 2.此时必须为get请求，即使用@GET注解
+     * 2.此方法为Get请求，需使用@GET注解
      */
     @GET
     Observable<String> getNormal(
@@ -34,10 +34,10 @@ public interface StringApi {
     );
 
     /**
-     * 普通post请求，此时Field类型的参数会以键值对的形式写在body中
+     * 普通Post请求，Field类型的参数会以键值对的形式写入Body中
      * 注:
      * 1.参数注解只能使用@Path，@Query，@QueryMap，@Field，@FieldMap
-     * 2.此时必须为post请求，即使用@POST注解，且必须使用@FormUrlEncoded注解
+     * 2.此方法为Post请求，需使用@POST注解，且必须使用@FormUrlEncoded注解
      */
     @FormUrlEncoded
     @POST
@@ -49,10 +49,10 @@ public interface StringApi {
     );
 
     /**
-     * 表单上传数据方式，比如上传多文件,图片,参数等，以表单方式写入body中，而不是键值对
+     * 表单Post请求，Part类型的参数会以表单的形式写入Body中
      * 注:
      * 1.参数只能使用@Path，@Query，@QueryMap，@Part，@PartMap注解
-     * 2.此时必须为post请求，即使用@POST注解，且必须使用@Multipart注解
+     * 2.此方法为Post请求，需使用@POST注解，且必须使用@Multipart注解
      */
     @Multipart
     @POST
@@ -60,14 +60,14 @@ public interface StringApi {
             @Url String url,
             @HeaderMap Map<String, Object> headerParams,
             @QueryMap Map<String, Object> queryParams,
-            @PartMap Map<String, Object> partParams// 此处的Map中的Object可以为RequestBody
+            @PartMap Map<String, Object> partParams
     );
 
     /**
-     * 将指定数据写入Body的方式，比如将json、file、string等数据写入body中，而不是键值对，使用@Body注解标记要上传的json实体类即可
+     * 自定义Body的Post请求，直接指定Body的数据，比如可以将json、file、string等数据写入Body中
      * 注：
      * 1.参数只能使用@Path，@Query，@QueryMap，@Body注解，其中最多只能有一个@Body
-     * 2.此时必须为post请求，即使用@POST注解，且不能使用@FormUrlEncoded和@Multipart注解
+     * 2.此方法为Post请求，需使用@POST注解，且不能使用@FormUrlEncoded和@Multipart注解
      */
     @POST
     Observable<String> postBody(

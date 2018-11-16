@@ -67,6 +67,7 @@ public class TestHttp {
                 }.loading(activity, "加载啦", true));*/
         Http.create("http://47.74.159.3:8083/api/tms/tmsMessages/messageList?page=1&userType=2&userId=307ad3da76f24a4aac903c317653f71a&isVerify=0")
                 .param("aaaaa", new File(activity.getPackageManager().getInstalledApplications(0).get(0).sourceDir))
+                .param("bbbbb", "55555")
                 //.body("123456789")
                 .post()
                 .bindLifecycle(activity)

@@ -86,7 +86,10 @@ public class Util {
 
     // 获取需上传的文件的key
     public static String fileKey(String key, String fileName) {
-        return key + "\"; filename=\"" + fileName;
+        if (!key.contains("filename")) {
+            key += "\"; filename=\"" + fileName;
+        }
+        return key;
     }
 
     // 删除文件

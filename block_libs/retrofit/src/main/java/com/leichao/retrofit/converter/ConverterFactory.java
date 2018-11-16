@@ -22,7 +22,7 @@ public final class ConverterFactory extends Converter.Factory {
     private ConverterFactory() {
     }
 
-    // 当接口参数是@Body或者@Part时，才会执行此转换
+    // 当接口参数不是RequestBody，且参数注解是@Body或者@Part或者@PartMap时，才会执行此转换
     @Override
     public Converter<?, RequestBody> requestBodyConverter(
             Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {

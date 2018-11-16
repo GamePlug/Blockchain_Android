@@ -38,8 +38,8 @@ public class HttpSimple {
     private String mUrl;
     private final Map<String, Object> mHeaders = new LinkedHashMap<>();// 要上传的header
     private final Map<String, Object> mParams = new LinkedHashMap<>();// 要上传的参数
-    private boolean mContainFile = false;// 要上传的参数是否包含文件
-    private Object mBody;// 要以Body数据格式上传的对象
+    private boolean mPart = false;// 要上传的参数mParams中是否包含非String且非基本类型，包含时强制使用POST(Part)方式
+    private Object mBody;// 要上传的自定义Body对象，强制使用POST(Body)方式
     private LifecycleOwner mLifeOwner;// 用于生命周期绑定
     private Lifecycle.Event mLifeEvent;// 用于生命周期绑定
     private BaseLoading mLoading;// 加载loading
@@ -99,11 +99,13 @@ public class HttpSimple {
     }
 
     /**
-     * 请求的参数，参数包含File时代表上传文件
+     * 请求的参数，参数包含非String且非基本类型时，使用Post表单上传
      */
     public HttpSimple param(String key, Object value) {
+        if (!Util.isStringOrBase(value.getClass())) {
+            mPart = true;
+        }
         if (value instanceof File) {
-            mContainFile = true;
             key = Util.fileKey(key, (File) value);
         }
         this.mParams.put(key, value);
@@ -111,7 +113,7 @@ public class HttpSimple {
     }
 
     /**
-     * 请求的参数集合，参数包含File时代表上传文件
+     * 请求的参数集合，参数包含非String且非基本类型时，使用Post表单上传
      */
     public HttpSimple params(Map<String, Object> params) {
         for (String key : params.keySet()) {
@@ -233,7 +235,7 @@ public class HttpSimple {
         if (mBody != null) {
             observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (mContainFile) {
+        } else if (mPart) {
             observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
@@ -260,7 +262,7 @@ public class HttpSimple {
         if (mBody != null) {
             observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (mContainFile) {
+        } else if (mPart) {
             observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
@@ -287,7 +289,7 @@ public class HttpSimple {
         if (mBody != null) {
             observable = api.postBody(mUrl, mHeaders, mParams, mBody);
 
-        } else if (mContainFile) {
+        } else if (mPart) {
             observable = api.postPart(mUrl, mHeaders, EMPTY_MAP, mParams);
 
         } else {
