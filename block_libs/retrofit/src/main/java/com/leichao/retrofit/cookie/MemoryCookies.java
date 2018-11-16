@@ -9,9 +9,9 @@ import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 
 /**
- * 使用内存cookie管理器
+ * 内存cookie管理器
  */
-public class MemoryCookie implements CookieJar {
+public class MemoryCookies implements CookieJar {
 
     private Map<String, List<Cookie>> cookieMap = new HashMap<>();
 
