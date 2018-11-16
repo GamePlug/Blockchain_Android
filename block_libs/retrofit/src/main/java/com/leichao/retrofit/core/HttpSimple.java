@@ -29,6 +29,7 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
+import okhttp3.CookieJar;
 
 public class HttpSimple {
 
@@ -45,6 +46,7 @@ public class HttpSimple {
     private BaseLoading mLoading;// 加载loading
     private long mTimeout;// 超时时间
     private String mBaseUrl;// BaseUrl
+    private CookieJar mCookieJar;// cookie管理器
     private ParamsInterceptor mParamsInterceptor;// 参数拦截器
     private ProgressListener mUpListener;// 上传进度监听
     private ProgressListener mDownListener;// 下载进度监听
@@ -54,6 +56,7 @@ public class HttpSimple {
         HttpConfig config = Http.config();
         this.mTimeout = config.getTimeout();
         this.mBaseUrl = config.getBaseUrl();
+        this.mCookieJar = config.getCookieJar();
         this.mParamsInterceptor = config.getParamsInterceptor();
     }
 
@@ -199,6 +202,14 @@ public class HttpSimple {
     }
 
     /**
+     * 设置cookie管理器
+     */
+    public HttpSimple cookieJar(CookieJar cookieJar) {
+        this.mCookieJar = cookieJar;
+        return this;
+    }
+
+    /**
      * 参数拦截器
      */
     public HttpSimple paramsInterceptor(ParamsInterceptor interceptor) {
@@ -327,6 +338,7 @@ public class HttpSimple {
         return HttpClient.builder()
                 .timeout(mTimeout)
                 .baseUrl(mBaseUrl)
+                .cookieJar(mCookieJar)
                 .addInterceptor(mParamsInterceptor)
                 .addInterceptor(new ProgressInterceptor(mUpListener, mDownListener));
     }

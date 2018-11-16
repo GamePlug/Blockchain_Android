@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.CookieJar;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -18,6 +19,7 @@ public class HttpClient {
 
     private long mTimeout;
     private String mBaseUrl;
+    private CookieJar cookieJar = CookieJar.NO_COOKIES;
     private final List<Interceptor> interceptorList = new ArrayList<>();
 
     public static HttpClient builder() {
@@ -41,6 +43,14 @@ public class HttpClient {
     }
 
     /**
+     * 设置cookie管理器
+     */
+    public HttpClient cookieJar(CookieJar cookieJar) {
+        if (cookieJar != null) this.cookieJar = cookieJar;
+        return this;
+    }
+
+    /**
      * 添加拦截器
      */
     public HttpClient addInterceptor(Interceptor interceptor) {
@@ -59,7 +69,8 @@ public class HttpClient {
         OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
                 .connectTimeout(mTimeout, TimeUnit.SECONDS)
                 .writeTimeout(mTimeout, TimeUnit.SECONDS)
-                .readTimeout(mTimeout, TimeUnit.SECONDS);
+                .readTimeout(mTimeout, TimeUnit.SECONDS)
+                .cookieJar(cookieJar);
         for (Interceptor interceptor : interceptorList) {
             okHttpBuilder.addInterceptor(interceptor);
         }

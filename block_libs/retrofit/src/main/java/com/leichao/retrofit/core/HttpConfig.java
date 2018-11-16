@@ -8,6 +8,8 @@ import com.leichao.retrofit.interceptor.DefaultParamsInterceptor;
 import com.leichao.retrofit.interceptor.ParamsInterceptor;
 import com.leichao.retrofit.loading.BaseLoading;
 
+import okhttp3.CookieJar;
+
 /**
  * Retrofit配置类
  * Created by leichao on 2017/4/15.
@@ -23,6 +25,9 @@ public class HttpConfig {
 
     // 全局域名
     private String baseUrl = "http://47.74.159.3:8084/";
+
+    // cookie管理器
+    private CookieJar cookieJar = CookieJar.NO_COOKIES;
 
     // 参数处理，可以设置为空
     private ParamsInterceptor paramsInterceptor = new DefaultParamsInterceptor();
@@ -66,6 +71,18 @@ public class HttpConfig {
      */
     public HttpConfig setBaseUrl(String baseUrl) {
         if (!TextUtils.isEmpty(baseUrl)) this.baseUrl = baseUrl;
+        return this;
+    }
+
+    public CookieJar getCookieJar() {
+        return cookieJar;
+    }
+
+    /**
+     * 设置cookie管理器
+     */
+    public HttpConfig setCookieJar(CookieJar cookieJar) {
+        this.cookieJar = cookieJar;
         return this;
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.SupportActivity;
 
 import com.leichao.retrofit.Http;
+import com.leichao.retrofit.cookie.MemoryCookie;
 import com.leichao.retrofit.core.HttpConfig;
 import com.leichao.retrofit.core.Util;
 import com.leichao.retrofit.interceptor.MulaParamsInterceptor;
@@ -20,6 +21,7 @@ public class TestHttp {
     public static void test(SupportActivity activity) {
         Http.config()
                 .setTimeout(40)
+                .setCookieJar(new MemoryCookie())
                 .setParamsInterceptor(new MulaParamsInterceptor())
                 .setLoadingCallback(new HttpConfig.LoadingCallback() {
                     @Override

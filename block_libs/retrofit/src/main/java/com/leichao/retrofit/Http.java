@@ -44,7 +44,9 @@ public final class Http {
      * @param service Api接口
      */
     public static <T> T create(Class<T> service) {
-        return HttpClient.builder().addInterceptor(mConfig.getParamsInterceptor())
+        return HttpClient.builder()
+                .cookieJar(mConfig.getCookieJar())
+                .addInterceptor(mConfig.getParamsInterceptor())
                 .build().create(service);
     }
 
