@@ -1,5 +1,6 @@
 package com.leichao.retrofit.interceptor;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.leichao.retrofit.core.Constant;
@@ -69,7 +70,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         }
         HttpUrl url = builder.build();
         // 生成新的Request
-        request = request.newBuilder()
+        request = addCommonHeaders(request)
                 .url(url)
                 .build();
         Util.log("url:" + request.url());
@@ -80,8 +81,8 @@ public abstract class ParamsInterceptor implements Interceptor {
      * 普通post请求(键值对参数方式)统一处理的操作
      */
     private Request postNormal(Request request) {
-        String postBodyString = bodyToString(request.body());
         // 获取公共参数
+        String postBodyString = bodyToString(request.body());
         String originUrl = getAppendUrl(request, postBodyString);
         Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
@@ -94,7 +95,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         }
         postBodyString = sb.toString();
         // 生成新的Request
-        request = request.newBuilder()
+        request = addCommonHeaders(request)
                 .post(RequestBody.create(
                         MediaType.parse(Constant.CONTENT_TYPE_URL + Constant.CHARSET_UTF_8),
                         postBodyString))
@@ -107,6 +108,7 @@ public abstract class ParamsInterceptor implements Interceptor {
      * 表单上传统一处理的操作
      */
     private Request postPart(Request request) {
+        // 获取公共参数
         RequestBody body = request.body();
         List<MultipartBody.Part> parts = ((MultipartBody) body).parts();
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -114,7 +116,6 @@ public abstract class ParamsInterceptor implements Interceptor {
             builder.addPart(part);
         }
         String uploadBodyString = partsToString(parts);
-        // 获取公共参数
         String originUrl = getAppendUrl(request, uploadBodyString);// 不包含文件数据
         Map<String, String> params = getCommonParams(originUrl);
         // 设置公共参数
@@ -129,7 +130,7 @@ public abstract class ParamsInterceptor implements Interceptor {
         MultipartBody multiBody = builder.build();
         uploadBodyString = sb.toString();
         // 生成新的Request
-        request = request.newBuilder()
+        request = addCommonHeaders(request)
                 .post(multiBody)
                 .build();
         Util.log("url:" + getAppendUrl(request, uploadBodyString));
@@ -153,12 +154,27 @@ public abstract class ParamsInterceptor implements Interceptor {
         }
         HttpUrl url = builder.build();
         // 生成新的Request
-        request = request.newBuilder()
+        request = addCommonHeaders(request)
                 .url(url)
                 .build();
         String postBodyString = bodyToString(request.body());
         Util.log("url:" + getAppendUrl(request, postBodyString));
         return request;
+    }
+
+    /**
+     * 添加公共头部
+     */
+    private Request.Builder addCommonHeaders(Request request) {
+        Request.Builder builder = request.newBuilder();
+        Map<String, String> headers = getCommonHeaders(request.headers());
+        for (String key : headers.keySet()) {
+            String value = headers.get(key);
+            if (!TextUtils.isEmpty(value)) {
+                builder.addHeader(key, value);
+            }
+        }
+        return builder;
     }
 
     /**
@@ -207,6 +223,10 @@ public abstract class ParamsInterceptor implements Interceptor {
         return partBuilder.toString();
     }
 
+    @NonNull
+    public abstract Map<String, String> getCommonHeaders(Headers headers);
+
+    @NonNull
     public abstract Map<String, String> getCommonParams(String url);
 
 }

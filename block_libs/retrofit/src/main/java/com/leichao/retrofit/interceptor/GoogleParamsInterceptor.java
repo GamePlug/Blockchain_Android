@@ -1,17 +1,21 @@
 package com.leichao.retrofit.interceptor;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import java.io.IOException;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import okhttp3.Headers;
 
 /**
  * Google相关请求添加默认的参数及签名
@@ -22,6 +26,13 @@ public class GoogleParamsInterceptor extends ParamsInterceptor {
     private static final String CLIENT_ID = "gme-mulacarinternational";// 谷歌50万次client_id(客户ID)
     private static final String PRIVATE_KEY = "TbN51m8dEi3QUXMSyClj28E67BQ=";// 谷歌50万次private_key(私钥)
 
+    @NonNull
+    @Override
+    public Map<String, String> getCommonHeaders(Headers headers) {
+        return Collections.emptyMap();
+    }
+
+    @NonNull
     @Override
     public Map<String, String> getCommonParams(String url) {
         Map<String, String> params = new LinkedHashMap<>();
@@ -44,7 +55,7 @@ public class GoogleParamsInterceptor extends ParamsInterceptor {
      * @param urlStr 访问的全连接
      * @return 返回签名参数
      */
-    public static String getSign(String urlStr) {
+    private String getSign(String urlStr) {
         String keyStr = PRIVATE_KEY.replace('-', '+').replace('_', '/');
         byte[] key = Base64.decode(keyStr, Base64.DEFAULT);
         try {

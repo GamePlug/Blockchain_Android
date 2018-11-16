@@ -1,14 +1,18 @@
 package com.leichao.retrofit.interceptor;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
+
+import okhttp3.Headers;
 
 /**
  * Mula相关请求添加默认的参数及签名
@@ -30,6 +34,13 @@ public class MulaParamsInterceptor extends ParamsInterceptor {
     // 加密的key与值
     public static final String KEY_VALUE="key=aaaaaa";
 
+    @NonNull
+    @Override
+    public Map<String, String> getCommonHeaders(Headers headers) {
+        return Collections.emptyMap();
+    }
+
+    @NonNull
     @Override
     public Map<String, String> getCommonParams(String url) {
         Map<String, String> params = new LinkedHashMap<>();
@@ -68,7 +79,7 @@ public class MulaParamsInterceptor extends ParamsInterceptor {
     /**
      * 生成加密签名
      */
-    public String getSign(String url) {
+    private String getSign(String url) {
         Uri uri = Uri.parse(url);
         TreeSet<String> treeSet = new TreeSet<>();// TreeSet的默认排序为ASCII码从小到大排序
         for (String key : uri.getQueryParameterNames()) {
@@ -126,7 +137,7 @@ public class MulaParamsInterceptor extends ParamsInterceptor {
     /**
      * md5加密
      */
-    public String md5(String string) {
+    private String md5(String string) {
         byte[] hash;
         try {
             hash = MessageDigest.getInstance("MD5").digest(
