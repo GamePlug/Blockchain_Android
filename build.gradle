@@ -4,10 +4,10 @@ buildscript {
     apply from: rootProject.rootDir.absolutePath + "/file/gradle/dependencies.gradle"
     repositories {
         google()
+        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
         jcenter()
         //maven { url RELEASE_URL }
         maven { url rootProject.ext.file.maven }
-        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -21,10 +21,10 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
         jcenter()
         //maven { url RELEASE_URL }
         maven { url rootProject.ext.file.maven }
-        maven { url "https://dl.bintray.com/soli/maven" }// 兼容replugin(2.3.0)与gradle(3.2.1)的冲突
     }
 }
 

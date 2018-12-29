@@ -1,2 +1,6 @@
 apply from: rootProject.ext.gradle.base_lib
 apply from: rootProject.ext.gradle.maven_push
+
+dependencies {
+    api rootProject.ext.dependencies.glide
+}

@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
     // glide
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
 
     // mqtt
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
